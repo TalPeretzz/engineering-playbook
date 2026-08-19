@@ -5,8 +5,11 @@ import type { ProgrammingLanguage } from "@engineering-playbook/content-schema";
 import type { TopicProgress } from "@engineering-playbook/shared-types";
 import * as store from "@/store/progressStore";
 
+const DEFAULT_TOPIC_PROGRESS: TopicProgress = { status: "not-started", completedChallenges: [] };
+
 export function useTopicProgress(slug: string) {
-  const [progress, setProgress] = useState<TopicProgress>(() => store.getTopicProgress(slug));
+  // Start with SSR-safe default; read real value after mount to avoid hydration mismatch
+  const [progress, setProgress] = useState<TopicProgress>(DEFAULT_TOPIC_PROGRESS);
 
   const refresh = useCallback(() => {
     setProgress(store.getTopicProgress(slug));
@@ -38,9 +41,12 @@ export function useTopicProgress(slug: string) {
 }
 
 export function usePreferredLanguage() {
-  const [language, setLanguageState] = useState<ProgrammingLanguage>(() =>
-    store.getPreferredLanguage()
-  );
+  // Start with SSR-safe default
+  const [language, setLanguageState] = useState<ProgrammingLanguage>("typescript");
+
+  useEffect(() => {
+    setLanguageState(store.getPreferredLanguage());
+  }, []);
 
   const setLanguage = useCallback((lang: ProgrammingLanguage) => {
     store.setPreferredLanguage(lang);
@@ -51,7 +57,8 @@ export function usePreferredLanguage() {
 }
 
 export function useOverallProgress(totalTopics: number) {
-  const [stats, setStats] = useState(() => store.getOverallProgress(totalTopics));
+  // Start with 0 so server and client agree on initial render
+  const [stats, setStats] = useState({ completed: 0, total: totalTopics, percent: 0 });
 
   useEffect(() => {
     setStats(store.getOverallProgress(totalTopics));

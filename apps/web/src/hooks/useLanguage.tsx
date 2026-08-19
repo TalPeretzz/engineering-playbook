@@ -1,6 +1,6 @@
 "use client";
 
-import React, { createContext, useContext, useState, useCallback } from "react";
+import React, { createContext, useContext, useState, useEffect, useCallback } from "react";
 import type { ProgrammingLanguage } from "@engineering-playbook/content-schema";
 import * as store from "@/store/progressStore";
 
@@ -12,9 +12,12 @@ type LanguageContextValue = {
 const LanguageContext = createContext<LanguageContextValue | null>(null);
 
 export function LanguageProvider({ children }: { children: React.ReactNode }) {
-  const [language, setLanguageState] = useState<ProgrammingLanguage>(() =>
-    store.getPreferredLanguage()
-  );
+  // SSR-safe: start with "typescript" so server and client agree on first render
+  const [language, setLanguageState] = useState<ProgrammingLanguage>("typescript");
+
+  useEffect(() => {
+    setLanguageState(store.getPreferredLanguage());
+  }, []);
 
   const setLanguage = useCallback((lang: ProgrammingLanguage) => {
     store.setPreferredLanguage(lang);
