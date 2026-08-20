@@ -2,7 +2,6 @@
 
 import React, { useEffect } from "react";
 import type { Topic } from "@engineering-playbook/content-schema";
-import { useLanguage } from "@/hooks/useLanguage";
 import { useTopicProgress } from "@/hooks/useProgress";
 import { setLastVisitedTopic } from "@/store/progressStore";
 import { CodeBlock } from "./CodeBlock";
@@ -19,7 +18,6 @@ type TopicPageProps = {
 };
 
 export function TopicPage({ topic }: TopicPageProps) {
-  const { language } = useLanguage();
   const { progress, markInProgress } = useTopicProgress(topic.slug);
 
   useEffect(() => {
@@ -34,8 +32,6 @@ export function TopicPage({ topic }: TopicPageProps) {
   const nextTopics = topic.nextTopics
     .map((slug) => allTopics.find((t) => t.slug === slug))
     .filter(Boolean) as Topic[];
-
-  const code = topic.implementations[language] ?? topic.implementations.typescript;
 
   return (
     <article className="space-y-10 pb-24">
@@ -121,10 +117,10 @@ export function TopicPage({ topic }: TopicPageProps) {
         </ul>
       </Section>
 
-      {code && (
+      {Object.keys(topic.implementations).length > 0 && (
         <Section id="implementation">
           <SectionHeading>Implementation</SectionHeading>
-          <CodeBlock code={code} language={language} />
+          <CodeBlock implementations={topic.implementations} />
         </Section>
       )}
 

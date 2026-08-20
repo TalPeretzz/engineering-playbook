@@ -359,6 +359,33 @@ public class SlidingWindowRateLimiter {
         "Weighted count = prevCount × (1 - elapsed/windowMs) + currCount",
         "If weighted count >= limit, reject. Otherwise increment currCount and allow.",
       ],
+      testCases: [
+        {
+          id: "rl-tc-1",
+          description: "First request within limit is allowed",
+          code: `const limiter = new SlidingWindowRateLimiter(5, 1000);
+return limiter.isAllowed("user-1");`,
+          expected: true,
+        },
+        {
+          id: "rl-tc-2",
+          description: "Request is rejected after exceeding the limit",
+          code: `const limiter = new SlidingWindowRateLimiter(3, 1000);
+limiter.isAllowed("user-1");
+limiter.isAllowed("user-1");
+limiter.isAllowed("user-1");
+return limiter.isAllowed("user-1");`,
+          expected: false,
+        },
+        {
+          id: "rl-tc-3",
+          description: "Different clients have independent counters",
+          code: `const limiter = new SlidingWindowRateLimiter(1, 1000);
+limiter.isAllowed("user-1");
+return limiter.isAllowed("user-2");`,
+          expected: true,
+        },
+      ],
       solution: {
         typescript: `class SlidingWindowRateLimiter {
   private windowMs: number;

@@ -385,6 +385,44 @@ public class ConsistentHashRing {
         "For wrap-around: if binary search returns an index past the end, use index 0 (the first node on the ring)",
         "In Python, bisect.bisect_left finds the insertion point; in Java, TreeMap.tailMap handles this naturally",
       ],
+      testCases: [
+        {
+          id: "ch-tc-1",
+          description: "getNode() returns a node after addNode()",
+          code: `const ring = new ConsistentHashRing(3);
+ring.addNode("server-a");
+return ring.getNode("some-key") !== null;`,
+          expected: true,
+        },
+        {
+          id: "ch-tc-2",
+          description: "Same key always maps to same node",
+          code: `const ring = new ConsistentHashRing(3);
+ring.addNode("server-a");
+ring.addNode("server-b");
+const n1 = ring.getNode("user-42");
+const n2 = ring.getNode("user-42");
+return n1 === n2;`,
+          expected: true,
+        },
+        {
+          id: "ch-tc-3",
+          description: "getNode() returns null on an empty ring",
+          code: `const ring = new ConsistentHashRing(3);
+return ring.getNode("any-key");`,
+          expected: null,
+        },
+        {
+          id: "ch-tc-4",
+          description: "Removing a node does not break getNode() for other keys",
+          code: `const ring = new ConsistentHashRing(3);
+ring.addNode("server-a");
+ring.addNode("server-b");
+ring.removeNode("server-a");
+return ring.getNode("any-key") !== null;`,
+          expected: true,
+        },
+      ],
       solution: {
         typescript: `class ConsistentHashRing {
   private ring = new Map<number, string>();

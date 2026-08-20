@@ -29,6 +29,15 @@ export type MultipleChoiceChallenge = {
   explanation: string;
 };
 
+export type TestCase = {
+  id: string;
+  description: string;
+  // JavaScript/TypeScript code run after the user's class definition.
+  // Must return the value to compare against `expected`.
+  code: string;
+  expected: unknown;
+};
+
 export type ImplementationChallenge = {
   type: "implementation";
   id: string;
@@ -37,6 +46,7 @@ export type ImplementationChallenge = {
   starterCode: Record<ProgrammingLanguage, string>;
   hints: string[];
   solution: Record<ProgrammingLanguage, string>;
+  testCases?: TestCase[];
 };
 
 export type SystemDesignChallenge = {

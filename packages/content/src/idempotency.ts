@@ -354,6 +354,40 @@ public class IdempotencyService {
         "Only call operation() when you don't have a valid cached result",
         "In a real system, this store would be Redis — the TTL would be managed by Redis EXPIRE",
       ],
+      testCases: [
+        {
+          id: "idm-tc-1",
+          description: "First call executes the operation and returns its result",
+          code: `const handler = new IdempotencyHandler(60000);
+let callCount = 0;
+const op = () => { callCount++; return { id: "tx-1", status: "ok", amount: 100 }; };
+const result = handler.execute("key-1", op);
+return result.status;`,
+          expected: "ok",
+        },
+        {
+          id: "idm-tc-2",
+          description: "Second call with same key does not re-execute the operation",
+          code: `const handler = new IdempotencyHandler(60000);
+let callCount = 0;
+const op = () => { callCount++; return { id: "tx-1", status: "ok", amount: 100 }; };
+handler.execute("key-1", op);
+handler.execute("key-1", op);
+return callCount;`,
+          expected: 1,
+        },
+        {
+          id: "idm-tc-3",
+          description: "Different keys execute independently",
+          code: `const handler = new IdempotencyHandler(60000);
+let callCount = 0;
+const op = () => { callCount++; return { id: "tx-" + callCount, status: "ok", amount: 100 }; };
+handler.execute("key-1", op);
+handler.execute("key-2", op);
+return callCount;`,
+          expected: 2,
+        },
+      ],
       solution: {
         typescript: `type Result = { id: string; status: string; amount: number };
 
