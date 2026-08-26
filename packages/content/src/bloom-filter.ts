@@ -385,6 +385,42 @@ You don't need to calculate optimal m and k — a fixed size is fine for this ex
         "For hash2 use a different seed or multiplier (e.g., h = 0x811c9dc5 ^ 0x1234)",
         "Take Math.abs(result) % size to keep positions in bounds",
       ],
+      testCases: [
+        {
+          id: "bf-tc-1",
+          description: "has() returns false for items never added",
+          code: `const filter = new BloomFilter(100);
+return filter.has("apple");`,
+          expected: false,
+        },
+        {
+          id: "bf-tc-2",
+          description: "has() returns true immediately after add()",
+          code: `const filter = new BloomFilter(100);
+filter.add("apple");
+return filter.has("apple");`,
+          expected: true,
+        },
+        {
+          id: "bf-tc-3",
+          description: "Multiple items can be added independently",
+          code: `const filter = new BloomFilter(200);
+filter.add("apple");
+filter.add("banana");
+filter.add("cherry");
+return filter.has("banana");`,
+          expected: true,
+        },
+        {
+          id: "bf-tc-4",
+          description: "Absent item still returns false after other inserts",
+          code: `const filter = new BloomFilter(200);
+filter.add("apple");
+filter.add("banana");
+return filter.has("mango");`,
+          expected: false,
+        },
+      ],
       solution: {
         typescript: `class BloomFilter {
   private bits: boolean[];

@@ -380,6 +380,44 @@ Hint: You'll need two data structures working together.`,
         "Use dummy head/tail sentinel nodes to eliminate edge cases when inserting/removing from the list ends",
         "In Python, OrderedDict gives you this for free via move_to_end() and popitem(last=False)",
       ],
+      testCases: [
+        {
+          id: "lru-tc-1",
+          description: "get() returns -1 for a key that was never inserted",
+          code: `const cache = new LRUCache(2);
+return cache.get(1);`,
+          expected: -1,
+        },
+        {
+          id: "lru-tc-2",
+          description: "get() returns the value after put()",
+          code: `const cache = new LRUCache(2);
+cache.put(1, 10);
+return cache.get(1);`,
+          expected: 10,
+        },
+        {
+          id: "lru-tc-3",
+          description: "LRU item is evicted when capacity is exceeded",
+          code: `const cache = new LRUCache(2);
+cache.put(1, 1);
+cache.put(2, 2);
+cache.put(3, 3);
+return cache.get(1);`,
+          expected: -1,
+        },
+        {
+          id: "lru-tc-4",
+          description: "Accessing an item promotes it — it is not evicted next",
+          code: `const cache = new LRUCache(2);
+cache.put(1, 1);
+cache.put(2, 2);
+cache.get(1);
+cache.put(3, 3);
+return cache.get(1);`,
+          expected: 1,
+        },
+      ],
       solution: {
         typescript: `class LRUCache {
   private map = new Map<number, { key: number; value: number; prev: any; next: any }>();
