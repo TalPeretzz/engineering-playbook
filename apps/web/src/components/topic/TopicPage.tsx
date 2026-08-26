@@ -1,6 +1,6 @@
 "use client";
 
-import React, { useEffect } from "react";
+import React, { useEffect, useCallback } from "react";
 import type { Topic } from "@engineering-playbook/content-schema";
 import { useTopicProgress } from "@/hooks/useProgress";
 import { setLastVisitedTopic } from "@/store/progressStore";
@@ -9,6 +9,7 @@ import { ChallengesSection } from "@/components/challenges/ChallengesSection";
 import { TopicHeader } from "./TopicHeader";
 import { SectionHeading } from "./SectionHeading";
 import { TopicSectionRenderer } from "./TopicSectionRenderer";
+import { allRequiredCompleted } from "@/utils/challengeCompletion";
 import Link from "next/link";
 import { allTopics } from "@engineering-playbook/content";
 
@@ -17,12 +18,24 @@ type TopicPageProps = {
 };
 
 export function TopicPage({ topic }: TopicPageProps) {
-  const { progress, markInProgress } = useTopicProgress(topic.slug);
+  const { progress, completeChallenge, completeTopic, markInProgress } = useTopicProgress(topic.slug);
 
   useEffect(() => {
     setLastVisitedTopic(topic.slug);
     markInProgress();
   }, [topic.slug, markInProgress]);
+
+  // Single completion handler — updates progress state once so both TopicHeader
+  // and ChallengesSection see the change in the same render cycle.
+  const handleChallengeComplete = useCallback((challengeId: string) => {
+    completeChallenge(challengeId);
+    const updatedCompleted = progress.completedChallenges.includes(challengeId)
+      ? progress.completedChallenges
+      : [...progress.completedChallenges, challengeId];
+    if (allRequiredCompleted(topic.challenges, updatedCompleted) && progress.status !== "completed") {
+      completeTopic();
+    }
+  }, [completeChallenge, completeTopic, progress, topic.challenges]);
 
   const prereqTopics = topic.prerequisites
     .map((slug) => allTopics.find((t) => t.slug === slug))
@@ -68,7 +81,11 @@ export function TopicPage({ topic }: TopicPageProps) {
 
       <section id="challenges" className="scroll-mt-20 space-y-4">
         <SectionHeading>Challenges</SectionHeading>
-        <ChallengesSection topic={topic} />
+        <ChallengesSection
+          topic={topic}
+          progress={progress}
+          onChallengeComplete={handleChallengeComplete}
+        />
       </section>
 
       {nextTopics.length > 0 && (

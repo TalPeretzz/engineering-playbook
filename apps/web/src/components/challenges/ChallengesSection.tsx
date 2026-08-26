@@ -2,30 +2,18 @@
 
 import React from "react";
 import type { Topic } from "@engineering-playbook/content-schema";
+import type { TopicProgress } from "@engineering-playbook/shared-types";
 import { MultipleChoiceChallenge } from "./MultipleChoiceChallenge";
 import { ImplementationChallenge } from "./ImplementationChallenge";
 import { SystemDesignChallenge } from "./SystemDesignChallenge";
-import { useTopicProgress } from "@/hooks/useProgress";
-import { allRequiredCompleted } from "@/utils/challengeCompletion";
 
 type ChallengesSectionProps = {
   topic: Topic;
+  progress: TopicProgress;
+  onChallengeComplete: (challengeId: string) => void;
 };
 
-export function ChallengesSection({ topic }: ChallengesSectionProps) {
-  const { progress, completeChallenge, completeTopic } = useTopicProgress(topic.slug);
-
-  const handleComplete = (challengeId: string) => {
-    completeChallenge(challengeId);
-    // Compute updated list locally — progress hasn't refreshed yet after completeChallenge.
-    const updatedCompleted = progress.completedChallenges.includes(challengeId)
-      ? progress.completedChallenges
-      : [...progress.completedChallenges, challengeId];
-    if (allRequiredCompleted(topic.challenges, updatedCompleted) && progress.status !== "completed") {
-      completeTopic();
-    }
-  };
-
+export function ChallengesSection({ topic, progress, onChallengeComplete }: ChallengesSectionProps) {
   const req = topic.challenges.filter((c) => c.required).length;
   const doneReq = topic.challenges.filter(
     (c) => c.required && progress.completedChallenges.includes(c.id)
@@ -41,7 +29,7 @@ export function ChallengesSection({ topic }: ChallengesSectionProps) {
       </p>
       {topic.challenges.map((challenge) => {
         const isCompleted = progress.completedChallenges.includes(challenge.id);
-        const onComplete = () => handleComplete(challenge.id);
+        const onComplete = () => onChallengeComplete(challenge.id);
 
         if (challenge.type === "multiple-choice") {
           return (
