@@ -12,7 +12,93 @@ export type TopicCategory =
 export type ProgrammingLanguage = "typescript" | "python" | "java";
 
 // ---------------------------------------------------------------------------
-// Challenges
+// Rich text — typed content nodes for lesson body text
+// Inline text fields may use **bold** markers rendered by InlineBold.
+// ---------------------------------------------------------------------------
+
+export type RichParagraph =
+  | { type: "p"; text: string }
+  | { type: "heading"; level: 2 | 3; text: string }
+  | { type: "list"; items: string[] };
+
+export type RichText = RichParagraph[];
+
+// ---------------------------------------------------------------------------
+// Section types — discriminated union
+// TopicPage renders sections by dispatching on `section.type`.
+// Future section types can be added here without touching existing topics.
+// ---------------------------------------------------------------------------
+
+export type ComplexityEntry = {
+  operation: string;
+  time: string;
+  space?: string;
+  note?: string;
+};
+
+export type ComparisonRow = Record<string, string>;
+
+export type TextSection = {
+  type: "text";
+  id: string;
+  heading: string;
+  body: RichText;
+};
+
+export type VisualSection = {
+  type: "visual";
+  id: string;
+  heading: string;
+  content: string;
+};
+
+export type ComplexitySection = {
+  type: "complexity";
+  id: string;
+  heading: string;
+  entries: ComplexityEntry[];
+};
+
+export type TradeoffsSection = {
+  type: "tradeoffs";
+  id: string;
+  heading: string;
+  pros: string[];
+  cons: string[];
+};
+
+export type UseCasesSection = {
+  type: "use-cases";
+  id: string;
+  heading: string;
+  whenToUse: string[];
+  whenNotToUse: string[];
+};
+
+export type ComparisonSection = {
+  type: "comparison";
+  id: string;
+  heading: string;
+  columns: string[];
+  rows: ComparisonRow[];
+};
+
+export type Section =
+  | TextSection
+  | VisualSection
+  | ComplexitySection
+  | TradeoffsSection
+  | UseCasesSection
+  | ComparisonSection;
+
+// ---------------------------------------------------------------------------
+// Challenges — discriminated union
+//
+// required: true  → completing this challenge counts toward topic completion.
+// required: false → optional (e.g. open-ended system-design discussions).
+//
+// Code execution (testCases, new Function) is intentionally absent.
+// It belongs in a sandboxed runner service, not in the browser.
 // ---------------------------------------------------------------------------
 
 export type MultipleChoiceOption = {
@@ -23,35 +109,28 @@ export type MultipleChoiceOption = {
 export type MultipleChoiceChallenge = {
   type: "multiple-choice";
   id: string;
+  required: boolean;
   question: string;
   options: MultipleChoiceOption[];
   correctOptionId: string;
   explanation: string;
 };
 
-export type TestCase = {
-  id: string;
-  description: string;
-  // JavaScript/TypeScript code run after the user's class definition.
-  // Must return the value to compare against `expected`.
-  code: string;
-  expected: unknown;
-};
-
 export type ImplementationChallenge = {
   type: "implementation";
   id: string;
+  required: boolean;
   title: string;
   description: string;
   starterCode: Record<ProgrammingLanguage, string>;
   hints: string[];
   solution: Record<ProgrammingLanguage, string>;
-  testCases?: TestCase[];
 };
 
 export type SystemDesignChallenge = {
   type: "system-design";
   id: string;
+  required: boolean;
   title: string;
   scenario: string;
   hints: string[];
@@ -64,30 +143,8 @@ export type Challenge =
   | SystemDesignChallenge;
 
 // ---------------------------------------------------------------------------
-// Complexity
-// ---------------------------------------------------------------------------
-
-export type ComplexityEntry = {
-  operation: string;
-  time: string;
-  space?: string;
-  note?: string;
-};
-
-// ---------------------------------------------------------------------------
 // Topic
 // ---------------------------------------------------------------------------
-
-export type TopicSection = {
-  problemStatement: string;
-  howItWorks: string;
-  visualExplanation: string;
-  complexity: ComplexityEntry[];
-  tradeoffs: { pros: string[]; cons: string[] };
-  whenToUse: string[];
-  whenNotToUse: string[];
-  realWorldExamples: string[];
-};
 
 export type Topic = {
   slug: string;
@@ -99,6 +156,6 @@ export type Topic = {
   prerequisites: string[];
   nextTopics: string[];
   implementations: Partial<Record<ProgrammingLanguage, string>>;
-  content: TopicSection;
+  sections: Section[];
   challenges: Challenge[];
 };

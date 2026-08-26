@@ -3,9 +3,6 @@
 import React from "react";
 import type { Topic } from "@engineering-playbook/content-schema";
 import type { TopicProgress } from "@engineering-playbook/shared-types";
-import { completeTopic } from "@/store/progressStore";
-import { useRouter } from "next/navigation";
-
 type TopicHeaderProps = {
   topic: Topic;
   progress: TopicProgress;
@@ -28,13 +25,7 @@ const CATEGORY_LABELS: Record<string, string> = {
 };
 
 export function TopicHeader({ topic, progress }: TopicHeaderProps) {
-  const router = useRouter();
   const isCompleted = progress.status === "completed";
-
-  const handleComplete = () => {
-    completeTopic(topic.slug);
-    router.refresh();
-  };
 
   return (
     <header className="border-b border-zinc-800 pb-8">
@@ -61,17 +52,6 @@ export function TopicHeader({ topic, progress }: TopicHeaderProps) {
 
       <h1 className="text-3xl font-bold text-zinc-50 mb-3">{topic.title}</h1>
       <p className="text-zinc-400 text-lg leading-relaxed max-w-2xl">{topic.description}</p>
-
-      {!isCompleted && progress.status === "in-progress" && (
-        <div className="mt-6">
-          <button
-            onClick={handleComplete}
-            className="text-sm px-4 py-2 rounded-lg bg-emerald-900/40 hover:bg-emerald-900/70 border border-emerald-700/50 text-emerald-300 transition-colors font-medium"
-          >
-            Mark as completed
-          </button>
-        </div>
-      )}
     </header>
   );
 }
