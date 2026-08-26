@@ -26,7 +26,7 @@ export function MultipleChoiceChallenge({ challenge, isCompleted, onComplete }: 
   };
 
   return (
-    <ChallengeCard title={challenge.question} type="multiple-choice" isCompleted={isCompleted}>
+    <ChallengeCard title={challenge.question} type="multiple-choice" required={challenge.required} isCompleted={isCompleted}>
       <div className="space-y-2">
         {challenge.options.map((option) => {
           const isSelected = selected === option.id;

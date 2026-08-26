@@ -16,7 +16,7 @@ export const sections: Section[] = [
       },
       {
         type: "p",
-        text: "This is the Bloom Filter's role: **membership testing with near-zero memory overhead**, at the cost of a small, tunable chance of false positives.",
+        text: "This is the Bloom Filter's role: **highly memory-efficient membership testing** — it uses far less memory than storing the original values — at the cost of a small, tunable chance of false positives.",
       },
     ],
   },
@@ -125,35 +125,82 @@ export const sections: Section[] = [
     type: "visual",
     id: "visual",
     heading: "Step-by-step visual",
-    content: `Bit array (m=12, all zeros):
-Index:  0  1  2  3  4  5  6  7  8  9 10 11
-Bits:   0  0  0  0  0  0  0  0  0  0  0  0
-
-── add("apple") ──────────────────────────
-  h1("apple") → 2   set bit 2
-  h2("apple") → 5   set bit 5
-  h3("apple") → 9   set bit 9
-Bits:   0  0  1  0  0  1  0  0  0  1  0  0
-
-── add("grape") ──────────────────────────
-  h1("grape") → 1   set bit 1
-  h2("grape") → 5   already set
-  h3("grape") → 8   set bit 8
-Bits:   0  1  1  0  0  1  0  0  1  1  0  0
-
-── has("apple")? ─────────────────────────
-  h1 → bit 2 ✓  h2 → bit 5 ✓  h3 → bit 9 ✓
-  → PROBABLY IN SET  (correct — was inserted)
-
-── has("mango")? ─────────────────────────
-  h1 → bit 3 ✗
-  → DEFINITELY NOT IN SET  (correct)
-
-── has("peach")? ─────────────────────────
-  h1 → bit 1 ✓  h2 → bit 5 ✓  h3 → bit 8 ✓
-  → PROBABLY IN SET  ← FALSE POSITIVE
-  "peach" was never inserted, but all three of
-  its hash positions were already set by other items.`,
+    steps: [
+      {
+        label: "Initial state  (m=12 bits, k=3 hash functions)",
+        description:
+          "A Bloom Filter starts as a compact bit array of all zeros. We use m=12 bits and k=3 independent hash functions. No values have been inserted yet.",
+        bitArray: [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0],
+      },
+      {
+        label: 'add("apple")',
+        description:
+          "Run \"apple\" through all 3 hash functions. Set each resulting bit position to 1. The string itself is never stored — only the bit positions it touches.",
+        bitArray: [0, 0, 1, 0, 0, 1, 0, 0, 0, 1, 0, 0],
+        activeIndices: [2, 5, 9],
+        hashOutputs: [
+          { fn: 'h1("apple")', output: 2 },
+          { fn: 'h2("apple")', output: 5 },
+          { fn: 'h3("apple")', output: 9 },
+        ],
+      },
+      {
+        label: 'add("grape")',
+        description:
+          "Run \"grape\" through the same 3 hash functions. Position 5 was already set by \"apple\" — that is fine, bits are never cleared.",
+        bitArray: [0, 1, 1, 0, 0, 1, 0, 0, 1, 1, 0, 0],
+        activeIndices: [1, 5, 8],
+        hashOutputs: [
+          { fn: 'h1("grape")', output: 1 },
+          { fn: 'h2("grape")', output: 5 },
+          { fn: 'h3("grape")', output: 8 },
+        ],
+      },
+      {
+        label: 'has("apple")?',
+        description:
+          "Check all 3 hash positions for \"apple\". Every bit is 1. The filter answers: probably in set. Correct — \"apple\" was inserted.",
+        bitArray: [0, 1, 1, 0, 0, 1, 0, 0, 1, 1, 0, 0],
+        activeIndices: [2, 5, 9],
+        hashOutputs: [
+          { fn: 'h1("apple")', output: 2 },
+          { fn: 'h2("apple")', output: 5 },
+          { fn: 'h3("apple")', output: 9 },
+        ],
+        result: {
+          type: "in-set",
+          text: "PROBABLY IN SET — all 3 bits are 1  ✓  (correct)",
+        },
+      },
+      {
+        label: 'has("mango")?',
+        description:
+          "Check hash position 3 for \"mango\". It is 0. We can stop immediately — no element that was ever inserted could have left that bit at 0.",
+        bitArray: [0, 1, 1, 0, 0, 1, 0, 0, 1, 1, 0, 0],
+        activeIndices: [3],
+        hashOutputs: [{ fn: 'h1("mango")', output: 3 }],
+        result: {
+          type: "not-in-set",
+          text: "DEFINITELY NOT IN SET — bit 3 is 0  ✓  (correct)",
+        },
+      },
+      {
+        label: 'has("peach")? — false positive',
+        description:
+          "\"peach\" was never inserted. Its hash functions point to positions 1, 2, and 9. Position 1 was set by \"grape\", position 2 was set by \"apple\", and position 9 was set by \"apple\". All three bits happen to be 1 — set by different values — so the filter incorrectly answers: probably in set. This is the key false-positive intuition: no single collision is required; bits set by different values can conspire.",
+        bitArray: [0, 1, 1, 0, 0, 1, 0, 0, 1, 1, 0, 0],
+        activeIndices: [1, 2, 9],
+        hashOutputs: [
+          { fn: 'h1("peach")', output: 1 },
+          { fn: 'h2("peach")', output: 2 },
+          { fn: 'h3("peach")', output: 9 },
+        ],
+        result: {
+          type: "false-positive",
+          text: "PROBABLY IN SET — false positive! \"peach\" was never inserted",
+        },
+      },
+    ],
   },
 
   {

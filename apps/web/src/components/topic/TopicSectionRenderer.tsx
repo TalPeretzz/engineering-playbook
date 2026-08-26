@@ -3,6 +3,7 @@ import type { Section, RichParagraph } from "@engineering-playbook/content-schem
 import { ComplexityTable } from "./ComplexityTable";
 import { TradeoffList } from "./TradeoffList";
 import { SectionHeading } from "./SectionHeading";
+import { StepVisual } from "./StepVisual";
 
 export function TopicSectionRenderer({ section }: { section: Section }) {
   switch (section.type) {
@@ -18,9 +19,13 @@ export function TopicSectionRenderer({ section }: { section: Section }) {
       return (
         <section id={section.id} className="scroll-mt-20 space-y-4">
           <SectionHeading>{section.heading}</SectionHeading>
-          <pre className="bg-surface-overlay border border-zinc-800 rounded-lg p-4 text-zinc-300 text-sm overflow-x-auto leading-relaxed font-mono">
-            {section.content}
-          </pre>
+          {section.steps ? (
+            <StepVisual steps={section.steps} />
+          ) : (
+            <pre className="bg-surface-overlay border border-zinc-800 rounded-lg p-4 text-zinc-300 text-sm overflow-x-auto leading-relaxed font-mono">
+              {section.content}
+            </pre>
+          )}
         </section>
       );
 

@@ -22,7 +22,7 @@ export function SystemDesignChallenge({ challenge, isCompleted, onComplete }: Pr
   };
 
   return (
-    <ChallengeCard title={challenge.title} type="system-design" isCompleted={isCompleted}>
+    <ChallengeCard title={challenge.title} type="system-design" required={challenge.required} isCompleted={isCompleted}>
       <div className="space-y-4">
         <div className="bg-surface-overlay border border-zinc-700 rounded-lg p-4">
           <p className="text-zinc-300 text-sm leading-relaxed whitespace-pre-line">
