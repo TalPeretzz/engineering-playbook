@@ -7,39 +7,31 @@ import { MultipleChoiceChallenge } from "./MultipleChoiceChallenge";
 import { ImplementationChallenge } from "./ImplementationChallenge";
 import { SystemDesignChallenge } from "./SystemDesignChallenge";
 import { useTopicProgress } from "@/hooks/useProgress";
+import { allRequiredCompleted } from "@/utils/challengeCompletion";
 
 type ChallengesSectionProps = {
   topic: Topic;
   progress: TopicProgress;
 };
 
-function requiredCount(topic: Topic) {
-  return topic.challenges.filter((c) => c.required).length;
-}
-
-function completedRequiredCount(topic: Topic, progress: TopicProgress) {
-  return topic.challenges.filter((c) => c.required && progress.completedChallenges.includes(c.id)).length;
-}
-
 export function ChallengesSection({ topic }: ChallengesSectionProps) {
   const { progress, completeChallenge, completeTopic } = useTopicProgress(topic.slug);
 
   const handleComplete = (challengeId: string) => {
     completeChallenge(challengeId);
-    // Derive topic completion from required challenges
+    // Compute updated list locally — progress hasn't refreshed yet after completeChallenge.
     const updatedCompleted = progress.completedChallenges.includes(challengeId)
       ? progress.completedChallenges
       : [...progress.completedChallenges, challengeId];
-    const allRequiredDone = topic.challenges
-      .filter((c) => c.required)
-      .every((c) => updatedCompleted.includes(c.id));
-    if (allRequiredDone && progress.status !== "completed") {
+    if (allRequiredCompleted(topic.challenges, updatedCompleted) && progress.status !== "completed") {
       completeTopic();
     }
   };
 
-  const req = requiredCount(topic);
-  const doneReq = completedRequiredCount(topic, progress);
+  const req = topic.challenges.filter((c) => c.required).length;
+  const doneReq = topic.challenges.filter(
+    (c) => c.required && progress.completedChallenges.includes(c.id)
+  ).length;
 
   return (
     <div className="space-y-6">

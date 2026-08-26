@@ -38,11 +38,9 @@ export function SystemDesignChallenge({ challenge, isCompleted, onComplete }: Pr
             {showHints ? "Hide hints" : "Reveal hints"}
           </button>
 
+          {/* Revealing discussion points does NOT complete the challenge. */}
           <button
-            onClick={() => {
-              setShowDiscussion(true);
-              onComplete();
-            }}
+            onClick={() => setShowDiscussion(true)}
             className="text-xs px-3 py-1.5 rounded border border-zinc-700 text-zinc-400 hover:text-zinc-200 hover:border-zinc-600 transition-colors"
           >
             Reveal discussion points

@@ -5,6 +5,7 @@ import type { ImplementationChallenge as ImplChallenge } from "@engineering-play
 import { ChallengeCard } from "./ChallengeCard";
 import { CodeBlock } from "@/components/topic/CodeBlock";
 import { useLanguage } from "@/hooks/useLanguage";
+import { buildDraftRecord } from "@/utils/challengeCompletion";
 
 type Props = {
   challenge: ImplChallenge;
@@ -16,24 +17,24 @@ const LANG_LABELS = { typescript: "TypeScript", python: "Python", java: "Java" }
 
 export function ImplementationChallenge({ challenge, isCompleted, onComplete }: Props) {
   const { language } = useLanguage();
-  const starterCode = challenge.starterCode[language] ?? challenge.starterCode.typescript ?? "";
-  const solutionCode = challenge.solution[language] ?? challenge.solution.typescript ?? "";
 
-  const [userCode, setUserCode] = useState(starterCode);
+  // One draft slot per language — switching languages never loses prior edits.
+  const [drafts, setDrafts] = useState(() => buildDraftRecord(challenge.starterCode));
   const [showHints, setShowHints] = useState(false);
   const [showSolution, setShowSolution] = useState(false);
   const [currentHint, setCurrentHint] = useState(0);
 
-  // Reset editor when language changes
-  const [prevLang, setPrevLang] = useState(language);
-  if (language !== prevLang) {
-    setPrevLang(language);
-    setUserCode(challenge.starterCode[language] ?? challenge.starterCode.typescript ?? "");
-  }
+  const userCode = drafts[language] ?? "";
+  const solutionCode = challenge.solution[language] ?? challenge.solution.typescript ?? "";
 
-  const handleReset = () => {
-    setUserCode(challenge.starterCode[language] ?? challenge.starterCode.typescript ?? "");
-  };
+  const setUserCode = (code: string) =>
+    setDrafts((prev) => ({ ...prev, [language]: code }));
+
+  const handleReset = () =>
+    setDrafts((prev) => ({
+      ...prev,
+      [language]: challenge.starterCode[language] ?? challenge.starterCode.typescript ?? "",
+    }));
 
   return (
     <ChallengeCard title={challenge.title} type="implementation" isCompleted={isCompleted}>
@@ -65,8 +66,7 @@ export function ImplementationChallenge({ challenge, isCompleted, onComplete }: 
                 const el = e.currentTarget;
                 const start = el.selectionStart;
                 const end = el.selectionEnd;
-                const next = userCode.slice(0, start) + "  " + userCode.slice(end);
-                setUserCode(next);
+                setUserCode(userCode.slice(0, start) + "  " + userCode.slice(end));
                 requestAnimationFrame(() => {
                   el.selectionStart = el.selectionEnd = start + 2;
                 });
@@ -84,8 +84,9 @@ export function ImplementationChallenge({ challenge, isCompleted, onComplete }: 
             {showHints ? "Hide hints" : "Show hints"}
           </button>
 
+          {/* Revealing the solution does NOT complete the challenge. */}
           <button
-            onClick={() => { setShowSolution(true); onComplete(); }}
+            onClick={() => setShowSolution(true)}
             className="text-xs px-3 py-1.5 rounded border border-zinc-700 text-zinc-400 hover:text-zinc-200 hover:border-zinc-600 transition-colors"
           >
             Reveal solution
