@@ -19,13 +19,15 @@ export type ProgrammingLanguage = "typescript" | "python" | "java";
 export type RichParagraph =
   | { type: "p"; text: string }
   | { type: "heading"; level: 2 | 3; text: string }
-  | { type: "list"; items: string[] };
+  | { type: "list"; items: string[] }
+  | { type: "code"; language: string; code: string };
 
 export type RichText = RichParagraph[];
 
 // ---------------------------------------------------------------------------
 // Section types — discriminated union
 // TopicPage renders sections by dispatching on `section.type`.
+// `phase` groups sections visually (e.g. "understand" | "deep-dive" | "apply").
 // Future section types can be added here without touching existing topics.
 // ---------------------------------------------------------------------------
 
@@ -43,6 +45,7 @@ export type TextSection = {
   id: string;
   heading: string;
   body: RichText;
+  phase?: string;
 };
 
 export type VisualStep = {
@@ -65,6 +68,7 @@ export type VisualSection = {
   content?: string;
   /** Step-by-step interactive walkthrough — takes precedence over content. */
   steps?: VisualStep[];
+  phase?: string;
 };
 
 export type ComplexitySection = {
@@ -72,6 +76,7 @@ export type ComplexitySection = {
   id: string;
   heading: string;
   entries: ComplexityEntry[];
+  phase?: string;
 };
 
 export type TradeoffsSection = {
@@ -80,6 +85,7 @@ export type TradeoffsSection = {
   heading: string;
   pros: string[];
   cons: string[];
+  phase?: string;
 };
 
 export type UseCasesSection = {
@@ -88,6 +94,7 @@ export type UseCasesSection = {
   heading: string;
   whenToUse: string[];
   whenNotToUse: string[];
+  phase?: string;
 };
 
 export type ComparisonSection = {
@@ -96,6 +103,7 @@ export type ComparisonSection = {
   heading: string;
   columns: string[];
   rows: ComparisonRow[];
+  phase?: string;
 };
 
 export type Section =

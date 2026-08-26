@@ -17,6 +17,12 @@ type TopicPageProps = {
   topic: Topic;
 };
 
+const PHASE_LABELS: Record<string, string> = {
+  understand: "Understand",
+  "deep-dive": "Deep Dive",
+  apply: "Apply",
+};
+
 export function TopicPage({ topic }: TopicPageProps) {
   const { progress, completeChallenge, completeTopic, markInProgress } =
     useTopicProgress(topic.slug);
@@ -54,13 +60,10 @@ export function TopicPage({ topic }: TopicPageProps) {
     .filter(Boolean) as Topic[];
 
   const hasImplementations = Object.keys(topic.implementations).length > 0;
+  const hasPhases = topic.sections.some((s) => s.phase);
 
-  // Build TOC entries from section data — keep it generic
-  const tocEntries = [
-    ...topic.sections.map((s) => ({ id: s.id, label: s.heading })),
-    ...(hasImplementations ? [{ id: "implementation", label: "Implementation" }] : []),
-    { id: "challenges", label: "Challenges" },
-  ];
+  // Build phased TOC groups when phases are present, otherwise flat list
+  const tocGroups = buildTocGroups(topic.sections, hasImplementations, hasPhases);
 
   return (
     <div className="xl:flex xl:gap-14">
@@ -85,16 +88,15 @@ export function TopicPage({ topic }: TopicPageProps) {
           </div>
         )}
 
-        {topic.sections.map((section, i) => (
-          <React.Fragment key={section.id}>
-            {i > 0 && <hr className="border-zinc-800/60" />}
-            <TopicSectionRenderer section={section} />
-          </React.Fragment>
-        ))}
+        <SectionList sections={topic.sections} hasPhases={hasPhases} />
 
         {hasImplementations && (
           <>
-            <hr className="border-zinc-800/60" />
+            {hasPhases ? (
+              <PhaseHeader phase="apply" label="Implementation" />
+            ) : (
+              <hr className="border-zinc-800/60" />
+            )}
             <section id="implementation" className="scroll-mt-20 space-y-4">
               <SectionHeading>Implementation</SectionHeading>
               <p className="text-zinc-500 text-sm">
@@ -113,6 +115,7 @@ export function TopicPage({ topic }: TopicPageProps) {
             topic={topic}
             progress={progress}
             onChallengeComplete={handleChallengeComplete}
+            nextTopic={nextTopic ?? undefined}
           />
         </section>
 
@@ -160,17 +163,117 @@ export function TopicPage({ topic }: TopicPageProps) {
           <p className="text-[11px] font-semibold text-zinc-600 uppercase tracking-wider mb-3">
             On this page
           </p>
-          {tocEntries.map((entry) => (
-            <a
-              key={entry.id}
-              href={`#${entry.id}`}
-              className="block text-sm text-zinc-500 hover:text-zinc-200 py-0.5 leading-snug transition-colors"
-            >
-              {entry.label}
-            </a>
+          {tocGroups.map((group) => (
+            <div key={group.phase ?? "default"}>
+              {group.phase && (
+                <p className="text-[10px] font-semibold text-zinc-700 uppercase tracking-widest mt-4 mb-1 first:mt-0">
+                  {PHASE_LABELS[group.phase] ?? group.phase}
+                </p>
+              )}
+              {group.entries.map((entry) => (
+                <a
+                  key={entry.id}
+                  href={`#${entry.id}`}
+                  className="block text-sm text-zinc-500 hover:text-zinc-200 py-0.5 leading-snug transition-colors"
+                >
+                  {entry.label}
+                </a>
+              ))}
+            </div>
           ))}
         </div>
       </aside>
     </div>
   );
+}
+
+// Renders sections with optional phase-group headers between them
+function SectionList({
+  sections,
+  hasPhases,
+}: {
+  sections: Topic["sections"];
+  hasPhases: boolean;
+}) {
+  let lastPhase: string | undefined;
+
+  return (
+    <>
+      {sections.map((section, i) => {
+        const phaseChanged = hasPhases && section.phase && section.phase !== lastPhase;
+        if (section.phase) lastPhase = section.phase;
+
+        return (
+          <React.Fragment key={section.id}>
+            {phaseChanged ? (
+              <PhaseHeader phase={section.phase!} />
+            ) : (
+              i > 0 && <hr className="border-zinc-800/60" />
+            )}
+            <TopicSectionRenderer section={section} />
+          </React.Fragment>
+        );
+      })}
+    </>
+  );
+}
+
+function PhaseHeader({ phase, label }: { phase: string; label?: string }) {
+  return (
+    <div className="flex items-center gap-3 pt-2">
+      <div className="flex-1 h-px bg-zinc-800" />
+      <span className="text-[11px] font-semibold text-zinc-600 uppercase tracking-widest px-1">
+        {label ?? PHASE_LABELS[phase] ?? phase}
+      </span>
+      <div className="flex-1 h-px bg-zinc-800" />
+    </div>
+  );
+}
+
+type TocGroup = { phase?: string; entries: { id: string; label: string }[] };
+
+function buildTocGroups(
+  sections: Topic["sections"],
+  hasImplementations: boolean,
+  hasPhases: boolean
+): TocGroup[] {
+  if (!hasPhases) {
+    return [
+      {
+        entries: [
+          ...sections.map((s) => ({ id: s.id, label: s.heading })),
+          ...(hasImplementations ? [{ id: "implementation", label: "Implementation" }] : []),
+          { id: "challenges", label: "Challenges" },
+        ],
+      },
+    ];
+  }
+
+  const groups: TocGroup[] = [];
+  const phaseMap = new Map<string, TocGroup>();
+
+  for (const section of sections) {
+    const key = section.phase ?? "__default__";
+    if (!phaseMap.has(key)) {
+      const group: TocGroup = { phase: section.phase, entries: [] };
+      phaseMap.set(key, group);
+      groups.push(group);
+    }
+    phaseMap.get(key)!.entries.push({ id: section.id, label: section.heading });
+  }
+
+  // Implementation and Challenges always appear in the Apply group (or a new one)
+  const applyGroup = phaseMap.get("apply");
+  const implAndChallenges = [
+    ...(hasImplementations ? [{ id: "implementation", label: "Implementation" }] : []),
+    { id: "challenges", label: "Challenges" },
+  ];
+
+  if (applyGroup) {
+    applyGroup.entries.push(...implAndChallenges);
+  } else {
+    groups.push({ phase: "apply", entries: implAndChallenges });
+  }
+
+  return groups;
 }

@@ -97,7 +97,7 @@ export function ImplementationChallenge({ challenge, isCompleted, onComplete }: 
               onClick={onComplete}
               className="text-xs px-3 py-1.5 rounded bg-emerald-900/40 border border-emerald-700/50 text-emerald-300 hover:bg-emerald-900/70 transition-colors font-medium"
             >
-              Mark as completed
+              I completed this challenge
             </button>
           )}
         </div>

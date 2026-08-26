@@ -116,6 +116,18 @@ export function StepVisual({ steps }: { steps: VisualStep[] }) {
           </div>
         )}
 
+        {/* Invariant callout */}
+        <div className="flex items-start gap-3 px-4 py-3 bg-zinc-800/40 border border-zinc-700/50 rounded-lg text-xs text-zinc-400 leading-relaxed">
+          <span className="text-zinc-500 shrink-0 mt-0.5">ℹ</span>
+          <span>
+            A Bloom Filter only answers{" "}
+            <strong className="text-zinc-200">&ldquo;Definitely not present&rdquo;</strong>{" "}
+            or{" "}
+            <strong className="text-zinc-200">&ldquo;Probably present&rdquo;</strong>.
+            {" "}It never gives a definitive yes.
+          </span>
+        </div>
+
         {/* Step dots */}
         <div className="flex gap-2 pt-1">
           {steps.map((_, i) => (
