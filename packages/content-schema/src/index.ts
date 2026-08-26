@@ -45,11 +45,26 @@ export type TextSection = {
   body: RichText;
 };
 
+export type VisualStep = {
+  label: string;
+  description: string;
+  bitArray: (0 | 1)[];
+  activeIndices?: number[];
+  hashOutputs?: { fn: string; output: number }[];
+  result?: {
+    type: "in-set" | "not-in-set" | "false-positive";
+    text: string;
+  };
+};
+
 export type VisualSection = {
   type: "visual";
   id: string;
   heading: string;
-  content: string;
+  /** Static ASCII diagram — rendered as a <pre> block. */
+  content?: string;
+  /** Step-by-step interactive walkthrough — takes precedence over content. */
+  steps?: VisualStep[];
 };
 
 export type ComplexitySection = {

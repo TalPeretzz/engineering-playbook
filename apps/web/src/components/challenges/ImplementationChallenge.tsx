@@ -37,7 +37,7 @@ export function ImplementationChallenge({ challenge, isCompleted, onComplete }: 
     }));
 
   return (
-    <ChallengeCard title={challenge.title} type="implementation" isCompleted={isCompleted}>
+    <ChallengeCard title={challenge.title} type="implementation" required={challenge.required} isCompleted={isCompleted}>
       <div className="space-y-4">
         <p className="text-zinc-300 text-sm leading-relaxed whitespace-pre-line">
           {challenge.description}

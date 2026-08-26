@@ -3,12 +3,13 @@ import React from "react";
 type ChallengeCardProps = {
   title: string;
   type: "multiple-choice" | "implementation" | "system-design";
+  required: boolean;
   isCompleted: boolean;
   children: React.ReactNode;
 };
 
 const TYPE_LABELS: Record<ChallengeCardProps["type"], string> = {
-  "multiple-choice": "Conceptual",
+  "multiple-choice": "Concept Check",
   implementation: "Implementation",
   "system-design": "System Design",
 };
@@ -19,27 +20,45 @@ const TYPE_COLORS: Record<ChallengeCardProps["type"], string> = {
   "system-design": "text-amber-400 bg-amber-900/20 border-amber-800/40",
 };
 
-export function ChallengeCard({ title, type, isCompleted, children }: ChallengeCardProps) {
+export function ChallengeCard({
+  title,
+  type,
+  required,
+  isCompleted,
+  children,
+}: ChallengeCardProps) {
   return (
-    <div className={`border rounded-xl p-5 transition-colors ${
-      isCompleted
-        ? "border-emerald-800/50 bg-emerald-950/10"
-        : "border-zinc-800 bg-surface-raised"
-    }`}>
-      <div className="flex items-start justify-between gap-4 mb-4">
-        <div>
-          <div className="flex items-center gap-2 mb-1.5">
-            <span className={`text-[11px] font-semibold px-2 py-0.5 rounded border ${TYPE_COLORS[type]}`}>
+    <div
+      className={`border rounded-xl transition-colors ${
+        isCompleted
+          ? "border-emerald-800/40 bg-emerald-950/10"
+          : "border-zinc-800 bg-surface-raised"
+      }`}
+    >
+      {/* Card header */}
+      <div className="flex items-start justify-between gap-4 px-5 pt-5 pb-4">
+        <div className="flex-1 min-w-0">
+          <div className="flex flex-wrap items-center gap-2 mb-2">
+            <span
+              className={`text-[11px] font-semibold px-2 py-0.5 rounded border ${TYPE_COLORS[type]}`}
+            >
               {TYPE_LABELS[type]}
             </span>
+            {!required && (
+              <span className="text-[11px] text-zinc-600 border border-zinc-800 px-2 py-0.5 rounded">
+                Optional
+              </span>
+            )}
             {isCompleted && (
               <span className="text-[11px] text-emerald-400 font-medium">✓ Completed</span>
             )}
           </div>
-          <h3 className="text-base font-semibold text-zinc-200">{title}</h3>
+          <h3 className="text-sm font-semibold text-zinc-200 leading-snug">{title}</h3>
         </div>
       </div>
-      {children}
+
+      {/* Card body */}
+      <div className="px-5 pb-5">{children}</div>
     </div>
   );
 }
