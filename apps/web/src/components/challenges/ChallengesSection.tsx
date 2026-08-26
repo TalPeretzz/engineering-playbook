@@ -2,7 +2,6 @@
 
 import React from "react";
 import type { Topic } from "@engineering-playbook/content-schema";
-import type { TopicProgress } from "@engineering-playbook/shared-types";
 import { MultipleChoiceChallenge } from "./MultipleChoiceChallenge";
 import { ImplementationChallenge } from "./ImplementationChallenge";
 import { SystemDesignChallenge } from "./SystemDesignChallenge";
@@ -11,7 +10,6 @@ import { allRequiredCompleted } from "@/utils/challengeCompletion";
 
 type ChallengesSectionProps = {
   topic: Topic;
-  progress: TopicProgress;
 };
 
 export function ChallengesSection({ topic }: ChallengesSectionProps) {

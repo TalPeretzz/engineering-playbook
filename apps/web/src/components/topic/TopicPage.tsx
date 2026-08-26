@@ -68,7 +68,7 @@ export function TopicPage({ topic }: TopicPageProps) {
 
       <section id="challenges" className="scroll-mt-20 space-y-4">
         <SectionHeading>Challenges</SectionHeading>
-        <ChallengesSection topic={topic} progress={progress} />
+        <ChallengesSection topic={topic} />
       </section>
 
       {nextTopics.length > 0 && (
