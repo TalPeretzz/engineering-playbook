@@ -16,7 +16,7 @@ export const sections: Section[] = [
       },
       {
         type: "p",
-        text: "This is the Bloom Filter's role: **membership testing with near-zero memory overhead**, at the cost of a small, tunable chance of false positives.",
+        text: "This is the Bloom Filter's role: **highly memory-efficient membership testing** — it uses far less memory than storing the original values — at the cost of a small, tunable chance of false positives.",
       },
     ],
   },
@@ -187,13 +187,13 @@ export const sections: Section[] = [
       {
         label: 'has("peach")? — false positive',
         description:
-          "\"peach\" was never inserted, but positions 1, 5, and 8 were all set by \"grape\". The filter sees all bits as 1 and incorrectly answers: probably in set.",
+          "\"peach\" was never inserted. Its hash functions point to positions 1, 2, and 9. Position 1 was set by \"grape\", position 2 was set by \"apple\", and position 9 was set by \"apple\". All three bits happen to be 1 — set by different values — so the filter incorrectly answers: probably in set. This is the key false-positive intuition: no single collision is required; bits set by different values can conspire.",
         bitArray: [0, 1, 1, 0, 0, 1, 0, 0, 1, 1, 0, 0],
-        activeIndices: [1, 5, 8],
+        activeIndices: [1, 2, 9],
         hashOutputs: [
           { fn: 'h1("peach")', output: 1 },
-          { fn: 'h2("peach")', output: 5 },
-          { fn: 'h3("peach")', output: 8 },
+          { fn: 'h2("peach")', output: 2 },
+          { fn: 'h3("peach")', output: 9 },
         ],
         result: {
           type: "false-positive",

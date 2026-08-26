@@ -98,8 +98,8 @@ export function TopicPage({ topic }: TopicPageProps) {
             <section id="implementation" className="scroll-mt-20 space-y-4">
               <SectionHeading>Implementation</SectionHeading>
               <p className="text-zinc-500 text-sm">
-                A complete, production-quality implementation. Switch languages using the
-                selector in the top bar.
+                A complete implementation focused on clarity and learning. Switch languages to see
+                the same concept expressed idiomatically.
               </p>
               <CodeBlock implementations={topic.implementations} />
             </section>
