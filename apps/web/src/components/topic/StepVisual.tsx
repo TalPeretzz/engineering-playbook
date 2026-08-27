@@ -1,6 +1,6 @@
 "use client";
 
-import React, { useState } from "react";
+import React, { useState, useRef } from "react";
 import type { VisualStep } from "@engineering-playbook/content-schema";
 
 const RESULT_STYLES = {
@@ -9,9 +9,18 @@ const RESULT_STYLES = {
   "false-positive": "bg-amber-950/40 border-amber-800/50 text-amber-300",
 };
 
-export function StepVisual({ steps }: { steps: VisualStep[] }) {
+export function StepVisual({ steps, onFirstStep }: { steps: VisualStep[]; onFirstStep?: () => void }) {
   const [stepIndex, setStepIndex] = useState(0);
   const current = steps[stepIndex];
+  const hasCalledFirstStep = useRef(false);
+
+  const advance = () => {
+    if (stepIndex === 0 && !hasCalledFirstStep.current) {
+      hasCalledFirstStep.current = true;
+      onFirstStep?.();
+    }
+    setStepIndex((i) => Math.min(steps.length - 1, i + 1));
+  };
 
   return (
     <div className="bg-zinc-900 border border-zinc-800 rounded-xl overflow-hidden">
@@ -34,7 +43,7 @@ export function StepVisual({ steps }: { steps: VisualStep[] }) {
               ←
             </button>
             <button
-              onClick={() => setStepIndex((i) => Math.min(steps.length - 1, i + 1))}
+              onClick={advance}
               disabled={stepIndex === steps.length - 1}
               aria-label="Next step"
               className="w-7 h-7 rounded flex items-center justify-center text-zinc-400 hover:text-zinc-100 hover:bg-zinc-800 disabled:opacity-30 disabled:cursor-not-allowed transition-colors"
@@ -133,7 +142,13 @@ export function StepVisual({ steps }: { steps: VisualStep[] }) {
           {steps.map((_, i) => (
             <button
               key={i}
-              onClick={() => setStepIndex(i)}
+              onClick={() => {
+                if (i > stepIndex && stepIndex === 0 && !hasCalledFirstStep.current) {
+                  hasCalledFirstStep.current = true;
+                  onFirstStep?.();
+                }
+                setStepIndex(i);
+              }}
               aria-label={`Go to step ${i + 1}`}
               className={`h-1.5 rounded-full transition-all duration-200 ${
                 i === stepIndex

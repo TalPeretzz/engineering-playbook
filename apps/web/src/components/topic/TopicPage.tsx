@@ -1,10 +1,12 @@
 "use client";
 
-import React, { useEffect, useCallback } from "react";
+import React, { useEffect, useCallback, useMemo } from "react";
 import type { Topic } from "@engineering-playbook/content-schema";
 import { useTopicProgress } from "@/hooks/useProgress";
+import { useActiveSection } from "@/hooks/useActiveSection";
 import { setLastVisitedTopic } from "@/store/progressStore";
 import { CodeBlock } from "./CodeBlock";
+import { LessonCTA } from "./LessonCTA";
 import { ChallengesSection } from "@/components/challenges/ChallengesSection";
 import { TopicHeader } from "./TopicHeader";
 import { SectionHeading } from "./SectionHeading";
@@ -29,11 +31,13 @@ export function TopicPage({ topic }: TopicPageProps) {
 
   useEffect(() => {
     setLastVisitedTopic(topic.slug);
-    markInProgress();
-  }, [topic.slug, markInProgress]);
+    // markInProgress is NOT called here — only on meaningful user actions
+  }, [topic.slug]);
 
   const handleChallengeComplete = useCallback(
     (challengeId: string) => {
+      // Fire markInProgress as fallback for users who jump straight to challenges
+      markInProgress();
       completeChallenge(challengeId);
       const updatedCompleted = progress.completedChallenges.includes(challengeId)
         ? progress.completedChallenges
@@ -45,7 +49,7 @@ export function TopicPage({ topic }: TopicPageProps) {
         completeTopic();
       }
     },
-    [completeChallenge, completeTopic, progress, topic.challenges]
+    [markInProgress, completeChallenge, completeTopic, progress, topic.challenges]
   );
 
   const currentIndex = allTopics.findIndex((t) => t.slug === topic.slug);
@@ -63,7 +67,20 @@ export function TopicPage({ topic }: TopicPageProps) {
   const hasPhases = topic.sections.some((s) => s.phase);
 
   // Build phased TOC groups when phases are present, otherwise flat list
-  const tocGroups = buildTocGroups(topic.sections, hasImplementations, hasPhases);
+  const tocGroups = useMemo(
+    () => buildTocGroups(topic.sections, hasImplementations, hasPhases),
+    // Static content — stable reference
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+    []
+  );
+
+  // Flat id list for IntersectionObserver scroll tracking
+  const sectionIds = useMemo(
+    () => tocGroups.flatMap((g) => g.entries.map((e) => e.id)),
+    [tocGroups]
+  );
+
+  const activeId = useActiveSection(sectionIds);
 
   return (
     <div className="xl:flex xl:gap-14">
@@ -88,7 +105,18 @@ export function TopicPage({ topic }: TopicPageProps) {
           </div>
         )}
 
-        <SectionList sections={topic.sections} hasPhases={hasPhases} />
+        <LessonCTA
+          status={progress.status}
+          challenges={topic.challenges}
+          completedChallenges={progress.completedChallenges}
+          onStart={markInProgress}
+        />
+
+        <SectionList
+          sections={topic.sections}
+          hasPhases={hasPhases}
+          onFirstInteraction={markInProgress}
+        />
 
         {hasImplementations && (
           <>
@@ -174,7 +202,11 @@ export function TopicPage({ topic }: TopicPageProps) {
                 <a
                   key={entry.id}
                   href={`#${entry.id}`}
-                  className="block text-sm text-zinc-500 hover:text-zinc-200 py-0.5 leading-snug transition-colors"
+                  className={`block text-sm py-0.5 leading-snug transition-colors ${
+                    activeId === entry.id
+                      ? "text-emerald-400"
+                      : "text-zinc-500 hover:text-zinc-200"
+                  }`}
                 >
                   {entry.label}
                 </a>
@@ -191,9 +223,11 @@ export function TopicPage({ topic }: TopicPageProps) {
 function SectionList({
   sections,
   hasPhases,
+  onFirstInteraction,
 }: {
   sections: Topic["sections"];
   hasPhases: boolean;
+  onFirstInteraction?: () => void;
 }) {
   let lastPhase: string | undefined;
 
@@ -210,7 +244,7 @@ function SectionList({
             ) : (
               i > 0 && <hr className="border-zinc-800/60" />
             )}
-            <TopicSectionRenderer section={section} />
+            <TopicSectionRenderer section={section} onFirstInteraction={onFirstInteraction} />
           </React.Fragment>
         );
       })}

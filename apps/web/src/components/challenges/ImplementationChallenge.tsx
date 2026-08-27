@@ -1,28 +1,32 @@
 "use client";
 
-import React, { useState } from "react";
+import React, { useState, useRef } from "react";
 import type { ImplementationChallenge as ImplChallenge } from "@engineering-playbook/content-schema";
 import { ChallengeCard } from "./ChallengeCard";
 import { CodeBlock } from "@/components/topic/CodeBlock";
 import { useLanguage } from "@/hooks/useLanguage";
 import { buildDraftRecord } from "@/utils/challengeCompletion";
+import { runTests, type TestCase, type TestResult } from "@/utils/testRunner";
 
 type Props = {
   challenge: ImplChallenge;
   isCompleted: boolean;
   onComplete: () => void;
+  testCases?: TestCase[];
 };
 
 const LANG_LABELS = { typescript: "TypeScript", python: "Python", java: "Java" } as const;
 
-export function ImplementationChallenge({ challenge, isCompleted, onComplete }: Props) {
+export function ImplementationChallenge({ challenge, isCompleted, onComplete, testCases }: Props) {
   const { language } = useLanguage();
 
-  // One draft slot per language — switching languages never loses prior edits.
   const [drafts, setDrafts] = useState(() => buildDraftRecord(challenge.starterCode));
   const [showHints, setShowHints] = useState(false);
   const [showSolution, setShowSolution] = useState(false);
   const [currentHint, setCurrentHint] = useState(0);
+  const [testResults, setTestResults] = useState<TestResult[] | null>(null);
+  const [isRunning, setIsRunning] = useState(false);
+  const hasAutoCompleted = useRef(false);
 
   const userCode = drafts[language] ?? "";
   const solutionCode = challenge.solution[language] ?? challenge.solution.typescript ?? "";
@@ -30,11 +34,32 @@ export function ImplementationChallenge({ challenge, isCompleted, onComplete }: 
   const setUserCode = (code: string) =>
     setDrafts((prev) => ({ ...prev, [language]: code }));
 
-  const handleReset = () =>
+  const handleReset = () => {
     setDrafts((prev) => ({
       ...prev,
       [language]: challenge.starterCode[language] ?? challenge.starterCode.typescript ?? "",
     }));
+    setTestResults(null);
+  };
+
+  const handleRunTests = () => {
+    if (!testCases) return;
+    setIsRunning(true);
+    setTestResults(null);
+    // Defer to allow the loading state to paint
+    setTimeout(() => {
+      const results = runTests(userCode, testCases);
+      setTestResults(results);
+      setIsRunning(false);
+      const allPassed = results.every((r) => r.passed);
+      if (allPassed && !isCompleted && !hasAutoCompleted.current) {
+        hasAutoCompleted.current = true;
+        onComplete();
+      }
+    }, 0);
+  };
+
+  const allTestsPassed = testResults?.every((r) => r.passed) ?? false;
 
   return (
     <ChallengeCard title={challenge.title} type="implementation" required={challenge.required} isCompleted={isCompleted}>
@@ -84,7 +109,6 @@ export function ImplementationChallenge({ challenge, isCompleted, onComplete }: 
             {showHints ? "Hide hints" : "Show hints"}
           </button>
 
-          {/* Revealing the solution does NOT complete the challenge. */}
           <button
             onClick={() => setShowSolution(true)}
             className="text-xs px-3 py-1.5 rounded border border-zinc-700 text-zinc-400 hover:text-zinc-200 hover:border-zinc-600 transition-colors"
@@ -92,7 +116,17 @@ export function ImplementationChallenge({ challenge, isCompleted, onComplete }: 
             Reveal solution
           </button>
 
-          {!isCompleted && (
+          {testCases && language === "typescript" && (
+            <button
+              onClick={handleRunTests}
+              disabled={isRunning}
+              className="text-xs px-3 py-1.5 rounded bg-zinc-800 border border-zinc-600 text-zinc-300 hover:bg-zinc-700 hover:text-zinc-100 disabled:opacity-50 disabled:cursor-not-allowed transition-colors font-medium"
+            >
+              {isRunning ? "Running…" : "Run tests"}
+            </button>
+          )}
+
+          {!isCompleted && !allTestsPassed && (
             <button
               onClick={onComplete}
               className="text-xs px-3 py-1.5 rounded bg-emerald-900/40 border border-emerald-700/50 text-emerald-300 hover:bg-emerald-900/70 transition-colors font-medium"
@@ -125,6 +159,43 @@ export function ImplementationChallenge({ challenge, isCompleted, onComplete }: 
           <div>
             <p className="text-xs font-semibold text-zinc-500 uppercase tracking-wider mb-2">Solution</p>
             <CodeBlock code={solutionCode} language={language} label="Solution" />
+          </div>
+        )}
+
+        {/* Test results */}
+        {testResults && (
+          <div className="space-y-2">
+            <p className="text-xs font-semibold text-zinc-500 uppercase tracking-wider">
+              Test results
+            </p>
+            {testResults.map((r, i) => (
+              <div
+                key={i}
+                className={`flex items-start gap-3 text-sm rounded-lg px-4 py-3 border ${
+                  r.passed
+                    ? "bg-emerald-950/20 border-emerald-900/30"
+                    : "bg-red-950/20 border-red-900/30"
+                }`}
+              >
+                <span
+                  className={`shrink-0 font-bold ${r.passed ? "text-emerald-400" : "text-red-400"}`}
+                  aria-hidden="true"
+                >
+                  {r.passed ? "✓" : "✗"}
+                </span>
+                <div>
+                  <p className={r.passed ? "text-emerald-200" : "text-red-200"}>{r.name}</p>
+                  {r.error && (
+                    <p className="text-red-400 text-xs mt-1 font-mono break-all">{r.error}</p>
+                  )}
+                </div>
+              </div>
+            ))}
+            {allTestsPassed && (
+              <p className="text-emerald-400 text-sm font-medium pt-1">
+                All tests passed — challenge completed!
+              </p>
+            )}
           </div>
         )}
       </div>

@@ -3,7 +3,7 @@
 import React, { useEffect, useState } from "react";
 import Link from "next/link";
 import { allTopics } from "@engineering-playbook/content";
-import type { Topic, TopicCategory } from "@engineering-playbook/content-schema";
+import type { Topic, TopicCategory, Challenge } from "@engineering-playbook/content-schema";
 import type { TopicStatus } from "@engineering-playbook/shared-types";
 import { getProgress, getOverallProgress } from "@/store/progressStore";
 
@@ -22,6 +22,13 @@ const DIFFICULTY_COLORS: Record<string, string> = {
   intermediate: "text-amber-400",
   advanced: "text-red-400",
 };
+
+function formatChallengeCount(challenges: Challenge[]): string {
+  const req = challenges.filter((c) => c.required).length;
+  const opt = challenges.filter((c) => !c.required).length;
+  if (opt === 0) return `${req} challenge${req !== 1 ? "s" : ""}`;
+  return `${req} required · ${opt} optional`;
+}
 
 function StatusPill({ status }: { status: TopicStatus }) {
   if (status === "completed") return <span className="text-emerald-400 text-xs">✓ Completed</span>;
@@ -132,7 +139,7 @@ export function Dashboard() {
                         {topic.difficulty}
                       </span>
                       <span className="text-zinc-600 text-xs">{topic.estimatedMinutes} min</span>
-                      <span className="text-zinc-600 text-xs">{topic.challenges.length} challenges</span>
+                      <span className="text-zinc-600 text-xs">{formatChallengeCount(topic.challenges)}</span>
                     </div>
                   </Link>
                 );
