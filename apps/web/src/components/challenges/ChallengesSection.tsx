@@ -3,6 +3,7 @@
 import React from "react";
 import type { Topic } from "@engineering-playbook/content-schema";
 import type { TopicProgress } from "@engineering-playbook/shared-types";
+import Link from "next/link";
 import { MultipleChoiceChallenge } from "./MultipleChoiceChallenge";
 import { ImplementationChallenge } from "./ImplementationChallenge";
 import { SystemDesignChallenge } from "./SystemDesignChallenge";
@@ -11,9 +12,15 @@ type ChallengesSectionProps = {
   topic: Topic;
   progress: TopicProgress;
   onChallengeComplete: (challengeId: string) => void;
+  nextTopic?: { slug: string; title: string };
 };
 
-export function ChallengesSection({ topic, progress, onChallengeComplete }: ChallengesSectionProps) {
+export function ChallengesSection({
+  topic,
+  progress,
+  onChallengeComplete,
+  nextTopic,
+}: ChallengesSectionProps) {
   const req = topic.challenges.filter((c) => c.required).length;
   const doneReq = topic.challenges.filter(
     (c) => c.required && progress.completedChallenges.includes(c.id)
@@ -23,38 +30,47 @@ export function ChallengesSection({ topic, progress, onChallengeComplete }: Chal
   return (
     <div className="space-y-6">
       {/* Section header */}
-      <div className="flex items-end justify-between gap-4">
-        <div>
-          <h2 className="text-xl font-semibold text-zinc-100 mb-1">
-            Ready to practice?
-          </h2>
-          <p className="text-sm text-zinc-500">
-            {isTopicComplete ? (
-              <span className="text-emerald-400 font-medium">All required challenges completed.</span>
-            ) : (
-              <>
-                <span className="text-zinc-300 font-medium">{doneReq}</span>
-                {" / "}
-                <span className="text-zinc-300 font-medium">{req}</span>
-                {" required challenges completed"}
-                {topic.challenges.some((c) => !c.required) && (
-                  <span className="text-zinc-600 ml-1.5">· optional not counted</span>
-                )}
-              </>
-            )}
-          </p>
-        </div>
+      <div>
+        <h2 className="text-xl font-semibold text-zinc-100 mb-1">Ready to apply it?</h2>
+        <p className="text-sm text-zinc-500">
+          {isTopicComplete ? (
+            <span className="text-emerald-400 font-medium">All required challenges completed.</span>
+          ) : (
+            <>
+              <span className="text-zinc-300 font-medium">{doneReq}</span>
+              {" / "}
+              <span className="text-zinc-300 font-medium">{req}</span>
+              {" required challenges completed"}
+              {topic.challenges.some((c) => !c.required) && (
+                <span className="text-zinc-600 ml-1.5">· optional not counted</span>
+              )}
+            </>
+          )}
+        </p>
       </div>
 
-      {/* Completion banner */}
+      {/* Completion state */}
       {isTopicComplete && (
-        <div className="flex items-center gap-3 px-4 py-3 bg-emerald-950/30 border border-emerald-800/40 rounded-lg">
-          <span className="text-emerald-400 text-base shrink-0">✓</span>
-          <div>
-            <p className="text-emerald-300 text-sm font-medium">{topic.title} completed</p>
-            <p className="text-zinc-500 text-xs">
-              Move on to the next topic or revisit the challenges below.
-            </p>
+        <div className="rounded-lg border border-emerald-800/40 bg-emerald-950/20 p-5">
+          <div className="flex items-start gap-3">
+            <div className="w-7 h-7 rounded-full bg-emerald-900/60 border border-emerald-700/50 flex items-center justify-center shrink-0 mt-0.5">
+              <span className="text-emerald-400 text-sm">✓</span>
+            </div>
+            <div className="flex-1 min-w-0">
+              <p className="text-emerald-300 font-medium text-sm">{topic.title} completed</p>
+              <p className="text-zinc-500 text-xs mt-0.5">
+                You&apos;ve worked through all required challenges. The optional challenges below
+                are still available.
+              </p>
+              {nextTopic && (
+                <Link
+                  href={`/topics/${nextTopic.slug}`}
+                  className="inline-flex items-center gap-1.5 mt-3 text-xs font-medium text-emerald-400 hover:text-emerald-300 transition-colors"
+                >
+                  Up next: {nextTopic.title} →
+                </Link>
+              )}
+            </div>
           </div>
         </div>
       )}

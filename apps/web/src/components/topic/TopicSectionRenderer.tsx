@@ -135,6 +135,15 @@ function RichTextRenderer({ body }: { body: RichParagraph[] }) {
                 ))}
               </ul>
             );
+          case "code":
+            return (
+              <pre
+                key={i}
+                className="bg-zinc-950 border border-zinc-800 rounded-lg p-4 text-zinc-300 text-sm overflow-x-auto leading-relaxed font-mono whitespace-pre"
+              >
+                {node.code}
+              </pre>
+            );
           case "p":
           default:
             return (
