@@ -28,6 +28,7 @@ export type RichText = RichParagraph[];
 // Section types — discriminated union
 // TopicPage renders sections by dispatching on `section.type`.
 // `phase` groups sections visually (e.g. "understand" | "deep-dive" | "apply").
+// `collapsible` renders the section behind a toggle, collapsed by default.
 // Future section types can be added here without touching existing topics.
 // ---------------------------------------------------------------------------
 
@@ -46,6 +47,7 @@ export type TextSection = {
   heading: string;
   body: RichText;
   phase?: string;
+  collapsible?: boolean;
 };
 
 export type VisualStep = {
@@ -69,6 +71,7 @@ export type VisualSection = {
   /** Step-by-step interactive walkthrough — takes precedence over content. */
   steps?: VisualStep[];
   phase?: string;
+  collapsible?: boolean;
 };
 
 export type ComplexitySection = {
@@ -77,6 +80,7 @@ export type ComplexitySection = {
   heading: string;
   entries: ComplexityEntry[];
   phase?: string;
+  collapsible?: boolean;
 };
 
 export type TradeoffsSection = {
@@ -86,6 +90,7 @@ export type TradeoffsSection = {
   pros: string[];
   cons: string[];
   phase?: string;
+  collapsible?: boolean;
 };
 
 export type UseCasesSection = {
@@ -95,6 +100,7 @@ export type UseCasesSection = {
   whenToUse: string[];
   whenNotToUse: string[];
   phase?: string;
+  collapsible?: boolean;
 };
 
 export type ComparisonSection = {
@@ -104,6 +110,7 @@ export type ComparisonSection = {
   columns: string[];
   rows: ComparisonRow[];
   phase?: string;
+  collapsible?: boolean;
 };
 
 export type Section =

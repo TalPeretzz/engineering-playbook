@@ -7,6 +7,12 @@ import Link from "next/link";
 import { MultipleChoiceChallenge } from "./MultipleChoiceChallenge";
 import { ImplementationChallenge } from "./ImplementationChallenge";
 import { SystemDesignChallenge } from "./SystemDesignChallenge";
+import type { TestCase } from "@/utils/testRunner";
+import { bloomFilterTests } from "@/utils/bloomFilterTests";
+
+const IMPLEMENTATION_TESTS: Record<string, TestCase[]> = {
+  "bloom-filter-implementation": bloomFilterTests,
+};
 
 type ChallengesSectionProps = {
   topic: Topic;
@@ -98,6 +104,7 @@ export function ChallengesSection({
                 challenge={challenge}
                 isCompleted={isCompleted}
                 onComplete={onComplete}
+                testCases={IMPLEMENTATION_TESTS[challenge.id]}
               />
             );
           }

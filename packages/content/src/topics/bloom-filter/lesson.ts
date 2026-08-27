@@ -195,6 +195,7 @@ export const sections: Section[] = [
   {
     type: "text",
     id: "false-positives",
+    collapsible: true,
     heading: "Understanding false positives",
     phase: "deep-dive",
     body: [
@@ -269,6 +270,7 @@ export const sections: Section[] = [
   {
     type: "comparison",
     id: "set-vs-bloom-filter",
+    collapsible: true,
     heading: "Set vs Bloom Filter",
     phase: "deep-dive",
     columns: ["Feature", "Set", "Bloom Filter"],
@@ -360,6 +362,7 @@ export const sections: Section[] = [
   {
     type: "text",
     id: "real-world",
+    collapsible: true,
     heading: "Real-world usage",
     phase: "deep-dive",
     body: [
