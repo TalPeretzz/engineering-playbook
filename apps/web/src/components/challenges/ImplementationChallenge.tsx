@@ -46,7 +46,6 @@ export function ImplementationChallenge({ challenge, isCompleted, onComplete, te
     if (!testCases) return;
     setIsRunning(true);
     setTestResults(null);
-    // Defer to allow the loading state to paint
     setTimeout(() => {
       const results = runTests(userCode, testCases);
       setTestResults(results);
@@ -64,17 +63,17 @@ export function ImplementationChallenge({ challenge, isCompleted, onComplete, te
   return (
     <ChallengeCard title={challenge.title} type="implementation" required={challenge.required} isCompleted={isCompleted}>
       <div className="space-y-4">
-        <p className="text-zinc-300 text-sm leading-relaxed whitespace-pre-line">
+        <p className="text-ink-muted text-sm leading-relaxed whitespace-pre-line">
           {challenge.description}
         </p>
 
         {/* Editor */}
-        <div className="rounded-lg border border-zinc-700 overflow-hidden">
-          <div className="flex items-center justify-between px-4 py-2 bg-zinc-900 border-b border-zinc-700">
-            <span className="text-xs font-medium text-zinc-400">{LANG_LABELS[language] ?? language}</span>
+        <div className="rounded-lg border border-wire-strong overflow-hidden">
+          <div className="flex items-center justify-between px-4 py-2 bg-surface-raised border-b border-wire">
+            <span className="text-xs font-medium text-ink-muted">{LANG_LABELS[language] ?? language}</span>
             <button
               onClick={handleReset}
-              className="text-xs text-zinc-500 hover:text-zinc-300 transition-colors px-2 py-1 rounded hover:bg-zinc-800"
+              className="text-xs text-ink-faint hover:text-ink-muted transition-colors px-2 py-1 rounded hover:bg-surface-overlay cursor-pointer"
             >
               Reset
             </button>
@@ -83,7 +82,7 @@ export function ImplementationChallenge({ challenge, isCompleted, onComplete, te
             value={userCode}
             onChange={(e) => setUserCode(e.target.value)}
             spellCheck={false}
-            className="w-full bg-[#0d1117] text-zinc-300 font-mono text-sm p-4 resize-none focus:outline-none leading-relaxed"
+            className="w-full bg-surface-code text-ink-muted font-mono text-sm p-4 resize-none focus:outline-none leading-relaxed"
             style={{ minHeight: "280px", tabSize: 2 }}
             onKeyDown={(e) => {
               if (e.key === "Tab") {
@@ -104,14 +103,14 @@ export function ImplementationChallenge({ challenge, isCompleted, onComplete, te
         <div className="flex flex-wrap gap-2">
           <button
             onClick={() => setShowHints(!showHints)}
-            className="text-xs px-3 py-1.5 rounded border border-zinc-700 text-zinc-400 hover:text-zinc-200 hover:border-zinc-600 transition-colors"
+            className="text-xs px-3 py-1.5 rounded border border-wire text-ink-muted hover:text-ink hover:border-wire-strong transition-colors cursor-pointer"
           >
             {showHints ? "Hide hints" : "Show hints"}
           </button>
 
           <button
             onClick={() => setShowSolution(true)}
-            className="text-xs px-3 py-1.5 rounded border border-zinc-700 text-zinc-400 hover:text-zinc-200 hover:border-zinc-600 transition-colors"
+            className="text-xs px-3 py-1.5 rounded border border-wire text-ink-muted hover:text-ink hover:border-wire-strong transition-colors cursor-pointer"
           >
             Reveal solution
           </button>
@@ -120,7 +119,7 @@ export function ImplementationChallenge({ challenge, isCompleted, onComplete, te
             <button
               onClick={handleRunTests}
               disabled={isRunning}
-              className="text-xs px-3 py-1.5 rounded bg-zinc-800 border border-zinc-600 text-zinc-300 hover:bg-zinc-700 hover:text-zinc-100 disabled:opacity-50 disabled:cursor-not-allowed transition-colors font-medium"
+              className="text-xs px-3 py-1.5 rounded bg-surface-overlay border border-wire-strong text-ink hover:bg-wire disabled:opacity-50 disabled:cursor-not-allowed transition-colors font-medium cursor-pointer"
             >
               {isRunning ? "Running…" : "Run tests"}
             </button>
@@ -129,7 +128,7 @@ export function ImplementationChallenge({ challenge, isCompleted, onComplete, te
           {!isCompleted && !allTestsPassed && (
             <button
               onClick={onComplete}
-              className="text-xs px-3 py-1.5 rounded bg-emerald-900/40 border border-emerald-700/50 text-emerald-300 hover:bg-emerald-900/70 transition-colors font-medium"
+              className="text-xs px-3 py-1.5 rounded bg-emerald-50 dark:bg-emerald-900/40 border border-emerald-300 dark:border-emerald-700/50 text-emerald-700 dark:text-emerald-300 hover:bg-emerald-100 dark:hover:bg-emerald-900/70 transition-colors font-medium cursor-pointer"
             >
               I completed this challenge
             </button>
@@ -137,17 +136,17 @@ export function ImplementationChallenge({ challenge, isCompleted, onComplete, te
         </div>
 
         {showHints && (
-          <div className="bg-amber-950/20 border border-amber-900/30 rounded-lg p-4 space-y-2">
-            <p className="text-amber-400 text-xs font-semibold uppercase tracking-wider">Hints</p>
+          <div className="bg-amber-50 dark:bg-amber-950/20 border border-amber-200 dark:border-amber-900/30 rounded-lg p-4 space-y-2">
+            <p className="text-amber-700 dark:text-amber-400 text-xs font-semibold uppercase tracking-wider">Hints</p>
             {challenge.hints.slice(0, currentHint + 1).map((hint, i) => (
-              <p key={i} className="text-zinc-300 text-sm leading-relaxed">
-                <span className="text-amber-500 mr-2">{i + 1}.</span>{hint}
+              <p key={i} className="text-ink-muted text-sm leading-relaxed">
+                <span className="text-amber-600 dark:text-amber-500 mr-2">{i + 1}.</span>{hint}
               </p>
             ))}
             {currentHint < challenge.hints.length - 1 && (
               <button
                 onClick={() => setCurrentHint((h) => h + 1)}
-                className="text-xs text-amber-400 hover:text-amber-300 mt-2"
+                className="text-xs text-amber-700 dark:text-amber-400 hover:text-amber-800 dark:hover:text-amber-300 mt-2 cursor-pointer"
               >
                 Next hint →
               </button>
@@ -157,7 +156,7 @@ export function ImplementationChallenge({ challenge, isCompleted, onComplete, te
 
         {showSolution && (
           <div>
-            <p className="text-xs font-semibold text-zinc-500 uppercase tracking-wider mb-2">Solution</p>
+            <p className="text-xs font-semibold text-ink-faint uppercase tracking-wider mb-2">Solution</p>
             <CodeBlock code={solutionCode} language={language} label="Solution" />
           </div>
         )}
@@ -165,7 +164,7 @@ export function ImplementationChallenge({ challenge, isCompleted, onComplete, te
         {/* Test results */}
         {testResults && (
           <div className="space-y-2">
-            <p className="text-xs font-semibold text-zinc-500 uppercase tracking-wider">
+            <p className="text-xs font-semibold text-ink-faint uppercase tracking-wider">
               Test results
             </p>
             {testResults.map((r, i) => (
@@ -173,26 +172,26 @@ export function ImplementationChallenge({ challenge, isCompleted, onComplete, te
                 key={i}
                 className={`flex items-start gap-3 text-sm rounded-lg px-4 py-3 border ${
                   r.passed
-                    ? "bg-emerald-950/20 border-emerald-900/30"
-                    : "bg-red-950/20 border-red-900/30"
+                    ? "bg-emerald-50 dark:bg-emerald-950/20 border-emerald-200 dark:border-emerald-900/30"
+                    : "bg-red-50 dark:bg-red-950/20 border-red-200 dark:border-red-900/30"
                 }`}
               >
                 <span
-                  className={`shrink-0 font-bold ${r.passed ? "text-emerald-400" : "text-red-400"}`}
+                  className={`shrink-0 font-bold ${r.passed ? "text-emerald-700 dark:text-emerald-400" : "text-red-700 dark:text-red-400"}`}
                   aria-hidden="true"
                 >
                   {r.passed ? "✓" : "✗"}
                 </span>
                 <div>
-                  <p className={r.passed ? "text-emerald-200" : "text-red-200"}>{r.name}</p>
+                  <p className={r.passed ? "text-emerald-800 dark:text-emerald-200" : "text-red-800 dark:text-red-200"}>{r.name}</p>
                   {r.error && (
-                    <p className="text-red-400 text-xs mt-1 font-mono break-all">{r.error}</p>
+                    <p className="text-red-600 dark:text-red-400 text-xs mt-1 font-mono break-all">{r.error}</p>
                   )}
                 </div>
               </div>
             ))}
             {allTestsPassed && (
-              <p className="text-emerald-400 text-sm font-medium pt-1">
+              <p className="text-emerald-700 dark:text-emerald-400 text-sm font-medium pt-1">
                 All tests passed — challenge completed!
               </p>
             )}

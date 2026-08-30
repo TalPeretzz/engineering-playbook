@@ -66,7 +66,6 @@ export function TopicPage({ topic }: TopicPageProps) {
   const hasImplementations = Object.keys(topic.implementations).length > 0;
   const hasPhases = topic.sections.some((s) => s.phase);
 
-  // Build phased TOC groups when phases are present, otherwise flat list
   const tocGroups = useMemo(
     () => buildTocGroups(topic.sections, hasImplementations, hasPhases),
     // Static content — stable reference
@@ -74,7 +73,6 @@ export function TopicPage({ topic }: TopicPageProps) {
     []
   );
 
-  // Flat id list for IntersectionObserver scroll tracking
   const sectionIds = useMemo(
     () => tocGroups.flatMap((g) => g.entries.map((e) => e.id)),
     [tocGroups]
@@ -89,14 +87,14 @@ export function TopicPage({ topic }: TopicPageProps) {
         <TopicHeader topic={topic} progress={progress} />
 
         {prereqTopics.length > 0 && (
-          <div className="bg-surface-raised border border-zinc-800 rounded-lg p-4 text-sm text-zinc-400">
-            <span className="font-medium text-zinc-300">Recommended before this topic: </span>
+          <div className="bg-surface-raised border border-wire rounded-lg p-4 text-sm text-ink-muted">
+            <span className="font-medium text-ink">Recommended before this topic: </span>
             {prereqTopics.map((t, i) => (
               <span key={t.slug}>
                 {i > 0 && ", "}
                 <Link
                   href={`/topics/${t.slug}`}
-                  className="text-emerald-400 hover:text-emerald-300 underline underline-offset-2"
+                  className="text-brand-text hover:underline underline-offset-2"
                 >
                   {t.title}
                 </Link>
@@ -123,11 +121,11 @@ export function TopicPage({ topic }: TopicPageProps) {
             {hasPhases ? (
               <PhaseHeader phase="apply" label="Implementation" />
             ) : (
-              <hr className="border-zinc-800/60" />
+              <hr className="border-wire" />
             )}
             <section id="implementation" className="scroll-mt-20 space-y-4">
               <SectionHeading>Implementation</SectionHeading>
-              <p className="text-zinc-500 text-sm">
+              <p className="text-ink-muted text-sm">
                 A complete implementation focused on clarity and learning. Switch languages to see
                 the same concept expressed idiomatically.
               </p>
@@ -136,7 +134,7 @@ export function TopicPage({ topic }: TopicPageProps) {
           </>
         )}
 
-        <hr className="border-zinc-800/60" />
+        <hr className="border-wire" />
 
         <section id="challenges" className="scroll-mt-20 space-y-4">
           <ChallengesSection
@@ -151,17 +149,17 @@ export function TopicPage({ topic }: TopicPageProps) {
         {(prevTopic || nextTopic) && (
           <nav
             aria-label="Topic navigation"
-            className="flex items-stretch gap-3 pt-4 border-t border-zinc-800"
+            className="flex items-stretch gap-3 pt-4 border-t border-wire"
           >
             {prevTopic ? (
               <Link
                 href={`/topics/${prevTopic.slug}`}
-                className="flex-1 group flex flex-col gap-1 px-4 py-3 rounded-lg border border-zinc-800 hover:border-zinc-600 hover:bg-zinc-800/40 transition-colors"
+                className="flex-1 group flex flex-col gap-1 px-4 py-3 rounded-lg border border-wire hover:border-wire-strong hover:bg-surface-overlay transition-colors"
               >
-                <span className="text-xs text-zinc-600 group-hover:text-zinc-400 transition-colors">
+                <span className="text-xs text-ink-faint group-hover:text-ink-muted transition-colors">
                   ← Previous
                 </span>
-                <span className="text-sm font-medium text-zinc-300 group-hover:text-zinc-100 transition-colors">
+                <span className="text-sm font-medium text-ink-muted group-hover:text-ink transition-colors">
                   {prevTopic.title}
                 </span>
               </Link>
@@ -171,12 +169,12 @@ export function TopicPage({ topic }: TopicPageProps) {
             {nextTopic && (
               <Link
                 href={`/topics/${nextTopic.slug}`}
-                className="flex-1 group flex flex-col gap-1 px-4 py-3 rounded-lg border border-zinc-800 hover:border-zinc-600 hover:bg-zinc-800/40 transition-colors text-right"
+                className="flex-1 group flex flex-col gap-1 px-4 py-3 rounded-lg border border-wire hover:border-wire-strong hover:bg-surface-overlay transition-colors text-right"
               >
-                <span className="text-xs text-zinc-600 group-hover:text-zinc-400 transition-colors">
+                <span className="text-xs text-ink-faint group-hover:text-ink-muted transition-colors">
                   Next →
                 </span>
-                <span className="text-sm font-medium text-zinc-300 group-hover:text-zinc-100 transition-colors">
+                <span className="text-sm font-medium text-ink-muted group-hover:text-ink transition-colors">
                   {nextTopic.title}
                 </span>
               </Link>
@@ -188,13 +186,13 @@ export function TopicPage({ topic }: TopicPageProps) {
       {/* Sticky sidebar TOC — desktop only */}
       <aside className="hidden xl:block shrink-0 w-44" aria-label="Table of contents">
         <div className="sticky top-8 space-y-1">
-          <p className="text-[11px] font-semibold text-zinc-600 uppercase tracking-wider mb-3">
+          <p className="text-[11px] font-semibold text-ink-faint uppercase tracking-wider mb-3">
             On this page
           </p>
           {tocGroups.map((group) => (
             <div key={group.phase ?? "default"}>
               {group.phase && (
-                <p className="text-[10px] font-semibold text-zinc-700 uppercase tracking-widest mt-4 mb-1 first:mt-0">
+                <p className="text-[10px] font-semibold text-ink-faint uppercase tracking-widest mt-4 mb-1 first:mt-0">
                   {PHASE_LABELS[group.phase] ?? group.phase}
                 </p>
               )}
@@ -204,8 +202,8 @@ export function TopicPage({ topic }: TopicPageProps) {
                   href={`#${entry.id}`}
                   className={`block text-sm py-0.5 leading-snug transition-colors ${
                     activeId === entry.id
-                      ? "text-emerald-400"
-                      : "text-zinc-500 hover:text-zinc-200"
+                      ? "text-brand-text font-medium"
+                      : "text-ink-faint hover:text-ink-muted"
                   }`}
                 >
                   {entry.label}
@@ -219,7 +217,6 @@ export function TopicPage({ topic }: TopicPageProps) {
   );
 }
 
-// Renders sections with optional phase-group headers between them
 function SectionList({
   sections,
   hasPhases,
@@ -242,7 +239,7 @@ function SectionList({
             {phaseChanged ? (
               <PhaseHeader phase={section.phase!} />
             ) : (
-              i > 0 && <hr className="border-zinc-800/60" />
+              i > 0 && <hr className="border-wire" />
             )}
             <TopicSectionRenderer section={section} onFirstInteraction={onFirstInteraction} />
           </React.Fragment>
@@ -255,11 +252,11 @@ function SectionList({
 function PhaseHeader({ phase, label }: { phase: string; label?: string }) {
   return (
     <div className="flex items-center gap-3 pt-2">
-      <div className="flex-1 h-px bg-zinc-800" />
-      <span className="text-[11px] font-semibold text-zinc-600 uppercase tracking-widest px-1">
+      <div className="flex-1 h-px bg-wire" />
+      <span className="text-[11px] font-semibold text-ink-faint uppercase tracking-widest px-1">
         {label ?? PHASE_LABELS[phase] ?? phase}
       </span>
-      <div className="flex-1 h-px bg-zinc-800" />
+      <div className="flex-1 h-px bg-wire" />
     </div>
   );
 }
@@ -296,7 +293,6 @@ function buildTocGroups(
     phaseMap.get(key)!.entries.push({ id: section.id, label: section.heading });
   }
 
-  // Implementation and Challenges always appear in the Apply group (or a new one)
   const applyGroup = phaseMap.get("apply");
   const implAndChallenges = [
     ...(hasImplementations ? [{ id: "implementation", label: "Implementation" }] : []),

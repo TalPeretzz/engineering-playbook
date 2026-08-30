@@ -16,20 +16,20 @@ export function CollapsibleSection({ id, heading, children, defaultOpen = false 
 
   return (
     <section id={id} className="scroll-mt-20">
-      <h2 className="text-lg font-semibold text-zinc-200">
+      <h2 className="text-lg font-semibold text-ink">
         <button
           id={toggleId}
           aria-expanded={open}
           aria-controls={contentId}
           onClick={() => setOpen((v) => !v)}
-          className="flex w-full items-center justify-between gap-3 group text-left py-0.5"
+          className="flex w-full items-center justify-between gap-3 group text-left py-0.5 cursor-pointer"
         >
-          <span className="group-hover:text-zinc-100 transition-colors">{heading}</span>
+          <span className="group-hover:text-ink transition-colors">{heading}</span>
           <svg
             xmlns="http://www.w3.org/2000/svg"
             viewBox="0 0 20 20"
             fill="currentColor"
-            className={`w-4 h-4 text-zinc-500 shrink-0 transition-transform duration-200 ${
+            className={`w-4 h-4 text-ink-faint shrink-0 transition-transform duration-200 ${
               open ? "" : "-rotate-90"
             }`}
             aria-hidden="true"

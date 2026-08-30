@@ -18,7 +18,6 @@ export function LessonCTA({ status, challenges, completedChallenges, onStart }: 
 
   const handleStart = () => {
     onStart();
-    // Scroll to first section after a tick so progress state has updated
     setTimeout(() => {
       const firstSection = document.querySelector<HTMLElement>("article section[id]");
       firstSection?.scrollIntoView({ behavior: "smooth" });
@@ -47,18 +46,17 @@ export function LessonCTA({ status, challenges, completedChallenges, onStart }: 
     return (
       <button
         onClick={handleContinue}
-        className="px-5 py-2.5 rounded-lg bg-zinc-700 hover:bg-zinc-600 text-zinc-100 font-semibold text-sm transition-colors cursor-pointer"
+        className="px-5 py-2.5 rounded-lg bg-surface-overlay hover:bg-wire border border-wire text-ink font-semibold text-sm transition-colors cursor-pointer"
       >
         Continue to challenges →
       </button>
     );
   }
 
-  // completed
   return (
     <button
       onClick={() => scroll("challenges")}
-      className="px-5 py-2.5 rounded-lg bg-zinc-800 hover:bg-zinc-700 text-zinc-300 font-semibold text-sm transition-colors cursor-pointer"
+      className="px-5 py-2.5 rounded-lg bg-surface-overlay hover:bg-wire border border-wire text-ink-muted font-semibold text-sm transition-colors cursor-pointer"
     >
       Review challenges ✓
     </button>

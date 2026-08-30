@@ -39,7 +39,7 @@ function renderInner(section: Section, onFirstInteraction?: () => void) {
       return section.steps ? (
         <StepVisual steps={section.steps} onFirstStep={onFirstInteraction} />
       ) : (
-        <pre className="bg-surface-overlay border border-zinc-800 rounded-lg p-4 text-zinc-300 text-sm overflow-x-auto leading-relaxed font-mono">
+        <pre className="bg-surface-overlay border border-wire rounded-lg p-4 text-ink-muted text-sm overflow-x-auto leading-relaxed font-mono">
           {section.content}
         </pre>
       );
@@ -54,22 +54,22 @@ function renderInner(section: Section, onFirstInteraction?: () => void) {
       return (
         <div className="grid sm:grid-cols-2 gap-4">
           <div>
-            <p className="text-xs font-semibold text-emerald-400 uppercase tracking-wider mb-3">When to use</p>
+            <p className="text-xs font-semibold text-emerald-700 dark:text-emerald-400 uppercase tracking-wider mb-3">When to use</p>
             <ul className="space-y-2">
               {section.whenToUse.map((item, i) => (
-                <li key={i} className="flex gap-2 text-zinc-300 text-sm">
-                  <span className="text-emerald-400 mt-0.5 shrink-0">✓</span>
+                <li key={i} className="flex gap-2 text-ink-muted text-sm">
+                  <span className="text-emerald-600 dark:text-emerald-400 mt-0.5 shrink-0" aria-hidden="true">✓</span>
                   <span>{item}</span>
                 </li>
               ))}
             </ul>
           </div>
           <div>
-            <p className="text-xs font-semibold text-red-400 uppercase tracking-wider mb-3">When NOT to use</p>
+            <p className="text-xs font-semibold text-red-700 dark:text-red-400 uppercase tracking-wider mb-3">When NOT to use</p>
             <ul className="space-y-2">
               {section.whenNotToUse.map((item, i) => (
-                <li key={i} className="flex gap-2 text-zinc-300 text-sm">
-                  <span className="text-red-400 mt-0.5 shrink-0">✗</span>
+                <li key={i} className="flex gap-2 text-ink-muted text-sm">
+                  <span className="text-red-600 dark:text-red-400 mt-0.5 shrink-0" aria-hidden="true">✗</span>
                   <span>{item}</span>
                 </li>
               ))}
@@ -83,9 +83,9 @@ function renderInner(section: Section, onFirstInteraction?: () => void) {
         <div className="overflow-x-auto">
           <table className="w-full text-sm border-collapse">
             <thead>
-              <tr className="border-b border-zinc-700">
+              <tr className="border-b border-wire">
                 {section.columns.map((col) => (
-                  <th key={col} className="text-left py-2 pr-4 text-zinc-400 font-medium first:text-zinc-300">
+                  <th key={col} className="text-left py-2 pr-4 text-ink-muted font-medium first:text-ink">
                     {col}
                   </th>
                 ))}
@@ -93,9 +93,9 @@ function renderInner(section: Section, onFirstInteraction?: () => void) {
             </thead>
             <tbody>
               {section.rows.map((row, i) => (
-                <tr key={i} className="border-b border-zinc-800/50 hover:bg-surface-overlay transition-colors">
+                <tr key={i} className="border-b border-wire/50 hover:bg-surface-overlay transition-colors">
                   {section.columns.map((col) => (
-                    <td key={col} className="py-2.5 pr-4 text-zinc-300 text-sm first:font-medium first:text-zinc-200">
+                    <td key={col} className="py-2.5 pr-4 text-ink-muted text-sm first:font-medium first:text-ink">
                       {row[col] ?? ""}
                     </td>
                   ))}
@@ -115,11 +115,11 @@ function RichTextRenderer({ body }: { body: RichParagraph[] }) {
         switch (node.type) {
           case "heading":
             return node.level === 2 ? (
-              <h2 key={i} className="text-lg font-semibold text-zinc-200 mt-6 first:mt-0">
+              <h2 key={i} className="text-lg font-semibold text-ink mt-6 first:mt-0">
                 {node.text}
               </h2>
             ) : (
-              <h3 key={i} className="text-base font-semibold text-zinc-300 mt-4 first:mt-0">
+              <h3 key={i} className="text-base font-semibold text-ink mt-4 first:mt-0">
                 {node.text}
               </h3>
             );
@@ -127,8 +127,8 @@ function RichTextRenderer({ body }: { body: RichParagraph[] }) {
             return (
               <ul key={i} className="space-y-1.5 pl-1">
                 {node.items.map((item, j) => (
-                  <li key={j} className="flex gap-2 text-zinc-300 text-sm leading-relaxed">
-                    <span className="text-zinc-600 shrink-0 mt-1">•</span>
+                  <li key={j} className="flex gap-2 text-ink-muted text-sm leading-relaxed">
+                    <span className="text-ink-faint shrink-0 mt-1" aria-hidden="true">•</span>
                     <InlineBold text={item} />
                   </li>
                 ))}
@@ -138,7 +138,7 @@ function RichTextRenderer({ body }: { body: RichParagraph[] }) {
             return (
               <pre
                 key={i}
-                className="bg-zinc-950 border border-zinc-800 rounded-lg p-4 text-zinc-300 text-sm overflow-x-auto leading-relaxed font-mono whitespace-pre"
+                className="bg-surface-code border border-wire rounded-lg p-4 text-ink-muted text-sm overflow-x-auto leading-relaxed font-mono whitespace-pre"
               >
                 {node.code}
               </pre>
@@ -146,7 +146,7 @@ function RichTextRenderer({ body }: { body: RichParagraph[] }) {
           case "p":
           default:
             return (
-              <p key={i} className="text-zinc-300 text-sm leading-7">
+              <p key={i} className="text-ink-muted text-sm leading-7">
                 <InlineBold text={(node as { text: string }).text} />
               </p>
             );
@@ -162,7 +162,7 @@ function InlineBold({ text }: { text: string }) {
     <>
       {parts.map((part, i) =>
         part.startsWith("**") && part.endsWith("**") ? (
-          <strong key={i} className="text-zinc-100 font-semibold">
+          <strong key={i} className="text-ink font-semibold">
             {part.slice(2, -2)}
           </strong>
         ) : (
