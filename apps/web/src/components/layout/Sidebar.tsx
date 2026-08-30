@@ -18,22 +18,24 @@ const CATEGORY_LABELS: Record<TopicCategory, string> = {
 };
 
 const DIFFICULTY_COLOR: Record<string, string> = {
-  beginner: "text-emerald-400",
-  intermediate: "text-amber-400",
-  advanced: "text-red-400",
+  beginner: "text-emerald-600 dark:text-emerald-400",
+  intermediate: "text-amber-600 dark:text-amber-400",
+  advanced: "text-red-600 dark:text-red-400",
 };
 
 function StatusIcon({ status }: { status: TopicStatus }) {
-  if (status === "completed") return <span className="text-emerald-400 text-xs font-bold">✓</span>;
-  if (status === "in-progress") return <span className="text-amber-400 text-xs">◐</span>;
-  return <span className="text-zinc-600 text-xs">○</span>;
+  if (status === "completed") return <span className="text-emerald-600 dark:text-emerald-400 text-xs font-bold" aria-label="Completed">✓</span>;
+  if (status === "in-progress") return <span className="text-amber-600 dark:text-amber-400 text-xs" aria-label="In progress">◐</span>;
+  return <span className="text-ink-faint text-xs" aria-label="Not started">○</span>;
 }
 
 type SidebarProps = {
   topics: Topic[];
+  isOpen: boolean;
+  onClose: () => void;
 };
 
-export function Sidebar({ topics }: SidebarProps) {
+export function Sidebar({ topics, isOpen, onClose }: SidebarProps) {
   const pathname = usePathname();
   const [search, setSearch] = useState("");
   const [statuses, setStatuses] = useState<Record<string, TopicStatus>>({});
@@ -45,6 +47,12 @@ export function Sidebar({ topics }: SidebarProps) {
     }
     setStatuses(next);
   }, [topics, pathname]);
+
+  // Close sidebar when navigating on mobile
+  useEffect(() => {
+    onClose();
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [pathname]);
 
   const filtered = topics.filter(
     (t) =>
@@ -62,24 +70,34 @@ export function Sidebar({ topics }: SidebarProps) {
   const categories = Object.keys(byCategory) as TopicCategory[];
 
   return (
-    <aside className="w-[280px] shrink-0 border-r border-zinc-800 bg-surface-raised flex flex-col overflow-hidden">
-      <div className="p-3 border-b border-zinc-800">
+    <aside
+      className={`
+        fixed inset-y-0 left-0 z-40 flex flex-col w-[280px] shrink-0
+        bg-surface-raised border-r border-wire overflow-hidden
+        transition-transform duration-300 ease-in-out
+        lg:relative lg:translate-x-0 lg:z-auto
+        ${isOpen ? "translate-x-0" : "-translate-x-full"}
+      `}
+      aria-label="Navigation"
+    >
+      {/* Search */}
+      <div className="p-3 border-b border-wire">
         <input
           type="text"
-          placeholder="Search topics..."
+          placeholder="Search topics…"
           value={search}
           onChange={(e) => setSearch(e.target.value)}
-          className="w-full bg-surface-overlay border border-zinc-700 rounded px-3 py-1.5 text-sm text-zinc-200 placeholder:text-zinc-600 focus:outline-none focus:ring-1 focus:ring-emerald-500"
+          className="w-full bg-surface-overlay border border-wire-strong rounded px-3 py-1.5 text-sm text-ink placeholder:text-ink-faint focus:outline-none focus:ring-1 focus:ring-brand"
         />
       </div>
 
       <nav className="flex-1 overflow-y-auto py-3 space-y-4 px-2">
         {categories.map((category) => (
           <div key={category}>
-            <p className="px-2 mb-1.5 text-[11px] font-semibold uppercase tracking-widest text-zinc-500">
+            <p className="px-2 mb-1.5 text-[11px] font-semibold uppercase tracking-widest text-ink-faint">
               {CATEGORY_LABELS[category]}
             </p>
-            <ul className="space-y-0.5">
+            <ul className="space-y-0.5" role="list">
               {byCategory[category]!.map((topic) => {
                 const isActive = pathname === `/topics/${topic.slug}`;
                 const status = statuses[topic.slug] ?? "not-started";
@@ -87,10 +105,10 @@ export function Sidebar({ topics }: SidebarProps) {
                   <li key={topic.slug}>
                     <Link
                       href={`/topics/${topic.slug}`}
-                      className={`flex items-center gap-2.5 px-2 py-2 rounded-md text-sm transition-colors group ${
+                      className={`flex items-center gap-2.5 px-2 py-2 rounded-md text-sm transition-colors group cursor-pointer ${
                         isActive
-                          ? "bg-emerald-950/60 text-emerald-300"
-                          : "text-zinc-400 hover:bg-surface-overlay hover:text-zinc-200"
+                          ? "bg-emerald-100 dark:bg-emerald-950/60 text-emerald-700 dark:text-emerald-300"
+                          : "text-ink-muted hover:bg-surface-overlay hover:text-ink"
                       }`}
                     >
                       <StatusIcon status={status} />
@@ -109,7 +127,7 @@ export function Sidebar({ topics }: SidebarProps) {
         ))}
 
         {filtered.length === 0 && (
-          <p className="text-zinc-600 text-sm px-2 py-4">No topics match your search.</p>
+          <p className="text-ink-faint text-sm px-2 py-4">No topics match your search.</p>
         )}
       </nav>
     </aside>
