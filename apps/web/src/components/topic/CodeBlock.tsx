@@ -33,17 +33,17 @@ export function CodeBlock(props: CodeBlockProps) {
     const code = impls[activeLang] ?? "";
 
     return (
-      <div className="rounded-lg border border-zinc-800 overflow-hidden">
-        <div className="flex items-center justify-between px-4 py-0 bg-zinc-900 border-b border-zinc-800">
+      <div className="rounded-lg border border-wire overflow-hidden">
+        <div className="flex items-center justify-between px-4 py-0 bg-surface-raised border-b border-wire">
           <div className="flex items-center">
             {available.map((lang) => (
               <button
                 key={lang}
                 onClick={() => setLanguage(lang)}
-                className={`text-xs font-medium px-3 py-2.5 border-b-2 transition-colors ${
+                className={`text-xs font-medium px-3 py-2.5 border-b-2 transition-colors cursor-pointer ${
                   activeLang === lang
-                    ? "border-emerald-500 text-emerald-400"
-                    : "border-transparent text-zinc-500 hover:text-zinc-300"
+                    ? "border-brand text-brand-text"
+                    : "border-transparent text-ink-faint hover:text-ink-muted"
                 }`}
               >
                 {LANG_LABELS[lang]}
@@ -52,13 +52,13 @@ export function CodeBlock(props: CodeBlockProps) {
           </div>
           <button
             onClick={() => handleCopy(code)}
-            className="text-xs text-zinc-500 hover:text-zinc-300 transition-colors px-2 py-1 rounded hover:bg-zinc-800"
+            className="text-xs text-ink-faint hover:text-ink-muted transition-colors px-2 py-1 rounded hover:bg-surface-overlay cursor-pointer"
           >
             {copied ? "Copied!" : "Copy"}
           </button>
         </div>
-        <pre className="p-4 overflow-x-auto bg-[#0d1117] text-sm leading-relaxed">
-          <code className="text-zinc-300 font-mono">{code}</code>
+        <pre className="p-4 overflow-x-auto bg-surface-code text-sm leading-relaxed">
+          <code className="text-ink-muted font-mono">{code}</code>
         </pre>
       </div>
     );
@@ -66,18 +66,18 @@ export function CodeBlock(props: CodeBlockProps) {
 
   const { code, language, label } = props;
   return (
-    <div className="rounded-lg border border-zinc-800 overflow-hidden">
-      <div className="flex items-center justify-between px-4 py-2 bg-zinc-900 border-b border-zinc-800">
-        <span className="text-xs font-medium text-zinc-400">{label ?? LANG_LABELS[language]}</span>
+    <div className="rounded-lg border border-wire overflow-hidden">
+      <div className="flex items-center justify-between px-4 py-2 bg-surface-raised border-b border-wire">
+        <span className="text-xs font-medium text-ink-muted">{label ?? LANG_LABELS[language]}</span>
         <button
           onClick={() => handleCopy(code)}
-          className="text-xs text-zinc-500 hover:text-zinc-300 transition-colors px-2 py-1 rounded hover:bg-zinc-800"
+          className="text-xs text-ink-faint hover:text-ink-muted transition-colors px-2 py-1 rounded hover:bg-surface-overlay cursor-pointer"
         >
           {copied ? "Copied!" : "Copy"}
         </button>
       </div>
-      <pre className="p-4 overflow-x-auto bg-[#0d1117] text-sm leading-relaxed">
-        <code className="text-zinc-300 font-mono">{code}</code>
+      <pre className="p-4 overflow-x-auto bg-surface-code text-sm leading-relaxed">
+        <code className="text-ink-muted font-mono">{code}</code>
       </pre>
     </div>
   );

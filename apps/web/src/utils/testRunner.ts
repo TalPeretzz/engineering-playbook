@@ -10,10 +10,13 @@ export type TestCase = {
   run: (BloomFilter: BloomFilterConstructor) => boolean;
 };
 
+export type TestErrorKind = "compile" | "runtime";
+
 export type TestResult = {
   name: string;
   passed: boolean;
   error?: string;
+  errorKind?: TestErrorKind;
 };
 
 function stripTypeScript(code: string): string {
@@ -56,7 +59,8 @@ export function runTests(userCode: string, tests: TestCase[]): TestResult[] {
     return tests.map((t) => ({
       name: t.name,
       passed: false,
-      error: `Parse error: ${msg}`,
+      error: msg,
+      errorKind: "compile" as TestErrorKind,
     }));
   }
 
@@ -66,7 +70,7 @@ export function runTests(userCode: string, tests: TestCase[]): TestResult[] {
       return { name: test.name, passed };
     } catch (e) {
       const msg = e instanceof Error ? e.message : String(e);
-      return { name: test.name, passed: false, error: msg };
+      return { name: test.name, passed: false, error: msg, errorKind: "runtime" as TestErrorKind };
     }
   });
 }

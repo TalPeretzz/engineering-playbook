@@ -4,9 +4,9 @@ import React, { useState, useRef } from "react";
 import type { VisualStep } from "@engineering-playbook/content-schema";
 
 const RESULT_STYLES = {
-  "in-set": "bg-emerald-950/40 border-emerald-800/50 text-emerald-300",
-  "not-in-set": "bg-zinc-800/80 border-zinc-700 text-zinc-200",
-  "false-positive": "bg-amber-950/40 border-amber-800/50 text-amber-300",
+  "in-set": "bg-emerald-50 dark:bg-emerald-950/40 border-emerald-200 dark:border-emerald-800/50 text-emerald-800 dark:text-emerald-300",
+  "not-in-set": "bg-surface-overlay border-wire text-ink-muted",
+  "false-positive": "bg-amber-50 dark:bg-amber-950/40 border-amber-200 dark:border-amber-800/50 text-amber-800 dark:text-amber-300",
 };
 
 export function StepVisual({ steps, onFirstStep }: { steps: VisualStep[]; onFirstStep?: () => void }) {
@@ -23,14 +23,14 @@ export function StepVisual({ steps, onFirstStep }: { steps: VisualStep[]; onFirs
   };
 
   return (
-    <div className="bg-zinc-900 border border-zinc-800 rounded-xl overflow-hidden">
+    <div className="bg-surface-raised border border-wire rounded-xl overflow-hidden">
       {/* Header bar */}
-      <div className="flex items-center justify-between px-5 py-3 border-b border-zinc-800 bg-zinc-950/50">
-        <span className="font-mono text-sm text-emerald-400 font-medium truncate pr-4">
+      <div className="flex items-center justify-between px-5 py-3 border-b border-wire bg-surface-overlay/50">
+        <span className="font-mono text-sm text-brand-text font-medium truncate pr-4">
           {current.label}
         </span>
         <div className="flex items-center gap-3 shrink-0">
-          <span className="text-xs text-zinc-600">
+          <span className="text-xs text-ink-faint">
             {stepIndex + 1} / {steps.length}
           </span>
           <div className="flex gap-1">
@@ -38,7 +38,7 @@ export function StepVisual({ steps, onFirstStep }: { steps: VisualStep[]; onFirs
               onClick={() => setStepIndex((i) => Math.max(0, i - 1))}
               disabled={stepIndex === 0}
               aria-label="Previous step"
-              className="w-7 h-7 rounded flex items-center justify-center text-zinc-400 hover:text-zinc-100 hover:bg-zinc-800 disabled:opacity-30 disabled:cursor-not-allowed transition-colors"
+              className="w-7 h-7 rounded flex items-center justify-center text-ink-muted hover:text-ink hover:bg-surface-overlay disabled:opacity-30 disabled:cursor-not-allowed transition-colors cursor-pointer"
             >
               ←
             </button>
@@ -46,7 +46,7 @@ export function StepVisual({ steps, onFirstStep }: { steps: VisualStep[]; onFirs
               onClick={advance}
               disabled={stepIndex === steps.length - 1}
               aria-label="Next step"
-              className="w-7 h-7 rounded flex items-center justify-center text-zinc-400 hover:text-zinc-100 hover:bg-zinc-800 disabled:opacity-30 disabled:cursor-not-allowed transition-colors"
+              className="w-7 h-7 rounded flex items-center justify-center text-ink-muted hover:text-ink hover:bg-surface-overlay disabled:opacity-30 disabled:cursor-not-allowed transition-colors cursor-pointer"
             >
               →
             </button>
@@ -56,19 +56,19 @@ export function StepVisual({ steps, onFirstStep }: { steps: VisualStep[]; onFirs
 
       <div className="p-5 space-y-5">
         {/* Description */}
-        <p className="text-zinc-400 text-sm leading-relaxed">{current.description}</p>
+        <p className="text-ink-muted text-sm leading-relaxed">{current.description}</p>
 
         {/* Hash outputs */}
         {current.hashOutputs && current.hashOutputs.length > 0 && (
           <div className="space-y-1">
-            <p className="text-[11px] font-medium text-zinc-600 uppercase tracking-wider mb-2">
+            <p className="text-[11px] font-medium text-ink-faint uppercase tracking-wider mb-2">
               Hash functions
             </p>
             {current.hashOutputs.map((h, i) => (
               <div key={i} className="flex items-center gap-2 font-mono text-sm">
-                <span className="text-zinc-400">{h.fn}</span>
-                <span className="text-zinc-600">→</span>
-                <span className="text-emerald-400 font-semibold">{h.output}</span>
+                <span className="text-ink-muted">{h.fn}</span>
+                <span className="text-ink-faint">→</span>
+                <span className="text-brand-text font-semibold">{h.output}</span>
               </div>
             ))}
           </div>
@@ -76,7 +76,7 @@ export function StepVisual({ steps, onFirstStep }: { steps: VisualStep[]; onFirs
 
         {/* Bit array */}
         <div>
-          <p className="text-[11px] font-medium text-zinc-600 uppercase tracking-wider mb-2">
+          <p className="text-[11px] font-medium text-ink-faint uppercase tracking-wider mb-2">
             Bit array
           </p>
           {/* Index row */}
@@ -84,7 +84,7 @@ export function StepVisual({ steps, onFirstStep }: { steps: VisualStep[]; onFirs
             {current.bitArray.map((_, i) => (
               <div
                 key={i}
-                className="w-8 shrink-0 text-center text-[10px] text-zinc-600 font-mono"
+                className="w-8 shrink-0 text-center text-[10px] text-ink-faint font-mono"
               >
                 {i}
               </div>
@@ -97,13 +97,13 @@ export function StepVisual({ steps, onFirstStep }: { steps: VisualStep[]; onFirs
               let cls =
                 "w-8 h-8 shrink-0 flex items-center justify-center rounded text-sm font-mono font-bold transition-all duration-200 ";
               if (isActive && bit === 1) {
-                cls += "bg-emerald-500 text-white ring-2 ring-emerald-300 ring-offset-1 ring-offset-zinc-900";
+                cls += "bg-emerald-500 text-white ring-2 ring-emerald-300 ring-offset-1 ring-offset-surface-raised";
               } else if (isActive && bit === 0) {
-                cls += "bg-red-900/60 text-red-400 ring-2 ring-red-500 ring-offset-1 ring-offset-zinc-900";
+                cls += "bg-red-900/60 text-red-400 ring-2 ring-red-500 ring-offset-1 ring-offset-surface-raised";
               } else if (bit === 1) {
-                cls += "bg-zinc-600 text-zinc-200";
+                cls += "bg-surface-overlay text-ink-muted";
               } else {
-                cls += "bg-zinc-800 text-zinc-600";
+                cls += "bg-surface-overlay/50 text-ink-faint";
               }
               return (
                 <div key={i} className={cls}>
@@ -126,13 +126,13 @@ export function StepVisual({ steps, onFirstStep }: { steps: VisualStep[]; onFirs
         )}
 
         {/* Invariant callout */}
-        <div className="flex items-start gap-3 px-4 py-3 bg-zinc-800/40 border border-zinc-700/50 rounded-lg text-xs text-zinc-400 leading-relaxed">
-          <span className="text-zinc-500 shrink-0 mt-0.5">ℹ</span>
+        <div className="flex items-start gap-3 px-4 py-3 bg-surface-overlay border border-wire rounded-lg text-xs text-ink-muted leading-relaxed">
+          <span className="text-ink-faint shrink-0 mt-0.5" aria-hidden="true">ℹ</span>
           <span>
             A Bloom Filter only answers{" "}
-            <strong className="text-zinc-200">&ldquo;Definitely not present&rdquo;</strong>{" "}
+            <strong className="text-ink">&ldquo;Definitely not present&rdquo;</strong>{" "}
             or{" "}
-            <strong className="text-zinc-200">&ldquo;Probably present&rdquo;</strong>.
+            <strong className="text-ink">&ldquo;Probably present&rdquo;</strong>.
             {" "}It never gives a definitive yes.
           </span>
         </div>
@@ -150,10 +150,10 @@ export function StepVisual({ steps, onFirstStep }: { steps: VisualStep[]; onFirs
                 setStepIndex(i);
               }}
               aria-label={`Go to step ${i + 1}`}
-              className={`h-1.5 rounded-full transition-all duration-200 ${
+              className={`h-1.5 rounded-full transition-all duration-200 cursor-pointer ${
                 i === stepIndex
-                  ? "bg-emerald-400 w-5"
-                  : "bg-zinc-700 hover:bg-zinc-500 w-1.5"
+                  ? "bg-brand w-5"
+                  : "bg-wire-strong hover:bg-ink-faint w-1.5"
               }`}
             />
           ))}

@@ -14,9 +14,23 @@ const config: Config = {
       },
       colors: {
         surface: {
-          DEFAULT: "#0f0f10",
-          raised: "#18181b",
-          overlay: "#27272a",
+          DEFAULT: "var(--surface)",
+          raised: "var(--surface-raised)",
+          overlay: "var(--surface-overlay)",
+          code: "var(--surface-code)",
+        },
+        ink: {
+          DEFAULT: "var(--ink)",
+          muted: "var(--ink-muted)",
+          faint: "var(--ink-faint)",
+        },
+        wire: {
+          DEFAULT: "var(--wire)",
+          strong: "var(--wire-strong)",
+        },
+        brand: {
+          DEFAULT: "var(--brand)",
+          text: "var(--brand-text)",
         },
       },
     },

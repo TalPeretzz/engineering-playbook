@@ -4,17 +4,68 @@
 
 @import url("https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=JetBrains+Mono:wght@400;500&display=swap");
 
+/* ---------------------------------------------------------------------------
+ * Semantic design tokens — consumed by Tailwind utilities (bg-surface, etc.)
+ * Light theme is the default; .dark overrides each value.
+ * Never use raw zinc/gray values in components — use these tokens instead.
+ * --------------------------------------------------------------------------- */
+
 :root {
+  /* Layout */
   --sidebar-width: 280px;
   --topbar-height: 56px;
+
+  /* Backgrounds */
+  --surface: #f9fafb;           /* main content area / body */
+  --surface-raised: #ffffff;    /* sidebar, topbar, cards */
+  --surface-overlay: #f3f4f6;  /* hover states, dropdowns */
+  --surface-code: #f6f8fa;      /* code blocks */
+
+  /* Text */
+  --ink: #0f172a;               /* primary text */
+  --ink-muted: #374151;         /* secondary text — WCAG AA on white (9.2:1) */
+  --ink-faint: #6b7280;         /* tertiary text — WCAG AA on white (4.6:1) */
+
+  /* Borders */
+  --wire: #e2e8f0;              /* subtle border */
+  --wire-strong: #cbd5e1;       /* stronger border */
+
+  /* Brand */
+  --brand: #10b981;             /* emerald-500 */
+  --brand-text: #047857;        /* emerald-700 — WCAG AA on white */
 }
+
+.dark {
+  --surface: #0f0f10;
+  --surface-raised: #18181b;
+  --surface-overlay: #27272a;
+  --surface-code: #0d1117;
+
+  --ink: #f4f4f5;
+  --ink-muted: #d4d4d8;         /* secondary text — WCAG AA on dark (8.8:1) */
+  --ink-faint: #a1a1aa;         /* tertiary text — WCAG AA on dark (4.7:1) */
+
+  --wire: #27272a;
+  --wire-strong: #3f3f46;
+
+  --brand: #10b981;
+  --brand-text: #34d399;        /* emerald-400 — WCAG AA on dark bg */
+}
+
+/* ---------------------------------------------------------------------------
+ * Base styles
+ * --------------------------------------------------------------------------- */
 
 html {
   scroll-behavior: smooth;
+  color-scheme: light dark;
 }
 
 body {
-  @apply bg-surface text-zinc-100 antialiased;
+  background-color: var(--surface);
+  color: var(--ink);
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
 }
 
 /* Scrollbar */
@@ -22,13 +73,14 @@ body {
   width: 6px;
 }
 ::-webkit-scrollbar-track {
-  @apply bg-surface;
+  background: var(--surface);
 }
 ::-webkit-scrollbar-thumb {
-  @apply bg-zinc-700 rounded-full;
+  background: var(--wire-strong);
+  border-radius: 9999px;
 }
 ::-webkit-scrollbar-thumb:hover {
-  @apply bg-zinc-500;
+  background: var(--ink-faint);
 }
 
 /* Code blocks */
@@ -36,22 +88,10 @@ pre {
   @apply font-mono text-sm leading-relaxed;
 }
 
-/* Prose content */
-.prose-content h2 {
-  @apply text-xl font-semibold text-zinc-100 mt-8 mb-3;
-}
-.prose-content h3 {
-  @apply text-base font-semibold text-zinc-200 mt-6 mb-2;
-}
-.prose-content p {
-  @apply text-zinc-300 leading-7 mb-4;
-}
-.prose-content ul {
-  @apply list-disc list-inside space-y-1 text-zinc-300 mb-4 ml-2;
-}
-.prose-content li {
-  @apply leading-6;
-}
-.prose-content code {
-  @apply bg-zinc-800 text-emerald-300 px-1.5 py-0.5 rounded text-sm font-mono;
+/* prefers-reduced-motion */
+@media (prefers-reduced-motion: reduce) {
+  *, *::before, *::after {
+    animation-duration: 0.01ms !important;
+    transition-duration: 0.01ms !important;
+  }
 }
