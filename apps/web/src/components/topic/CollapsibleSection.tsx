@@ -1,6 +1,6 @@
 "use client";
 
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 
 type Props = {
   id: string;
@@ -10,9 +10,32 @@ type Props = {
 };
 
 export function CollapsibleSection({ id, heading, children, defaultOpen = false }: Props) {
-  const [open, setOpen] = useState(defaultOpen);
+  const [open, setOpen] = useState(() => {
+    if (defaultOpen) return true;
+    if (typeof window !== "undefined") {
+      return window.location.hash.slice(1) === id;
+    }
+    return false;
+  });
+
   const contentId = `${id}-content`;
   const toggleId = `${id}-toggle`;
+
+  // Auto-open when a TOC link or external anchor points to this section
+  useEffect(() => {
+    const handleHashChange = () => {
+      if (window.location.hash.slice(1) === id) {
+        setOpen(true);
+        // Let state flush then scroll into view
+        setTimeout(() => {
+          document.getElementById(id)?.scrollIntoView({ behavior: "smooth" });
+        }, 50);
+      }
+    };
+
+    window.addEventListener("hashchange", handleHashChange);
+    return () => window.removeEventListener("hashchange", handleHashChange);
+  }, [id]);
 
   return (
     <section id={id} className="scroll-mt-20">
@@ -22,7 +45,7 @@ export function CollapsibleSection({ id, heading, children, defaultOpen = false 
           aria-expanded={open}
           aria-controls={contentId}
           onClick={() => setOpen((v) => !v)}
-          className="flex w-full items-center justify-between gap-3 group text-left py-0.5 cursor-pointer"
+          className="flex w-full items-center justify-between gap-3 group text-left py-0.5 cursor-pointer focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-brand focus-visible:ring-offset-2 rounded"
         >
           <span className="group-hover:text-ink transition-colors">{heading}</span>
           <svg

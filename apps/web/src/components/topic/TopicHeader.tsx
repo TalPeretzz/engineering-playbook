@@ -34,8 +34,8 @@ export function TopicHeader({ topic, progress }: TopicHeaderProps) {
   ).length;
 
   return (
-    <header id="top" className="scroll-mt-20 pb-8 border-b border-wire">
-      {/* Category + status tags */}
+    <header id="top" className="scroll-mt-20">
+      {/* Category + status row */}
       <div className="flex flex-wrap items-center gap-2 mb-4">
         <span className="text-xs text-ink-muted bg-surface-overlay px-2 py-0.5 rounded border border-wire">
           {CATEGORY_LABELS[topic.category] ?? topic.category}
@@ -62,33 +62,42 @@ export function TopicHeader({ topic, progress }: TopicHeaderProps) {
       </p>
 
       {/* Meta row */}
-      <div className="flex flex-wrap items-center gap-x-4 gap-y-2 text-sm mb-4">
+      <div className="flex flex-wrap items-center gap-x-4 gap-y-2 text-sm mb-5">
         <span
           className={`text-xs px-2 py-0.5 rounded border font-medium ${DIFFICULTY_COLORS[topic.difficulty]}`}
         >
           {topic.difficulty}
         </span>
-        <span className="text-ink-muted">~{topic.estimatedMinutes} min</span>
-        <span className="text-ink-faint">·</span>
-        <span className="text-ink-muted">{CATEGORY_LABELS[topic.category] ?? topic.category}</span>
+        <span className="text-ink-muted text-sm">~{topic.estimatedMinutes} min</span>
+        <span className="text-ink-faint" aria-hidden="true">·</span>
+        <span className="text-ink-muted text-sm">{CATEGORY_LABELS[topic.category] ?? topic.category}</span>
       </div>
 
-      {/* Challenge progress dots */}
+      {/* Challenge progress — hollow vs filled dots + screen reader progress */}
       {requiredChallenges.length > 0 && (
-        <div className="flex items-center gap-3">
-          <div className="flex gap-1" role="list" aria-label="Challenge progress">
-            {requiredChallenges.map((c, i) => (
-              <div
-                key={c.id}
-                role="listitem"
-                title={`Challenge ${i + 1}`}
-                className={`w-2.5 h-2.5 rounded-full transition-colors ${
-                  progress.completedChallenges.includes(c.id)
-                    ? "bg-brand"
-                    : "bg-surface-overlay"
-                }`}
-              />
-            ))}
+        <div
+          className="flex items-center gap-3"
+          role="progressbar"
+          aria-valuenow={doneRequired}
+          aria-valuemin={0}
+          aria-valuemax={requiredChallenges.length}
+          aria-label={`${doneRequired} of ${requiredChallenges.length} required challenges completed`}
+        >
+          <div className="flex gap-1.5" aria-hidden="true">
+            {requiredChallenges.map((c, i) => {
+              const isDone = progress.completedChallenges.includes(c.id);
+              return (
+                <div
+                  key={c.id}
+                  title={`Challenge ${i + 1}: ${isDone ? "completed" : "not completed"}`}
+                  className={`w-3 h-3 rounded-full border-2 transition-all ${
+                    isDone
+                      ? "bg-brand border-brand"
+                      : "bg-transparent border-wire-strong"
+                  }`}
+                />
+              );
+            })}
           </div>
           <span className="text-xs text-ink-muted">
             {doneRequired} / {requiredChallenges.length} required challenges

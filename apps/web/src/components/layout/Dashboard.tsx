@@ -35,7 +35,7 @@ function StatusPill({ status }: { status: TopicStatus }) {
     return <span className="text-emerald-700 dark:text-emerald-400 text-xs font-medium">✓ Completed</span>;
   if (status === "in-progress")
     return <span className="text-amber-700 dark:text-amber-400 text-xs font-medium">◐ In Progress</span>;
-  return <span className="text-ink-faint text-xs">Not started</span>;
+  return <span className="text-ink-muted text-xs">Not started</span>;
 }
 
 export function Dashboard() {
@@ -86,7 +86,7 @@ export function Dashboard() {
             style={{ width: `${stats.percent}%` }}
           />
         </div>
-        <p className="text-ink-faint text-xs mt-2">{stats.percent}% complete</p>
+        <p className="text-ink-muted text-xs mt-2">{stats.percent}% complete</p>
       </div>
 
       {/* Continue Learning */}
@@ -125,7 +125,11 @@ export function Dashboard() {
                   <Link
                     key={topic.slug}
                     href={`/topics/${topic.slug}`}
-                    className="group bg-surface-raised hover:bg-surface-overlay border border-wire hover:border-wire-strong rounded-xl p-4 transition-colors cursor-pointer"
+                    className={`group border rounded-xl p-4 transition-colors cursor-pointer focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-brand focus-visible:ring-offset-2 ${
+                      topicStatuses[topic.slug] === "completed"
+                        ? "bg-surface-raised border-emerald-200 dark:border-emerald-900/40 hover:border-emerald-300 dark:hover:border-emerald-800/60"
+                        : "bg-surface-raised hover:bg-surface-overlay border-wire hover:border-wire-strong"
+                    }`}
                   >
                     <div className="flex items-start justify-between gap-2">
                       <p className="font-medium text-ink group-hover:text-ink">
@@ -137,11 +141,11 @@ export function Dashboard() {
                       {topic.description}
                     </p>
                     <div className="flex items-center gap-3 mt-3">
-                      <span className={`text-xs ${DIFFICULTY_COLORS[topic.difficulty]}`}>
+                      <span className={`text-xs font-medium ${DIFFICULTY_COLORS[topic.difficulty]}`}>
                         {topic.difficulty}
                       </span>
-                      <span className="text-ink-faint text-xs">{topic.estimatedMinutes} min</span>
-                      <span className="text-ink-faint text-xs">{formatChallengeCount(topic.challenges)}</span>
+                      <span className="text-ink-muted text-xs">{topic.estimatedMinutes} min</span>
+                      <span className="text-ink-muted text-xs">{formatChallengeCount(topic.challenges)}</span>
                     </div>
                   </Link>
                 );

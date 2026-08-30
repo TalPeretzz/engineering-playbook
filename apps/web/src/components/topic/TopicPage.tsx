@@ -25,18 +25,28 @@ const PHASE_LABELS: Record<string, string> = {
   apply: "Apply",
 };
 
+// Shorten long headings for the TOC without changing lesson content
+const TOC_SHORT_LABELS: Record<string, string> = {
+  "Understanding false positives": "False positives",
+  "Production considerations": "Production",
+  "What should you remember?": "Key takeaways",
+  "Simple implementation first": "Simple impl",
+};
+
+function tocLabel(heading: string): string {
+  return TOC_SHORT_LABELS[heading] ?? heading;
+}
+
 export function TopicPage({ topic }: TopicPageProps) {
   const { progress, completeChallenge, completeTopic, markInProgress } =
     useTopicProgress(topic.slug);
 
   useEffect(() => {
     setLastVisitedTopic(topic.slug);
-    // markInProgress is NOT called here — only on meaningful user actions
   }, [topic.slug]);
 
   const handleChallengeComplete = useCallback(
     (challengeId: string) => {
-      // Fire markInProgress as fallback for users who jump straight to challenges
       markInProgress();
       completeChallenge(challengeId);
       const updatedCompleted = progress.completedChallenges.includes(challengeId)
@@ -68,7 +78,6 @@ export function TopicPage({ topic }: TopicPageProps) {
 
   const tocGroups = useMemo(
     () => buildTocGroups(topic.sections, hasImplementations, hasPhases),
-    // Static content — stable reference
     // eslint-disable-next-line react-hooks/exhaustive-deps
     []
   );
@@ -81,136 +90,145 @@ export function TopicPage({ topic }: TopicPageProps) {
   const activeId = useActiveSection(sectionIds);
 
   return (
-    <div className="xl:flex xl:gap-14">
+    <div className="xl:flex xl:gap-12">
       {/* Main content */}
-      <article className="min-w-0 flex-1 pb-24 space-y-12">
-        <TopicHeader topic={topic} progress={progress} />
+      <article className="min-w-0 flex-1 pb-24">
 
-        {prereqTopics.length > 0 && (
-          <div className="bg-surface-raised border border-wire rounded-lg p-4 text-sm text-ink-muted">
-            <span className="font-medium text-ink">Recommended before this topic: </span>
-            {prereqTopics.map((t, i) => (
-              <span key={t.slug}>
-                {i > 0 && ", "}
-                <Link
-                  href={`/topics/${t.slug}`}
-                  className="text-brand-text hover:underline underline-offset-2"
-                >
-                  {t.title}
-                </Link>
-              </span>
-            ))}
-          </div>
-        )}
+        {/* Header cluster: header + prereqs + CTA grouped tightly */}
+        <div className="space-y-4 pb-8 mb-8 border-b border-wire">
+          <TopicHeader topic={topic} progress={progress} />
 
-        <LessonCTA
-          status={progress.status}
-          challenges={topic.challenges}
-          completedChallenges={progress.completedChallenges}
-          onStart={markInProgress}
-        />
-
-        <SectionList
-          sections={topic.sections}
-          hasPhases={hasPhases}
-          onFirstInteraction={markInProgress}
-        />
-
-        {hasImplementations && (
-          <>
-            {hasPhases ? (
-              <PhaseHeader phase="apply" label="Implementation" />
-            ) : (
-              <hr className="border-wire" />
-            )}
-            <section id="implementation" className="scroll-mt-20 space-y-4">
-              <SectionHeading>Implementation</SectionHeading>
-              <p className="text-ink-muted text-sm">
-                A complete implementation focused on clarity and learning. Switch languages to see
-                the same concept expressed idiomatically.
-              </p>
-              <CodeBlock implementations={topic.implementations} />
-            </section>
-          </>
-        )}
-
-        <hr className="border-wire" />
-
-        <section id="challenges" className="scroll-mt-20 space-y-4">
-          <ChallengesSection
-            topic={topic}
-            progress={progress}
-            onChallengeComplete={handleChallengeComplete}
-            nextTopic={nextTopic ?? undefined}
-          />
-        </section>
-
-        {/* Prev / Next navigation */}
-        {(prevTopic || nextTopic) && (
-          <nav
-            aria-label="Topic navigation"
-            className="flex items-stretch gap-3 pt-4 border-t border-wire"
-          >
-            {prevTopic ? (
-              <Link
-                href={`/topics/${prevTopic.slug}`}
-                className="flex-1 group flex flex-col gap-1 px-4 py-3 rounded-lg border border-wire hover:border-wire-strong hover:bg-surface-overlay transition-colors"
-              >
-                <span className="text-xs text-ink-faint group-hover:text-ink-muted transition-colors">
-                  ← Previous
+          {prereqTopics.length > 0 && (
+            <div className="bg-surface-raised border border-wire rounded-lg p-4 text-sm text-ink-muted">
+              <span className="font-medium text-ink">Recommended before this topic: </span>
+              {prereqTopics.map((t, i) => (
+                <span key={t.slug}>
+                  {i > 0 && ", "}
+                  <Link
+                    href={`/topics/${t.slug}`}
+                    className="text-brand-text hover:underline underline-offset-2 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-brand rounded"
+                  >
+                    {t.title}
+                  </Link>
                 </span>
-                <span className="text-sm font-medium text-ink-muted group-hover:text-ink transition-colors">
-                  {prevTopic.title}
-                </span>
-              </Link>
-            ) : (
-              <div className="flex-1" />
-            )}
-            {nextTopic && (
-              <Link
-                href={`/topics/${nextTopic.slug}`}
-                className="flex-1 group flex flex-col gap-1 px-4 py-3 rounded-lg border border-wire hover:border-wire-strong hover:bg-surface-overlay transition-colors text-right"
-              >
-                <span className="text-xs text-ink-faint group-hover:text-ink-muted transition-colors">
-                  Next →
-                </span>
-                <span className="text-sm font-medium text-ink-muted group-hover:text-ink transition-colors">
-                  {nextTopic.title}
-                </span>
-              </Link>
-            )}
-          </nav>
-        )}
-      </article>
-
-      {/* Sticky sidebar TOC — desktop only */}
-      <aside className="hidden xl:block shrink-0 w-44" aria-label="Table of contents">
-        <div className="sticky top-8 space-y-1">
-          <p className="text-[11px] font-semibold text-ink-faint uppercase tracking-wider mb-3">
-            On this page
-          </p>
-          {tocGroups.map((group) => (
-            <div key={group.phase ?? "default"}>
-              {group.phase && (
-                <p className="text-[10px] font-semibold text-ink-faint uppercase tracking-widest mt-4 mb-1 first:mt-0">
-                  {PHASE_LABELS[group.phase] ?? group.phase}
-                </p>
-              )}
-              {group.entries.map((entry) => (
-                <a
-                  key={entry.id}
-                  href={`#${entry.id}`}
-                  className={`block text-sm py-0.5 leading-snug transition-colors ${
-                    activeId === entry.id
-                      ? "text-brand-text font-medium"
-                      : "text-ink-faint hover:text-ink-muted"
-                  }`}
-                >
-                  {entry.label}
-                </a>
               ))}
             </div>
-          ))}
+          )}
+
+          <LessonCTA
+            status={progress.status}
+            challenges={topic.challenges}
+            completedChallenges={progress.completedChallenges}
+            onStart={markInProgress}
+          />
+        </div>
+
+        {/* Lesson content */}
+        <div className="space-y-10">
+          <SectionList
+            sections={topic.sections}
+            hasPhases={hasPhases}
+            onFirstInteraction={markInProgress}
+          />
+
+          {hasImplementations && (
+            <>
+              {hasPhases ? (
+                <PhaseHeader phase="apply" label="Implementation" />
+              ) : (
+                <hr className="border-wire" />
+              )}
+              <section id="implementation" className="scroll-mt-20 space-y-4">
+                <SectionHeading>Implementation</SectionHeading>
+                <p className="text-ink-muted text-sm">
+                  A complete implementation focused on clarity and learning. Switch languages to see
+                  the same concept expressed idiomatically.
+                </p>
+                <CodeBlock implementations={topic.implementations} />
+              </section>
+            </>
+          )}
+
+          <hr className="border-wire" />
+
+          <section id="challenges" className="scroll-mt-20 space-y-4">
+            <ChallengesSection
+              topic={topic}
+              progress={progress}
+              onChallengeComplete={handleChallengeComplete}
+              nextTopic={nextTopic ?? undefined}
+            />
+          </section>
+
+          {/* Prev / Next navigation */}
+          {(prevTopic || nextTopic) && (
+            <nav
+              aria-label="Topic navigation"
+              className="flex items-stretch gap-3 pt-4 border-t border-wire"
+            >
+              {prevTopic ? (
+                <Link
+                  href={`/topics/${prevTopic.slug}`}
+                  className="flex-1 group flex flex-col gap-1 px-4 py-3 rounded-lg border border-wire hover:border-wire-strong hover:bg-surface-overlay transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-brand focus-visible:ring-offset-2"
+                >
+                  <span className="text-xs text-ink-faint group-hover:text-ink-muted transition-colors">
+                    ← Previous
+                  </span>
+                  <span className="text-sm font-medium text-ink-muted group-hover:text-ink transition-colors">
+                    {prevTopic.title}
+                  </span>
+                </Link>
+              ) : (
+                <div className="flex-1" />
+              )}
+              {nextTopic && (
+                <Link
+                  href={`/topics/${nextTopic.slug}`}
+                  className="flex-1 group flex flex-col gap-1 px-4 py-3 rounded-lg border border-wire hover:border-wire-strong hover:bg-surface-overlay transition-colors text-right focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-brand focus-visible:ring-offset-2"
+                >
+                  <span className="text-xs text-ink-faint group-hover:text-ink-muted transition-colors">
+                    Next →
+                  </span>
+                  <span className="text-sm font-medium text-ink-muted group-hover:text-ink transition-colors">
+                    {nextTopic.title}
+                  </span>
+                </Link>
+              )}
+            </nav>
+          )}
+        </div>
+      </article>
+
+      {/* Sticky sidebar TOC — xl and up only */}
+      <aside className="hidden xl:block shrink-0 w-48" aria-label="Table of contents">
+        <div className="sticky top-8">
+          <p className="text-[11px] font-semibold text-ink-muted uppercase tracking-wider mb-3 pl-3">
+            On this page
+          </p>
+          <nav aria-label="Page sections">
+            {tocGroups.map((group) => (
+              <div key={group.phase ?? "default"} className="mb-2">
+                {group.phase && (
+                  <p className="text-[10px] font-semibold text-ink-muted uppercase tracking-widest mt-4 mb-1 first:mt-0 pl-3">
+                    {PHASE_LABELS[group.phase] ?? group.phase}
+                  </p>
+                )}
+                {group.entries.map((entry) => (
+                  <a
+                    key={entry.id}
+                    href={`#${entry.id}`}
+                    className={`block text-sm py-1 pl-3 leading-snug transition-colors border-l-2 rounded-r focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-brand focus-visible:ring-offset-1 ${
+                      activeId === entry.id
+                        ? "border-brand text-brand-text font-medium"
+                        : "border-transparent text-ink-muted hover:text-ink hover:border-wire-strong"
+                    }`}
+                  >
+                    {tocLabel(entry.label)}
+                  </a>
+                ))}
+              </div>
+            ))}
+          </nav>
         </div>
       </aside>
     </div>
@@ -253,7 +271,7 @@ function PhaseHeader({ phase, label }: { phase: string; label?: string }) {
   return (
     <div className="flex items-center gap-3 pt-2">
       <div className="flex-1 h-px bg-wire" />
-      <span className="text-[11px] font-semibold text-ink-faint uppercase tracking-widest px-1">
+      <span className="text-[11px] font-semibold text-ink-muted uppercase tracking-widest px-1">
         {label ?? PHASE_LABELS[phase] ?? phase}
       </span>
       <div className="flex-1 h-px bg-wire" />

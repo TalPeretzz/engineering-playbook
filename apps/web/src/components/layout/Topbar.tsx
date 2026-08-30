@@ -52,7 +52,7 @@ export function Topbar({ totalTopics, onSidebarToggle }: TopbarProps) {
               style={{ width: `${percent}%` }}
             />
           </div>
-          <span className="text-xs text-ink-faint tabular-nums">
+          <span className="text-xs text-ink-muted tabular-nums">
             {completed}/{total}
           </span>
         </div>

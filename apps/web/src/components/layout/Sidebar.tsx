@@ -26,7 +26,7 @@ const DIFFICULTY_COLOR: Record<string, string> = {
 function StatusIcon({ status }: { status: TopicStatus }) {
   if (status === "completed") return <span className="text-emerald-600 dark:text-emerald-400 text-xs font-bold" aria-label="Completed">✓</span>;
   if (status === "in-progress") return <span className="text-amber-600 dark:text-amber-400 text-xs" aria-label="In progress">◐</span>;
-  return <span className="text-ink-faint text-xs" aria-label="Not started">○</span>;
+  return <span className="text-ink-muted text-xs" aria-label="Not started">○</span>;
 }
 
 type SidebarProps = {
@@ -94,7 +94,7 @@ export function Sidebar({ topics, isOpen, onClose }: SidebarProps) {
       <nav className="flex-1 overflow-y-auto py-3 space-y-4 px-2">
         {categories.map((category) => (
           <div key={category}>
-            <p className="px-2 mb-1.5 text-[11px] font-semibold uppercase tracking-widest text-ink-faint">
+            <p className="px-2 mb-1.5 text-[11px] font-semibold uppercase tracking-widest text-ink-muted">
               {CATEGORY_LABELS[category]}
             </p>
             <ul className="space-y-0.5" role="list">
@@ -105,17 +105,15 @@ export function Sidebar({ topics, isOpen, onClose }: SidebarProps) {
                   <li key={topic.slug}>
                     <Link
                       href={`/topics/${topic.slug}`}
-                      className={`flex items-center gap-2.5 px-2 py-2 rounded-md text-sm transition-colors group cursor-pointer ${
+                      className={`flex items-center gap-2.5 px-2 py-2 rounded-md text-sm transition-colors group cursor-pointer focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-brand focus-visible:ring-offset-1 ${
                         isActive
-                          ? "bg-emerald-100 dark:bg-emerald-950/60 text-emerald-700 dark:text-emerald-300"
+                          ? "bg-emerald-100 dark:bg-emerald-950/60 text-emerald-700 dark:text-emerald-300 font-medium"
                           : "text-ink-muted hover:bg-surface-overlay hover:text-ink"
                       }`}
                     >
                       <StatusIcon status={status} />
                       <span className="flex-1 truncate">{topic.title}</span>
-                      <span
-                        className={`text-[10px] tabular-nums ${DIFFICULTY_COLOR[topic.difficulty]} opacity-70 group-hover:opacity-100`}
-                      >
+                      <span className="text-[10px] tabular-nums text-ink-faint group-hover:text-ink-muted transition-colors">
                         {topic.estimatedMinutes}m
                       </span>
                     </Link>

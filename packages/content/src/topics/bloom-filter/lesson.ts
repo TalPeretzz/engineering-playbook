@@ -381,6 +381,7 @@ export const sections: Section[] = [
     type: "text",
     id: "production-considerations",
     heading: "Production considerations",
+    collapsible: true,
     phase: "deep-dive",
     body: [
       {

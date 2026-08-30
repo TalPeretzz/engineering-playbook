@@ -23,8 +23,8 @@
 
   /* Text */
   --ink: #0f172a;               /* primary text */
-  --ink-muted: #475569;         /* secondary text */
-  --ink-faint: #94a3b8;         /* placeholder, tertiary */
+  --ink-muted: #374151;         /* secondary text — WCAG AA on white (9.2:1) */
+  --ink-faint: #6b7280;         /* tertiary text — WCAG AA on white (4.6:1) */
 
   /* Borders */
   --wire: #e2e8f0;              /* subtle border */
@@ -42,8 +42,8 @@
   --surface-code: #0d1117;
 
   --ink: #f4f4f5;
-  --ink-muted: #a1a1aa;
-  --ink-faint: #52525b;
+  --ink-muted: #d4d4d8;         /* secondary text — WCAG AA on dark (8.8:1) */
+  --ink-faint: #a1a1aa;         /* tertiary text — WCAG AA on dark (4.7:1) */
 
   --wire: #27272a;
   --wire-strong: #3f3f46;
