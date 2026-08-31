@@ -7,7 +7,8 @@ public class LRUCache {
     private final Node tail; // dummy LRU sentinel
 
     public LRUCache(int capacity) {
-        if (capacity <= 0) throw new IllegalArgumentException("Capacity must be positive");
+        // The int type already rejects fractions, NaN, and infinities at compile time.
+        if (capacity <= 0) throw new IllegalArgumentException("Capacity must be a positive integer");
         this.capacity = capacity;
         this.map = new HashMap<>();
         // Sentinel nodes eliminate every empty-list edge case

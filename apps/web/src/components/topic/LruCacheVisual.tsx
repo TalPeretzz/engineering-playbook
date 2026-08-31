@@ -286,23 +286,54 @@ export function LruCacheVisual() {
     keyRef.current?.focus();
   }, [keyInput, valueInput, liveEntries, liveCapacity]);
 
-  const handleReset = useCallback(() => {
-    const cap = Math.max(1, parseInt(capacityInput, 10) || EXAMPLE_CAPACITY);
-    setLiveCapacity(cap);
-    setCapacityInput(String(cap));
+  const [capacityError, setCapacityError] = useState("");
+
+  const commitCapacity = useCallback(() => {
+    const raw = capacityInput.trim();
+    const n = Number(raw);
+    if (raw === "" || !Number.isInteger(n) || n <= 0) {
+      const msg = "Capacity must be a positive integer.";
+      setCapacityError(msg);
+      setLiveMessage(`${msg} Cache unchanged (still ${liveCapacity}).`);
+      setMode("manual");
+      return;
+    }
+    setCapacityError("");
+    if (n === liveCapacity) return;
+    setLiveCapacity(n);
     setLiveEntries([]);
     setLiveResult(null);
-    setLiveMessage("Cache cleared. Enter operations below.");
+    setLiveMessage(`Capacity set to ${n}. Cache cleared.`);
+    setMode("manual");
+  }, [capacityInput, liveCapacity]);
+
+  const handleReset = useCallback(() => {
+    setLiveEntries([]);
+    setLiveResult(null);
+    setLiveMessage(`Cache cleared. Capacity: ${liveCapacity}.`);
     setMode("manual");
     setKeyInput("");
     setValueInput("");
-  }, [capacityInput]);
+    setInputError("");
+    setCapacityInput(String(liveCapacity));
+    setCapacityError("");
+  }, [liveCapacity]);
 
   const handleKeyDown = useCallback(
     (e: React.KeyboardEvent) => {
       if (e.key === "Enter") handlePut();
     },
     [handlePut]
+  );
+
+  const handleCapacityKeyDown = useCallback(
+    (e: React.KeyboardEvent) => {
+      if (e.key === "Enter") {
+        e.preventDefault();
+        commitCapacity();
+      }
+    },
+    [commitCapacity]
   );
 
   return (
@@ -479,12 +510,20 @@ export function LruCacheVisual() {
               <input
                 id="lru-cap"
                 type="number"
+                inputMode="numeric"
                 min={1}
                 max={8}
+                step={1}
                 value={capacityInput}
-                onChange={(e) => setCapacityInput(e.target.value)}
-                className="w-16 bg-surface-overlay border border-wire rounded px-2 py-1.5 text-xs font-mono text-ink focus:outline-none focus:ring-1 focus:ring-brand"
-                aria-label="Cache capacity"
+                onChange={(e) => { setCapacityInput(e.target.value); if (capacityError) setCapacityError(""); }}
+                onBlur={commitCapacity}
+                onKeyDown={handleCapacityKeyDown}
+                aria-invalid={capacityError ? true : undefined}
+                aria-describedby={capacityError ? "lru-cap-error" : undefined}
+                className={`w-16 bg-surface-overlay border rounded px-2 py-1.5 text-xs font-mono text-ink focus:outline-none focus:ring-1 focus:ring-brand ${
+                  capacityError ? "border-red-500 dark:border-red-600" : "border-wire"
+                }`}
+                aria-label="Cache capacity (positive integer)"
               />
             </div>
             <button
@@ -496,10 +535,19 @@ export function LruCacheVisual() {
           </div>
         </div>
 
-        {inputError && (
-          <p className="text-xs text-red-600 dark:text-red-400" role="alert">
-            {inputError}
-          </p>
+        {(inputError || capacityError) && (
+          <div className="space-y-1">
+            {inputError && (
+              <p className="text-xs text-red-600 dark:text-red-400" role="alert">
+                {inputError}
+              </p>
+            )}
+            {capacityError && (
+              <p id="lru-cap-error" className="text-xs text-red-600 dark:text-red-400" role="alert">
+                {capacityError} <span className="text-ink-faint">Value shown was not applied.</span>
+              </p>
+            )}
+          </div>
         )}
 
         {/* Example navigation */}

@@ -16,6 +16,9 @@ The starter code uses plain JavaScript — no TypeScript types are required. The
   starterCode: {
     typescript: `class LRUCache {
   constructor(capacity) {
+    if (!Number.isInteger(capacity) || capacity <= 0) {
+      throw new RangeError("Capacity must be a positive integer");
+    }
     this.capacity = capacity;
     this.map = new Map();                                             // key → node
     this.head = { key: null, value: null, prev: null, next: null };  // dummy MRU sentinel
@@ -94,7 +97,9 @@ The starter code uses plain JavaScript — no TypeScript types are required. The
   solution: {
     typescript: `class LRUCache {
   constructor(capacity) {
-    if (capacity <= 0) throw new RangeError("Capacity must be positive");
+    if (!Number.isInteger(capacity) || capacity <= 0) {
+      throw new RangeError("Capacity must be a positive integer");
+    }
     this.capacity = capacity;
     this.map = new Map();
     this.head = { prev: null, next: null }; // dummy MRU sentinel
@@ -150,6 +155,8 @@ The starter code uses plain JavaScript — no TypeScript types are required. The
 
 class LRUCache:
     def __init__(self, capacity):
+        if not isinstance(capacity, int) or isinstance(capacity, bool) or capacity <= 0:
+            raise ValueError("Capacity must be a positive integer")
         self.capacity = capacity
         self.map = {}
         self.head = Node(0, 0)  # dummy MRU sentinel
@@ -203,6 +210,7 @@ class LRUCache {
     private Node head, tail;
 
     public LRUCache(int capacity) {
+        if (capacity <= 0) throw new IllegalArgumentException("Capacity must be a positive integer");
         this.capacity = capacity;
         this.map = new HashMap<>();
         this.head = new Node(0, 0);

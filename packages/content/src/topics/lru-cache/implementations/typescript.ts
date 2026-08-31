@@ -17,7 +17,9 @@ class LRUCache<K, V> {
   private readonly tail: ListNode<K, V>; // dummy LRU sentinel
 
   constructor(capacity: number) {
-    if (capacity <= 0) throw new RangeError("Capacity must be positive");
+    if (!Number.isInteger(capacity) || capacity <= 0) {
+      throw new RangeError("Capacity must be a positive integer");
+    }
     this.capacity = capacity;
     this.map = new Map();
     // Sentinel nodes eliminate every empty-list edge case

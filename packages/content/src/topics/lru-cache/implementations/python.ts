@@ -8,8 +8,9 @@ export const pythonImpl = `class Node:
 
 class LRUCache:
     def __init__(self, capacity: int):
-        if capacity <= 0:
-            raise ValueError("Capacity must be positive")
+        # Reject non-int (floats, NaN, Infinity), booleans, and non-positive values.
+        if not isinstance(capacity, int) or isinstance(capacity, bool) or capacity <= 0:
+            raise ValueError("Capacity must be a positive integer")
         self.capacity = capacity
         self.map: dict[int, Node] = {}  # key → Node
         # Sentinel nodes eliminate every empty-list edge case

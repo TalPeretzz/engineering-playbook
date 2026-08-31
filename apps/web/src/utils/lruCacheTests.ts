@@ -98,13 +98,45 @@ export const lruCacheTests: TestCase[] = [
     },
   },
   {
-    name: "Constructor rejects capacity ≤ 0",
+    name: "Constructor rejects capacity 0",
     run: (LRUCache) => {
-      let threw0 = false;
-      let threwNeg = false;
-      try { new LRUCache(0); } catch (e) { threw0 = true; }
-      try { new LRUCache(-1); } catch (e) { threwNeg = true; }
-      return threw0 && threwNeg;
+      try { new LRUCache(0); return false; }
+      catch (e) { return e instanceof RangeError; }
+    },
+  },
+  {
+    name: "Constructor rejects negative capacity",
+    run: (LRUCache) => {
+      try { new LRUCache(-1); return false; }
+      catch (e) { return e instanceof RangeError; }
+    },
+  },
+  {
+    name: "Constructor rejects fractional capacity",
+    run: (LRUCache) => {
+      try { new LRUCache(2.5); return false; }
+      catch (e) { return e instanceof RangeError; }
+    },
+  },
+  {
+    name: "Constructor rejects NaN capacity",
+    run: (LRUCache) => {
+      try { new LRUCache(NaN); return false; }
+      catch (e) { return e instanceof RangeError; }
+    },
+  },
+  {
+    name: "Constructor rejects Infinity capacity",
+    run: (LRUCache) => {
+      try { new LRUCache(Infinity); return false; }
+      catch (e) { return e instanceof RangeError; }
+    },
+  },
+  {
+    name: "Constructor rejects -Infinity capacity",
+    run: (LRUCache) => {
+      try { new LRUCache(-Infinity); return false; }
+      catch (e) { return e instanceof RangeError; }
     },
   },
 ];

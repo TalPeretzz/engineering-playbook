@@ -16,11 +16,21 @@ export type ProgrammingLanguage = "typescript" | "python" | "java";
 // Inline text fields may use **bold** markers rendered by InlineBold.
 // ---------------------------------------------------------------------------
 
+export type Source = {
+  name: string;
+  url: string;
+  /** Date the citation was verified (ISO 8601, e.g. "2026-08-31"). */
+  verified: string;
+  /** Optional short qualifier displayed after the link. */
+  note?: string;
+};
+
 export type RichParagraph =
   | { type: "p"; text: string }
   | { type: "heading"; level: 2 | 3; text: string }
   | { type: "list"; items: string[] }
-  | { type: "code"; language: string; code: string };
+  | { type: "code"; language: string; code: string }
+  | { type: "sources"; items: Source[] };
 
 export type RichText = RichParagraph[];
 

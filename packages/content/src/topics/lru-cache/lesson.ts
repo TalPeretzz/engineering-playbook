@@ -362,14 +362,106 @@ export const sections: Section[] = [
     collapsible: true,
     body: [
       {
-        type: "list",
+        type: "p",
+        text: "Production LRU implementations diverge from the textbook version to trade strictness for performance, concurrency, or memory. The systems below all use LRU or an LRU approximation as part of their eviction strategy.",
+      },
+      // Hardware pseudo-LRU (CPU caches) intentionally omitted — no authoritative,
+      // easily-cited public source. TODO: add if we find one worth citing.
+
+      { type: "heading", level: 3, text: "Redis" },
+      {
+        type: "p",
+        text: "Configurable via `maxmemory-policy allkeys-lru` and `volatile-lru`. Redis samples a small random subset of keys on each eviction rather than tracking a fully-sorted list, keeping eviction cheap at very large key counts.",
+      },
+      {
+        type: "sources",
         items: [
-          "**Redis** — supports `maxmemory-policy allkeys-lru` and `volatile-lru` to approximate LRU eviction when memory is exhausted. Redis samples a small random subset of keys on each eviction rather than tracking a full sorted order, keeping overhead minimal.",
-          "**Memcached** — uses per-slab LRU lists. Each memory class maintains its own LRU tail pointer, making eviction O(1) within a slab without global locking.",
-          "**CPU L1/L2 caches** — hardware caches use pseudo-LRU or LRU-approximation policies for cache line eviction. True LRU in hardware is prohibitively expensive at nanosecond timescales.",
-          "**Linux kernel page replacement** — uses the Clock algorithm (second-chance) as an efficient LRU approximation for page frame management.",
-          "**Java Caffeine** — uses W-TinyLFU (windowed LRU + TinyLFU) combining a small LRU admission window with a frequency filter to achieve high hit rates even with scan-heavy workloads.",
-          "**Database buffer pools** — PostgreSQL and MySQL InnoDB use LRU-based page replacement for their buffer pools, often with a 'young' and 'old' sublist to resist scan pollution from large sequential reads.",
+          {
+            name: "Redis Docs — Key eviction",
+            url: "https://redis.io/docs/latest/develop/reference/eviction/",
+            verified: "2026-08-31",
+            note: "Sampled approximate LRU",
+          },
+        ],
+      },
+
+      { type: "heading", level: 3, text: "Memcached" },
+      {
+        type: "p",
+        text: "Uses per-slab LRU lists — each memory class (slab class) maintains its own tail pointer. Eviction is O(1) within a slab and avoids a single global lock across all keys.",
+      },
+      {
+        type: "sources",
+        items: [
+          {
+            name: "Memcached — Wiki",
+            url: "https://github.com/memcached/memcached/wiki",
+            verified: "2026-08-31",
+          },
+        ],
+      },
+
+      { type: "heading", level: 3, text: "Caffeine (Java)" },
+      {
+        type: "p",
+        text: "Uses **W-TinyLFU** — a small LRU admission window plus a frequency filter. This combination resists scan-based cache pollution far better than plain LRU while retaining a large main region.",
+      },
+      {
+        type: "sources",
+        items: [
+          {
+            name: "Caffeine Wiki — Efficiency",
+            url: "https://github.com/ben-manes/caffeine/wiki/Efficiency",
+            verified: "2026-08-31",
+          },
+        ],
+      },
+
+      { type: "heading", level: 3, text: "Linux kernel page replacement" },
+      {
+        type: "p",
+        text: "The kernel maintains active and inactive LRU lists per memory zone and uses a two-list scheme with reference bits (an LRU approximation), not strict LRU — precise recency tracking per page would be too costly.",
+      },
+      {
+        type: "sources",
+        items: [
+          {
+            name: "Linux Kernel Docs — Memory Management concepts",
+            url: "https://docs.kernel.org/admin-guide/mm/concepts.html",
+            verified: "2026-08-31",
+          },
+        ],
+      },
+
+      { type: "heading", level: 3, text: "PostgreSQL buffer manager" },
+      {
+        type: "p",
+        text: "Uses a clock-sweep algorithm — each buffer has a usage-count decremented on each pass. Eviction picks the first buffer whose count reaches zero. This is a common LRU approximation that avoids updating a global list on every read.",
+      },
+      {
+        type: "sources",
+        items: [
+          {
+            name: "PostgreSQL source — buffer manager README",
+            url: "https://github.com/postgres/postgres/blob/master/src/backend/storage/buffer/README",
+            verified: "2026-08-31",
+          },
+        ],
+      },
+
+      { type: "heading", level: 3, text: "MySQL InnoDB buffer pool" },
+      {
+        type: "p",
+        text: "Uses an LRU list with **midpoint insertion**: new pages enter at the boundary between the young and old sublists, not the head. A single scan-heavy query fills the old sublist without evicting hot pages from the young sublist.",
+      },
+      {
+        type: "sources",
+        items: [
+          {
+            name: "MySQL Reference Manual — InnoDB Buffer Pool",
+            url: "https://dev.mysql.com/doc/refman/8.0/en/innodb-buffer-pool.html",
+            verified: "2026-08-31",
+          },
         ],
       },
     ],
