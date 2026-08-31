@@ -1,6 +1,6 @@
 "use client";
 
-import React, { useState, useCallback, useRef } from "react";
+import React, { useState, useCallback, useRef, useEffect } from "react";
 
 // ─── Types ───────────────────────────────────────────────────────────────────
 
@@ -150,16 +150,19 @@ function LinkedListNode({
   isLru,
   isHighlight,
   isEvicted,
+  reduceMotion,
 }: {
   entry: Entry;
   isMru: boolean;
   isLru: boolean;
   isHighlight: boolean;
   isEvicted: boolean;
+  reduceMotion: boolean;
 }) {
+  const anim = reduceMotion ? "" : "transition-all duration-300";
   return (
     <div
-      className={`flex flex-col items-center transition-all duration-300 ${isEvicted ? "opacity-30" : ""}`}
+      className={`flex flex-col items-center ${anim} ${isEvicted ? "opacity-30" : ""}`}
     >
       {isMru && (
         <span className="text-[9px] font-bold text-emerald-600 dark:text-emerald-400 uppercase tracking-widest mb-1">
@@ -173,7 +176,7 @@ function LinkedListNode({
       )}
       {!isMru && !isLru && <span className="text-[9px] mb-1 opacity-0">·</span>}
       <div
-        className={`relative flex flex-col items-center justify-center w-14 h-14 rounded-lg border-2 text-xs font-mono font-bold transition-all duration-300 ${
+        className={`relative flex flex-col items-center justify-center w-14 h-14 rounded-lg border-2 text-xs font-mono font-bold ${anim} ${
           isHighlight
             ? "border-brand bg-emerald-50 dark:bg-emerald-950/40 text-ink scale-110 shadow-md"
             : isEvicted
@@ -216,6 +219,16 @@ export function LruCacheVisual() {
   const [capacityInput, setCapacityInput] = useState(String(EXAMPLE_CAPACITY));
 
   const keyRef = useRef<HTMLInputElement>(null);
+  const [reduceMotion, setReduceMotion] = useState(false);
+  const [inputError, setInputError] = useState("");
+
+  useEffect(() => {
+    const mq = window.matchMedia("(prefers-reduced-motion: reduce)");
+    setReduceMotion(mq.matches);
+    const handler = (e: MediaQueryListEvent) => setReduceMotion(e.matches);
+    mq.addEventListener("change", handler);
+    return () => mq.removeEventListener("change", handler);
+  }, []);
 
   const snapshot = SNAPSHOTS[stepIndex];
 
@@ -235,7 +248,8 @@ export function LruCacheVisual() {
 
   const handleGet = useCallback(() => {
     const key = keyInput.trim();
-    if (!key) return;
+    if (!key) { setInputError("Key is required"); return; }
+    setInputError("");
     const { next, result } = simulateLRU(liveEntries, liveCapacity, { type: "get", key });
     setLiveEntries(next);
     setLiveResult(result);
@@ -250,7 +264,8 @@ export function LruCacheVisual() {
   const handlePut = useCallback(() => {
     const key = keyInput.trim();
     const value = valueInput.trim() || "?";
-    if (!key) return;
+    if (!key) { setInputError("Key is required"); return; }
+    setInputError("");
     const { next, result } = simulateLRU(liveEntries, liveCapacity, {
       type: "put",
       key,
@@ -292,6 +307,11 @@ export function LruCacheVisual() {
 
   return (
     <div className="rounded-xl border border-wire bg-surface-raised overflow-hidden">
+      {/* Screen-reader live region for operation announcements */}
+      <div role="status" aria-live="polite" aria-atomic="true" className="sr-only">
+        {displayMessage}
+      </div>
+
       {/* Operation log */}
       <div className="px-4 py-3 border-b border-wire bg-surface-overlay min-h-[72px] flex flex-col justify-center gap-1">
         <div className="flex items-center gap-2 flex-wrap">
@@ -385,6 +405,7 @@ export function LruCacheVisual() {
                       isLru={i === entries.length - 1}
                       isHighlight={e.key === highlightKey && displayResult?.kind !== "miss"}
                       isEvicted={e.key === evictedKey}
+                      reduceMotion={reduceMotion}
                     />
                     {i < entries.length - 1 && <Arrow />}
                   </React.Fragment>
@@ -411,7 +432,7 @@ export function LruCacheVisual() {
               ref={keyRef}
               type="text"
               value={keyInput}
-              onChange={(e) => setKeyInput(e.target.value)}
+              onChange={(e) => { setKeyInput(e.target.value); if (inputError) setInputError(""); }}
               onKeyDown={handleKeyDown}
               placeholder="e.g. A"
               maxLength={8}
@@ -474,6 +495,12 @@ export function LruCacheVisual() {
             </button>
           </div>
         </div>
+
+        {inputError && (
+          <p className="text-xs text-red-600 dark:text-red-400" role="alert">
+            {inputError}
+          </p>
+        )}
 
         {/* Example navigation */}
         <div className="flex items-center gap-2 border-t border-wire pt-3">

@@ -32,7 +32,7 @@ export const sections: Section[] = [
       },
       {
         type: "p",
-        text: "The critical constraint: both `get` and `put` must run in **O(1)** time. A naive scan to find the oldest item is O(n) and collapses at scale.",
+        text: "The critical constraint: both `get` and `put` must run in **O(1) average** time. A naive scan to find the oldest item is O(n) and collapses at scale.",
       },
     ],
   },
@@ -65,7 +65,7 @@ export const sections: Section[] = [
       },
       {
         type: "p",
-        text: "The hash map supplies that direct pointer: `map[key]` is the node itself, not just the value. The combination makes every operation O(1).",
+        text: "The hash map supplies that direct pointer: `map[key]` is the node itself, not just the value. The combination makes every operation O(1) average.",
       },
       {
         type: "heading",
@@ -149,6 +149,21 @@ export const sections: Section[] = [
           "**A cache hit changes the eviction candidate** — after `get(A)`, the next eviction targets the new LRU, not A.",
           "**Empty cache or missing key** — `get` returns −1; `put` adds normally.",
           "**Invalid capacity (≤ 0)** — this implementation throws in the constructor.",
+        ],
+      },
+      {
+        type: "heading",
+        level: 3,
+        text: "Common implementation bugs",
+      },
+      {
+        type: "list",
+        items: [
+          "**Forgetting to delete the evicted key from the map** — the list evicts the tail node, but if you omit `map.delete(lru.key)`, the stale map entry remains. Subsequent gets return the evicted value instead of −1.",
+          "**Duplicate node on update** — calling `put` on an existing key and creating a new node instead of updating in-place leaves a ghost node in the list and breaks the map invariant.",
+          "**Wrong eviction timing** — checking `map.size > capacity` before inserting the new node evicts prematurely. Always check after insertion.",
+          "**Skipping MRU promotion on `put`** — updating an existing key's value without moving its node to the MRU end violates the recency invariant. A recently-updated key may be evicted next.",
+          "**Null-pointer crashes without sentinels** — using real nodes as list head/tail requires special-case branches for empty-list and single-node operations in every helper.",
         ],
       },
     ],
@@ -456,9 +471,9 @@ export const sections: Section[] = [
           "put() on an existing key updates the value AND promotes the node to MRU.",
       },
       {
-        Property: "O(1) via hash map",
+        Property: "O(1) avg via hash map",
         "What it means":
-          "map[key] gives a direct pointer to the list node — no scanning needed for lookup.",
+          "map[key] gives a direct pointer to the list node — no scanning needed for lookup. Average-case constant time due to hash function.",
       },
       {
         Property: "O(1) via doubly linked list",

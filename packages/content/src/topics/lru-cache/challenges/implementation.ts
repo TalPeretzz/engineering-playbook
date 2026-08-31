@@ -16,19 +16,45 @@ The starter code uses plain JavaScript — no TypeScript types are required. The
   starterCode: {
     typescript: `class LRUCache {
   constructor(capacity) {
-    // TODO: initialize your data structures
-    // Hint: you need a hash map and a doubly linked list
+    this.capacity = capacity;
+    this.map = new Map();                                             // key → node
+    this.head = { key: null, value: null, prev: null, next: null };  // dummy MRU sentinel
+    this.tail = { key: null, value: null, prev: null, next: null };  // dummy LRU sentinel
+    this.head.next = this.tail;
+    this.tail.prev = this.head;
   }
 
   get(key) {
-    // TODO: return the value if present, otherwise -1
-    // Mark the key as most recently used
+    // TODO: look up key in this.map
+    // If absent, return -1
+    // Otherwise: call _moveToHead(node) then return node.value
     return -1;
   }
 
   put(key, value) {
-    // TODO: insert or update the key
-    // If at capacity after inserting, evict the least recently used key
+    // TODO: if key exists → update node.value, call _moveToHead(node), return
+    // Create node = { key, value, prev: null, next: null }
+    // Add to this.map and call _addToHead(node)
+    // If this.map.size > this.capacity → call _removeTail(), delete its key from map
+  }
+
+  _addToHead(node) {
+    // TODO: wire node between this.head and this.head.next
+    // node.prev = this.head; node.next = this.head.next
+    // this.head.next.prev = node; this.head.next = node
+  }
+
+  _removeNode(node) {
+    // TODO: unlink node from its neighbors
+    // node.prev.next = node.next; node.next.prev = node.prev
+  }
+
+  _moveToHead(node) {
+    // TODO: call _removeNode(node) then _addToHead(node)
+  }
+
+  _removeTail() {
+    // TODO: const lru = this.tail.prev; _removeNode(lru); return lru
   }
 }`,
     python: `class LRUCache:
@@ -68,6 +94,7 @@ The starter code uses plain JavaScript — no TypeScript types are required. The
   solution: {
     typescript: `class LRUCache {
   constructor(capacity) {
+    if (capacity <= 0) throw new RangeError("Capacity must be positive");
     this.capacity = capacity;
     this.map = new Map();
     this.head = { prev: null, next: null }; // dummy MRU sentinel

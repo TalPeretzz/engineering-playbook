@@ -39,12 +39,21 @@ export const lruCacheTests: TestCase[] = [
     },
   },
   {
-    name: "Updating an existing key changes its value and recency",
+    name: "put() on an existing key updates its value",
+    run: (LRUCache) => {
+      const cache = new LRUCache(2);
+      cache.put(1, 1);
+      cache.put(1, 100); // overwrite key 1
+      return cache.get(1) === 100;
+    },
+  },
+  {
+    name: "put() on an existing key promotes it to MRU",
     run: (LRUCache) => {
       const cache = new LRUCache(2);
       cache.put(1, 1);
       cache.put(2, 2);
-      cache.put(1, 100); // update key 1 → new value, becomes MRU
+      cache.put(1, 100); // update key 1 → becomes MRU; key 2 becomes LRU
       cache.put(3, 3);   // evicts key 2 (LRU)
       return cache.get(1) === 100 && cache.get(2) === -1 && cache.get(3) === 3;
     },
@@ -86,6 +95,16 @@ export const lruCacheTests: TestCase[] = [
         if (cache.get(i) !== -1) hits++;
       }
       return hits <= 3;
+    },
+  },
+  {
+    name: "Constructor rejects capacity ≤ 0",
+    run: (LRUCache) => {
+      let threw0 = false;
+      let threwNeg = false;
+      try { new LRUCache(0); } catch (e) { threw0 = true; }
+      try { new LRUCache(-1); } catch (e) { threwNeg = true; }
+      return threw0 && threwNeg;
     },
   },
 ];
