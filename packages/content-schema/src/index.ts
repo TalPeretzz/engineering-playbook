@@ -113,13 +113,22 @@ export type ComparisonSection = {
   collapsible?: boolean;
 };
 
+export type LruVisualSection = {
+  type: "lru-visual";
+  id: string;
+  heading: string;
+  phase?: string;
+  collapsible?: boolean;
+};
+
 export type Section =
   | TextSection
   | VisualSection
   | ComplexitySection
   | TradeoffsSection
   | UseCasesSection
-  | ComparisonSection;
+  | ComparisonSection
+  | LruVisualSection;
 
 // ---------------------------------------------------------------------------
 // Challenges — discriminated union

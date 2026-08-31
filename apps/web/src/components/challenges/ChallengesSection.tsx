@@ -9,9 +9,13 @@ import { ImplementationChallenge } from "./ImplementationChallenge";
 import { SystemDesignChallenge } from "./SystemDesignChallenge";
 import type { TestCase } from "@/utils/testRunner";
 import { bloomFilterTests } from "@/utils/bloomFilterTests";
+import { lruCacheTests } from "@/utils/lruCacheTests";
 
-const IMPLEMENTATION_TESTS: Record<string, TestCase[]> = {
-  "bloom-filter-implementation": bloomFilterTests,
+type TestSuite = { tests: TestCase[]; className: string };
+
+const IMPLEMENTATION_TESTS: Record<string, TestSuite> = {
+  "bloom-filter-implementation": { tests: bloomFilterTests, className: "BloomFilter" },
+  "lru-cache-implementation": { tests: lruCacheTests, className: "LRUCache" },
 };
 
 type ChallengesSectionProps = {
@@ -98,13 +102,15 @@ export function ChallengesSection({
             );
           }
           if (challenge.type === "implementation") {
+            const suite = IMPLEMENTATION_TESTS[challenge.id];
             return (
               <ImplementationChallenge
                 key={challenge.id}
                 challenge={challenge}
                 isCompleted={isCompleted}
                 onComplete={onComplete}
-                testCases={IMPLEMENTATION_TESTS[challenge.id]}
+                testCases={suite?.tests}
+                testClassName={suite?.className}
               />
             );
           }

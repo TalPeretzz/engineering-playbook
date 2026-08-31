@@ -13,6 +13,7 @@ type Props = {
   isCompleted: boolean;
   onComplete: () => void;
   testCases?: TestCase[];
+  testClassName?: string;
 };
 
 const LANG_LABELS = { typescript: "TypeScript", python: "Python", java: "Java" } as const;
@@ -23,7 +24,7 @@ const ERROR_KIND_LABEL: Record<string, string> = {
   runtime: "Runtime error",
 };
 
-export function ImplementationChallenge({ challenge, isCompleted, onComplete, testCases }: Props) {
+export function ImplementationChallenge({ challenge, isCompleted, onComplete, testCases, testClassName }: Props) {
   const { language } = useLanguage();
 
   const [drafts, setDrafts] = useState(() => buildDraftRecord(challenge.starterCode));
@@ -53,7 +54,7 @@ export function ImplementationChallenge({ challenge, isCompleted, onComplete, te
     setIsRunning(true);
     setTestResults(null);
     setTimeout(() => {
-      const results = runTests(userCode, testCases);
+      const results = runTests(userCode, testCases, testClassName);
       setTestResults(results);
       setIsRunning(false);
       const allPassed = results.every((r) => r.passed);

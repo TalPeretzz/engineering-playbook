@@ -5,6 +5,7 @@ import { TradeoffList } from "./TradeoffList";
 import { SectionHeading } from "./SectionHeading";
 import { StepVisual } from "./StepVisual";
 import { CollapsibleSection } from "./CollapsibleSection";
+import { LruCacheVisual } from "./LruCacheVisual";
 
 type Props = {
   section: Section;
@@ -77,6 +78,9 @@ function renderInner(section: Section, onFirstInteraction?: () => void) {
           </div>
         </div>
       );
+
+    case "lru-visual":
+      return <LruCacheVisual />;
 
     case "comparison":
       return (
