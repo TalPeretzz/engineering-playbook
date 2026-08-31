@@ -5,6 +5,7 @@ import { TradeoffList } from "./TradeoffList";
 import { SectionHeading } from "./SectionHeading";
 import { StepVisual } from "./StepVisual";
 import { CollapsibleSection } from "./CollapsibleSection";
+import { LruCacheVisual } from "./LruCacheVisual";
 
 type Props = {
   section: Section;
@@ -78,6 +79,9 @@ function renderInner(section: Section, onFirstInteraction?: () => void) {
         </div>
       );
 
+    case "lru-visual":
+      return <LruCacheVisual />;
+
     case "comparison":
       return (
         <div className="overflow-x-auto">
@@ -142,6 +146,29 @@ function RichTextRenderer({ body }: { body: RichParagraph[] }) {
               >
                 {node.code}
               </pre>
+            );
+          case "sources":
+            return (
+              <ul
+                key={i}
+                aria-label="Sources"
+                className="mt-1 mb-2 space-y-1 border-l-2 border-wire pl-3"
+              >
+                {node.items.map((src, j) => (
+                  <li key={j} className="text-xs text-ink-faint leading-relaxed">
+                    <a
+                      href={src.url}
+                      target="_blank"
+                      rel="noopener noreferrer"
+                      className="text-brand-text underline underline-offset-2 hover:text-ink focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-brand rounded transition-colors"
+                    >
+                      {src.name}
+                    </a>
+                    <span className="text-ink-faint"> · verified {src.verified}</span>
+                    {src.note && <span className="text-ink-faint"> · {src.note}</span>}
+                  </li>
+                ))}
+              </ul>
             );
           case "p":
           default:
