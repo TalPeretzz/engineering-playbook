@@ -62,8 +62,6 @@ engineering-playbook/
 │   ├── content-schema/          # TypeScript types: Topic, Challenge, etc.
 │   ├── shared-types/            # UserProgress, TopicProgress, TopicStatus
 │   └── ui/                      # Shared components: Badge, ProgressRing
-│
-└── content/                     # (Reserved for future MDX content files)
 ```
 
 ---
