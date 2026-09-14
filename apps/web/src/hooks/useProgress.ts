@@ -17,6 +17,10 @@ export function useTopicProgress(slug: string) {
 
   useEffect(() => {
     refresh();
+    // Same-tab writes (this component's own or another's) don't touch localStorage's
+    // `storage` event — subscribe so e.g. completing a challenge elsewhere on the page
+    // updates this topic's progress without a navigation/remount.
+    return store.subscribeToProgress(refresh);
   }, [refresh]);
 
   const completeChallenge = useCallback(
@@ -45,7 +49,9 @@ export function usePreferredLanguage() {
   const [language, setLanguageState] = useState<ProgrammingLanguage>("typescript");
 
   useEffect(() => {
-    setLanguageState(store.getPreferredLanguage());
+    const refresh = () => setLanguageState(store.getPreferredLanguage());
+    refresh();
+    return store.subscribeToProgress(refresh);
   }, []);
 
   const setLanguage = useCallback((lang: ProgrammingLanguage) => {
@@ -61,10 +67,15 @@ export function useOverallProgress(totalTopics: number) {
   const [stats, setStats] = useState({ completed: 0, total: totalTopics, percent: 0 });
 
   useEffect(() => {
-    setStats(store.getOverallProgress(totalTopics));
-    const handler = () => setStats(store.getOverallProgress(totalTopics));
-    window.addEventListener("storage", handler);
-    return () => window.removeEventListener("storage", handler);
+    const refresh = () => setStats(store.getOverallProgress(totalTopics));
+    refresh();
+    // storage event: cross-tab. subscribeToProgress: same-tab.
+    window.addEventListener("storage", refresh);
+    const unsubscribe = store.subscribeToProgress(refresh);
+    return () => {
+      window.removeEventListener("storage", refresh);
+      unsubscribe();
+    };
   }, [totalTopics]);
 
   return stats;

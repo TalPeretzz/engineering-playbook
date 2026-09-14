@@ -10,13 +10,15 @@ import {
   learningPaths,
   derivedTopicOrder,
   topicsById,
-  nextAvailableTopicId,
 } from "@engineering-playbook/content";
 import {
   getProgress,
   getOverallProgress,
   getCategoryProgress,
   getPathProgress,
+  getRecommendedNextTopicId,
+  subscribeToProgress,
+  EMPTY_PATH_PROGRESS,
   type GroupProgress,
   type PathProgress,
 } from "@/store/progressStore";
@@ -35,34 +37,35 @@ const FEATURED_FLAGSHIPS: TopicDefinition[] = derivedTopicOrder
 
 const FEATURED_PATHS = learningPaths.slice(0, 3);
 
-const EMPTY_PATH_PROGRESS: PathProgress = { completed: 0, available: 0, percent: 0, nextRecommendedId: null };
 const EMPTY_CATEGORY_PROGRESS: GroupProgress = { completed: 0, available: 0, percent: 0 };
 
 export function Dashboard() {
   const [lastVisited, setLastVisited] = useState<string | null>(null);
+  const [recommendedNextId, setRecommendedNextId] = useState<string | null>(null);
   const [stats, setStats] = useState({ completed: 0, total: allTopics.length, percent: 0 });
   const [categoryProgress, setCategoryProgress] = useState<Record<string, GroupProgress>>({});
   const [pathProgress, setPathProgress] = useState<Record<string, PathProgress>>({});
 
   useEffect(() => {
-    const progress = getProgress();
-    setLastVisited(progress.lastVisitedTopic);
-    setStats(getOverallProgress(allTopics.length));
+    function refresh() {
+      const progress = getProgress();
+      setLastVisited(progress.lastVisitedTopic);
+      setRecommendedNextId(getRecommendedNextTopicId(progress.lastVisitedTopic));
+      setStats(getOverallProgress(allTopics.length));
 
-    const catProgress: Record<string, GroupProgress> = {};
-    for (const category of categories) catProgress[category.id] = getCategoryProgress(category.id);
-    setCategoryProgress(catProgress);
+      const catProgress: Record<string, GroupProgress> = {};
+      for (const category of categories) catProgress[category.id] = getCategoryProgress(category.id);
+      setCategoryProgress(catProgress);
 
-    const pProgress: Record<string, PathProgress> = {};
-    for (const path of FEATURED_PATHS) pProgress[path.id] = getPathProgress(path.id);
-    setPathProgress(pProgress);
+      const pProgress: Record<string, PathProgress> = {};
+      for (const path of FEATURED_PATHS) pProgress[path.id] = getPathProgress(path.id);
+      setPathProgress(pProgress);
+    }
+    refresh();
+    return subscribeToProgress(refresh);
   }, []);
 
   const lastVisitedTopic = lastVisited ? allTopics.find((t) => t.slug === lastVisited) : null;
-
-  const recommendedNextId = lastVisited
-    ? nextAvailableTopicId(lastVisited)
-    : (derivedTopicOrder.map((id) => topicsById[id]).find((t) => t?.availability === "available")?.id ?? null);
   const recommendedNext = recommendedNextId ? topicsById[recommendedNextId] : null;
 
   return (

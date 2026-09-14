@@ -19,7 +19,10 @@ export const bloomFilter: TopicDefinition = {
   availability: "available",
   difficulty: metadata.difficulty,
   estimatedMinutes: metadata.estimatedMinutes,
-  prerequisites: metadata.prerequisites,
+  // metadata.prerequisites is ["hashing"], but "hashing" has never been a real topic in
+  // this catalog — TopicPage already silently drops unresolvable ids, so this was a no-op.
+  // Dropped here (rather than editing metadata.ts, kept verbatim) to keep the catalog honest.
+  prerequisites: [],
   relatedTopics: [],
   learningPaths: [],
   lesson: {

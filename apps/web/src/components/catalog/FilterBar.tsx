@@ -1,20 +1,5 @@
-import type { CategoryDefinition, TopicAvailability, TopicDepth, TopicDifficulty } from "@engineering-playbook/content-schema";
-
-export type CatalogFilterState = {
-  search: string;
-  categoryId: string | null;
-  difficulty: TopicDifficulty | null;
-  availability: TopicAvailability | null;
-  depth: TopicDepth | null;
-};
-
-export const DEFAULT_FILTER_STATE: CatalogFilterState = {
-  search: "",
-  categoryId: null,
-  difficulty: null,
-  availability: null,
-  depth: null,
-};
+import type { CategoryDefinition, TopicDepth, TopicDifficulty } from "@engineering-playbook/content-schema";
+import { DEFAULT_FILTER_STATE, type CatalogFilterState } from "@/utils/catalogFilters";
 
 const DIFFICULTIES: TopicDifficulty[] = ["beginner", "intermediate", "advanced"];
 const DEPTHS: TopicDepth[] = ["flagship", "standard", "reference"];
