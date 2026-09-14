@@ -4,6 +4,8 @@ An interactive learning platform for software engineering concepts, patterns, sy
 
 The product combines technical documentation, structured learning paths, progress tracking, hands-on challenges, and lightweight coding practice — all in a developer-focused interface.
 
+**Architecture docs:** [`docs/architecture/catalog-refactor-plan.md`](docs/architecture/catalog-refactor-plan.md) (the data-driven catalog architecture) and [`docs/architecture/content-production.md`](docs/architecture/content-production.md) (how to add or promote a topic). The sections below on Project Structure and MVP Topics predate that refactor and describe the original 5-topic layout — the architecture docs are current.
+
 ---
 
 ## Product Vision
