@@ -1,18 +1,30 @@
 import type { ProgrammingLanguage } from "@engineering-playbook/content-schema";
-import type { UserProgress, TopicProgress, TopicStatus } from "@engineering-playbook/shared-types";
+import type { TopicProgress, TopicStatus, UserProgress } from "@engineering-playbook/shared-types";
+import { allTopicDefinitions } from "@engineering-playbook/content";
+import { migrateProgress, DEFAULT_PROGRESS_V2 } from "@/utils/progressMigration";
 
 const STORAGE_KEY = "engineering-playbook:progress";
 
-export const DEFAULT_PROGRESS: UserProgress = {
-  topics: {},
-  preferredLanguage: "typescript",
-  lastVisitedTopic: null,
-};
+const SLUG_TO_ID: Record<string, string> = Object.fromEntries(
+  allTopicDefinitions.map((definition) => [definition.slug, definition.id])
+);
 
-// ---------------------------------------------------------------------------
-// Testable factory — creates a store bound to a given Storage implementation.
-// The app uses createProgressStore(localStorage); tests use an in-memory map.
-// ---------------------------------------------------------------------------
+/** Topic ids equal slugs for every topic today; this indirection is what lets a future slug rename keep old progress. */
+function resolveId(slug: string): string {
+  return SLUG_TO_ID[slug] ?? slug;
+}
+
+/**
+ * Shape `getProgress()` returns, for consumers (Dashboard.tsx) still reading
+ * `.topics`/`.lastVisitedTopic` directly instead of going through the
+ * slug-based accessor functions below. Remove once Dashboard is rewritten
+ * (docs/architecture/catalog-refactor-plan.md §10, step 10).
+ */
+type LegacyUserProgress = {
+  topics: Record<string, TopicProgress>;
+  preferredLanguage: ProgrammingLanguage;
+  lastVisitedTopic: string | null;
+};
 
 export type ProgressStore = ReturnType<typeof createProgressStore>;
 
@@ -20,10 +32,10 @@ export function createProgressStore(storage: Storage) {
   function load(): UserProgress {
     try {
       const raw = storage.getItem(STORAGE_KEY);
-      if (!raw) return { ...DEFAULT_PROGRESS, topics: {} };
-      return { ...DEFAULT_PROGRESS, ...JSON.parse(raw) };
+      if (!raw) return { ...DEFAULT_PROGRESS_V2, topicsById: {} };
+      return migrateProgress(JSON.parse(raw));
     } catch {
-      return { ...DEFAULT_PROGRESS, topics: {} };
+      return { ...DEFAULT_PROGRESS_V2, topicsById: {} };
     }
   }
 
@@ -32,19 +44,32 @@ export function createProgressStore(storage: Storage) {
   }
 
   return {
-    getProgress(): UserProgress {
-      return load();
+    getProgress(): LegacyUserProgress {
+      const progress = load();
+      const idToSlug = Object.fromEntries(Object.entries(SLUG_TO_ID).map(([slug, id]) => [id, slug]));
+      const topics: Record<string, TopicProgress> = {};
+      for (const [id, topicProgress] of Object.entries(progress.topicsById)) {
+        topics[idToSlug[id] ?? id] = topicProgress;
+      }
+      return {
+        topics,
+        preferredLanguage: progress.preferredLanguage,
+        lastVisitedTopic: progress.lastVisitedTopicId
+          ? (idToSlug[progress.lastVisitedTopicId] ?? progress.lastVisitedTopicId)
+          : null,
+      };
     },
 
     getTopicProgress(slug: string): TopicProgress {
       const progress = load();
-      return progress.topics[slug] ?? { status: "not-started", completedChallenges: [] };
+      return progress.topicsById[resolveId(slug)] ?? { status: "not-started", completedChallenges: [] };
     },
 
     setTopicStatus(slug: string, status: TopicStatus): void {
       const progress = load();
-      const existing = progress.topics[slug] ?? { status: "not-started", completedChallenges: [] };
-      progress.topics[slug] = { ...existing, status };
+      const id = resolveId(slug);
+      const existing = progress.topicsById[id] ?? { status: "not-started", completedChallenges: [] };
+      progress.topicsById[id] = { ...existing, status };
       save(progress);
     },
 
@@ -61,14 +86,15 @@ export function createProgressStore(storage: Storage) {
 
     completeChallenge(topicSlug: string, challengeId: string): void {
       const progress = load();
-      const existing = progress.topics[topicSlug] ?? { status: "not-started", completedChallenges: [] };
+      const id = resolveId(topicSlug);
+      const existing = progress.topicsById[id] ?? { status: "not-started", completedChallenges: [] };
       if (!existing.completedChallenges.includes(challengeId)) {
         existing.completedChallenges = [...existing.completedChallenges, challengeId];
       }
       if (existing.status === "not-started") {
         existing.status = "in-progress";
       }
-      progress.topics[topicSlug] = existing;
+      progress.topicsById[id] = existing;
       save(progress);
     },
 
@@ -84,23 +110,26 @@ export function createProgressStore(storage: Storage) {
 
     setLastVisitedTopic(slug: string): void {
       const progress = load();
-      progress.lastVisitedTopic = slug;
+      progress.lastVisitedTopicId = resolveId(slug);
       save(progress);
     },
 
     getLastVisitedTopic(): string | null {
-      return load().lastVisitedTopic;
+      const progress = load();
+      if (!progress.lastVisitedTopicId) return null;
+      const idToSlug = Object.fromEntries(Object.entries(SLUG_TO_ID).map(([slug, id]) => [id, slug]));
+      return idToSlug[progress.lastVisitedTopicId] ?? progress.lastVisitedTopicId;
     },
 
     getOverallProgress(totalTopics: number): { completed: number; total: number; percent: number } {
       const progress = load();
-      const completed = Object.values(progress.topics).filter((t) => t.status === "completed").length;
+      const completed = Object.values(progress.topicsById).filter((t) => t.status === "completed").length;
       const percent = totalTopics === 0 ? 0 : Math.round((completed / totalTopics) * 100);
       return { completed, total: totalTopics, percent };
     },
 
     resetProgress(): void {
-      save({ ...DEFAULT_PROGRESS, topics: {} });
+      save({ ...DEFAULT_PROGRESS_V2, topicsById: {} });
     },
   };
 }

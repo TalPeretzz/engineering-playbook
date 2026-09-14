@@ -13,7 +13,7 @@ import { SectionHeading } from "./SectionHeading";
 import { TopicSectionRenderer } from "./TopicSectionRenderer";
 import { allRequiredCompleted } from "@/utils/challengeCompletion";
 import Link from "next/link";
-import { allTopics } from "@engineering-playbook/content";
+import { allTopics, topicsById, nextAvailableTopicId, prevAvailableTopicId } from "@engineering-playbook/content";
 
 type TopicPageProps = {
   topic: Topic;
@@ -62,12 +62,11 @@ export function TopicPage({ topic }: TopicPageProps) {
     [markInProgress, completeChallenge, completeTopic, progress, topic.challenges]
   );
 
-  const currentIndex = allTopics.findIndex((t) => t.slug === topic.slug);
-  const prevTopic = currentIndex > 0 ? allTopics[currentIndex - 1] : null;
-  const nextTopicSlug = topic.nextTopics[0];
-  const nextTopic =
-    (nextTopicSlug ? allTopics.find((t) => t.slug === nextTopicSlug) : null) ??
-    (currentIndex < allTopics.length - 1 ? allTopics[currentIndex + 1] : null);
+  // Topic ids equal slugs for every topic today, so `topic.slug` doubles as its catalog id here.
+  const prevTopicId = prevAvailableTopicId(topic.slug);
+  const nextTopicId = nextAvailableTopicId(topic.slug);
+  const prevTopic = prevTopicId ? topicsById[prevTopicId] : null;
+  const nextTopic = nextTopicId ? topicsById[nextTopicId] : null;
 
   const prereqTopics = topic.prerequisites
     .map((slug) => allTopics.find((t) => t.slug === slug))
