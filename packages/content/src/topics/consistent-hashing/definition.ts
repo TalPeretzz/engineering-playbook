@@ -12,7 +12,9 @@ export const consistentHashing: TopicDefinition = {
   availability: "available",
   difficulty: legacy.difficulty,
   estimatedMinutes: legacy.estimatedMinutes,
-  prerequisites: legacy.prerequisites,
+  // legacy.prerequisites is ["hashing"] — never a real topic in this catalog, silently
+  // dropped by TopicPage already. Dropped here rather than editing lesson-content.ts verbatim.
+  prerequisites: [],
   relatedTopics: [],
   learningPaths: [],
   lesson: {
