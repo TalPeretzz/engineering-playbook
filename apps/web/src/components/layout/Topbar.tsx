@@ -41,12 +41,14 @@ export function Topbar({ totalTopics, onSidebarToggle }: TopbarProps) {
         </span>
       </Link>
 
-      <Link
-        href="/topics"
-        className="hidden sm:inline text-sm text-ink-muted hover:text-ink transition-colors"
-      >
-        Browse all
-      </Link>
+      <nav className="hidden sm:flex items-center gap-4">
+        <Link href="/topics" className="text-sm text-ink-muted hover:text-ink transition-colors">
+          Browse all
+        </Link>
+        <Link href="/learn" className="text-sm text-ink-muted hover:text-ink transition-colors">
+          Learning paths
+        </Link>
+      </nav>
 
       <div className="flex-1" />
 

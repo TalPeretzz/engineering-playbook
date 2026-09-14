@@ -1,3 +1,4 @@
+import { Suspense } from "react";
 import type { Metadata } from "next";
 import { CatalogPage } from "@/components/catalog/CatalogPage";
 
@@ -7,5 +8,9 @@ export const metadata: Metadata = {
 };
 
 export default function TopicsIndexRoute() {
-  return <CatalogPage />;
+  return (
+    <Suspense>
+      <CatalogPage />
+    </Suspense>
+  );
 }

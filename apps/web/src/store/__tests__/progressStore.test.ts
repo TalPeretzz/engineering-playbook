@@ -178,6 +178,50 @@ describe("resetProgress", () => {
   });
 });
 
+describe("getCategoryProgress", () => {
+  // "caching" category has 9 topics in the catalog; only lru-cache is available today.
+  it("counts only available topics against the denominator", () => {
+    const p = store.getCategoryProgress("caching");
+    expect(p.available).toBe(1);
+    expect(p.completed).toBe(0);
+    expect(p.percent).toBe(0);
+  });
+
+  it("reflects completion of the available topic", () => {
+    store.completeTopic("lru-cache");
+    const p = store.getCategoryProgress("caching");
+    expect(p.completed).toBe(1);
+    expect(p.percent).toBe(100);
+  });
+
+  it("returns zeroes for an unknown category id", () => {
+    const p = store.getCategoryProgress("not-a-real-category");
+    expect(p).toEqual({ completed: 0, available: 0, percent: 0 });
+  });
+});
+
+describe("getPathProgress", () => {
+  // "caching" learning path has 9 topics; only lru-cache is available today.
+  it("recommends the first not-completed available topic", () => {
+    const p = store.getPathProgress("caching");
+    expect(p.available).toBe(1);
+    expect(p.nextRecommendedId).toBe("lru-cache");
+  });
+
+  it("clears the recommendation once the only available topic is completed", () => {
+    store.completeTopic("lru-cache");
+    const p = store.getPathProgress("caching");
+    expect(p.completed).toBe(1);
+    expect(p.percent).toBe(100);
+    expect(p.nextRecommendedId).toBeNull();
+  });
+
+  it("returns zeroes and a null recommendation for an unknown path id", () => {
+    const p = store.getPathProgress("not-a-real-path");
+    expect(p).toEqual({ completed: 0, available: 0, percent: 0, nextRecommendedId: null });
+  });
+});
+
 describe("persistence", () => {
   it("persists state across load() calls on the same store", () => {
     store.completeTopic("bloom-filter");

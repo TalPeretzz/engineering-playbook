@@ -1,6 +1,6 @@
 import type { ProgrammingLanguage } from "@engineering-playbook/content-schema";
 import type { TopicProgress, TopicStatus, UserProgress } from "@engineering-playbook/shared-types";
-import { allTopicDefinitions } from "@engineering-playbook/content";
+import { allTopicDefinitions, curriculum, learningPaths, topicsById as definitionsById } from "@engineering-playbook/content";
 import { migrateProgress, DEFAULT_PROGRESS_V2 } from "@/utils/progressMigration";
 
 const STORAGE_KEY = "engineering-playbook:progress";
@@ -8,6 +8,9 @@ const STORAGE_KEY = "engineering-playbook:progress";
 const SLUG_TO_ID: Record<string, string> = Object.fromEntries(
   allTopicDefinitions.map((definition) => [definition.slug, definition.id])
 );
+
+export type GroupProgress = { completed: number; available: number; percent: number };
+export type PathProgress = GroupProgress & { nextRecommendedId: string | null };
 
 /** Topic ids equal slugs for every topic today; this indirection is what lets a future slug rename keep old progress. */
 function resolveId(slug: string): string {
@@ -128,6 +131,31 @@ export function createProgressStore(storage: Storage) {
       return { completed, total: totalTopics, percent };
     },
 
+    /** Progress within one category, counting only `available` topics against the denominator. */
+    getCategoryProgress(categoryId: string): GroupProgress {
+      const progress = load();
+      const available = (curriculum.topicsInCategory[categoryId] ?? [])
+        .map((id) => definitionsById[id])
+        .filter((t) => t?.availability === "available");
+      const completed = available.filter((t) => progress.topicsById[t.id]?.status === "completed").length;
+      const percent = available.length === 0 ? 0 : Math.round((completed / available.length) * 100);
+      return { completed, available: available.length, percent };
+    },
+
+    /** Progress within one learning path, plus the first not-completed available topic in path order. */
+    getPathProgress(pathId: string): PathProgress {
+      const path = learningPaths.find((p) => p.id === pathId);
+      if (!path) return { completed: 0, available: 0, percent: 0, nextRecommendedId: null };
+
+      const progress = load();
+      const available = path.topicIds.map((id) => definitionsById[id]).filter((t) => t?.availability === "available");
+      const completed = available.filter((t) => progress.topicsById[t.id]?.status === "completed").length;
+      const percent = available.length === 0 ? 0 : Math.round((completed / available.length) * 100);
+      const nextRecommendedId =
+        available.find((t) => (progress.topicsById[t.id]?.status ?? "not-started") !== "completed")?.id ?? null;
+      return { completed, available: available.length, percent, nextRecommendedId };
+    },
+
     getCollapsedCategories(): string[] {
       return load().collapsedCategories;
     },
@@ -178,6 +206,8 @@ export const getPreferredLanguage = _store.getPreferredLanguage.bind(_store);
 export const setLastVisitedTopic = _store.setLastVisitedTopic.bind(_store);
 export const getLastVisitedTopic = _store.getLastVisitedTopic.bind(_store);
 export const getOverallProgress = _store.getOverallProgress.bind(_store);
+export const getCategoryProgress = _store.getCategoryProgress.bind(_store);
+export const getPathProgress = _store.getPathProgress.bind(_store);
 export const getCollapsedCategories = _store.getCollapsedCategories.bind(_store);
 export const setCollapsedCategories = _store.setCollapsedCategories.bind(_store);
 export const resetProgress = _store.resetProgress.bind(_store);
