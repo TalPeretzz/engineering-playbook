@@ -41,6 +41,13 @@ export function Topbar({ totalTopics, onSidebarToggle }: TopbarProps) {
         </span>
       </Link>
 
+      <Link
+        href="/topics"
+        className="hidden sm:inline text-sm text-ink-muted hover:text-ink transition-colors"
+      >
+        Browse all
+      </Link>
+
       <div className="flex-1" />
 
       <div className="flex items-center gap-3">
