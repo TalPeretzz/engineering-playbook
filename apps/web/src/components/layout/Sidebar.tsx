@@ -6,7 +6,7 @@ import { usePathname } from "next/navigation";
 import type { TopicDefinition } from "@engineering-playbook/content-schema";
 import type { TopicStatus } from "@engineering-playbook/shared-types";
 import { allTopicDefinitions, categories, curriculum } from "@engineering-playbook/content";
-import { getTopicProgress, getCollapsedCategories, setCollapsedCategories } from "@/store/progressStore";
+import { getTopicProgress, getCollapsedCategories, setCollapsedCategories, subscribeToProgress } from "@/store/progressStore";
 
 const DEFINITIONS_BY_ID: Record<string, TopicDefinition> = Object.fromEntries(
   allTopicDefinitions.map((d) => [d.id, d])
@@ -77,13 +77,17 @@ export function Sidebar({ isOpen, onClose }: SidebarProps) {
   }, []);
 
   useEffect(() => {
-    const next: Record<string, TopicStatus> = {};
-    for (const topic of allTopicDefinitions) {
-      if (topic.availability === "available") {
-        next[topic.slug] = getTopicProgress(topic.slug).status;
+    function refreshStatuses() {
+      const next: Record<string, TopicStatus> = {};
+      for (const topic of allTopicDefinitions) {
+        if (topic.availability === "available") {
+          next[topic.slug] = getTopicProgress(topic.slug).status;
+        }
       }
+      setStatuses(next);
     }
-    setStatuses(next);
+    refreshStatuses();
+    return subscribeToProgress(refreshStatuses);
   }, [pathname]);
 
   // Close sidebar when navigating on mobile

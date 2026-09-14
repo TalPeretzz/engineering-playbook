@@ -1,16 +1,28 @@
 import type { ProgrammingLanguage } from "@engineering-playbook/content-schema";
 import type { TopicProgress, TopicStatus, UserProgress } from "@engineering-playbook/shared-types";
-import { allTopicDefinitions, curriculum, learningPaths, topicsById as definitionsById } from "@engineering-playbook/content";
-import { migrateProgress, DEFAULT_PROGRESS_V2 } from "@/utils/progressMigration";
+import {
+  allTopicDefinitions,
+  curriculum,
+  learningPaths,
+  derivedTopicOrder,
+  topicsById as definitionsById,
+} from "@engineering-playbook/content";
+import { migrateProgress, createDefaultProgress } from "@/utils/progressMigration";
 
 const STORAGE_KEY = "engineering-playbook:progress";
 
 const SLUG_TO_ID: Record<string, string> = Object.fromEntries(
   allTopicDefinitions.map((definition) => [definition.slug, definition.id])
 );
+const ID_TO_SLUG: Record<string, string> = Object.fromEntries(
+  Object.entries(SLUG_TO_ID).map(([slug, id]) => [id, slug])
+);
 
 export type GroupProgress = { completed: number; available: number; percent: number };
 export type PathProgress = GroupProgress & { nextRecommendedId: string | null };
+
+/** Shared "no data yet" value — one instance, so every consumer's default is reference-equal. */
+export const EMPTY_PATH_PROGRESS: PathProgress = { completed: 0, available: 0, percent: 0, nextRecommendedId: null };
 
 /** Topic ids equal slugs for every topic today; this indirection is what lets a future slug rename keep old progress. */
 function resolveId(slug: string): string {
@@ -18,10 +30,11 @@ function resolveId(slug: string): string {
 }
 
 /**
- * Shape `getProgress()` returns, for consumers (Dashboard.tsx) still reading
+ * Shape `getProgress()` returns, for consumers (Dashboard.tsx) that read
  * `.topics`/`.lastVisitedTopic` directly instead of going through the
- * slug-based accessor functions below. Remove once Dashboard is rewritten
- * (docs/architecture/catalog-refactor-plan.md §10, step 10).
+ * slug-based accessor functions below — Dashboard still does this even
+ * after its catalog-architecture rewrite. Collapse into the id-keyed
+ * `UserProgress` shape if/when that call site is refactored.
  */
 type LegacyUserProgress = {
   topics: Record<string, TopicProgress>;
@@ -29,36 +42,57 @@ type LegacyUserProgress = {
   lastVisitedTopic: string | null;
 };
 
+// ---------------------------------------------------------------------------
+// Same-tab reactivity. `window`'s `storage` event only fires in *other* tabs,
+// so components that read progress once (on mount / pathname change) go
+// stale after a write in the same tab (e.g. completing a challenge doesn't
+// live-update the sidebar or dashboard until navigation). Every mutating
+// method below notifies this store's listeners after a successful save.
+// ---------------------------------------------------------------------------
+
+const listeners = new Set<() => void>();
+
+/** Subscribe to same-tab progress changes. Returns an unsubscribe function. */
+export function subscribeToProgress(listener: () => void): () => void {
+  listeners.add(listener);
+  return () => listeners.delete(listener);
+}
+
+function notifyListeners(): void {
+  for (const listener of listeners) listener();
+}
+
 export type ProgressStore = ReturnType<typeof createProgressStore>;
 
-export function createProgressStore(storage: Storage) {
+/** `onChange`, when provided, fires after every successful `save()` — used to wire same-tab reactivity for the app singleton. Test stores omit it. */
+export function createProgressStore(storage: Storage, onChange?: () => void) {
   function load(): UserProgress {
     try {
       const raw = storage.getItem(STORAGE_KEY);
-      if (!raw) return { ...DEFAULT_PROGRESS_V2, topicsById: {} };
+      if (!raw) return createDefaultProgress();
       return migrateProgress(JSON.parse(raw));
     } catch {
-      return { ...DEFAULT_PROGRESS_V2, topicsById: {} };
+      return createDefaultProgress();
     }
   }
 
   function save(progress: UserProgress): void {
     storage.setItem(STORAGE_KEY, JSON.stringify(progress));
+    onChange?.();
   }
 
   return {
     getProgress(): LegacyUserProgress {
       const progress = load();
-      const idToSlug = Object.fromEntries(Object.entries(SLUG_TO_ID).map(([slug, id]) => [id, slug]));
       const topics: Record<string, TopicProgress> = {};
       for (const [id, topicProgress] of Object.entries(progress.topicsById)) {
-        topics[idToSlug[id] ?? id] = topicProgress;
+        topics[ID_TO_SLUG[id] ?? id] = topicProgress;
       }
       return {
         topics,
         preferredLanguage: progress.preferredLanguage,
         lastVisitedTopic: progress.lastVisitedTopicId
-          ? (idToSlug[progress.lastVisitedTopicId] ?? progress.lastVisitedTopicId)
+          ? (ID_TO_SLUG[progress.lastVisitedTopicId] ?? progress.lastVisitedTopicId)
           : null,
       };
     },
@@ -120,8 +154,7 @@ export function createProgressStore(storage: Storage) {
     getLastVisitedTopic(): string | null {
       const progress = load();
       if (!progress.lastVisitedTopicId) return null;
-      const idToSlug = Object.fromEntries(Object.entries(SLUG_TO_ID).map(([slug, id]) => [id, slug]));
-      return idToSlug[progress.lastVisitedTopicId] ?? progress.lastVisitedTopicId;
+      return ID_TO_SLUG[progress.lastVisitedTopicId] ?? progress.lastVisitedTopicId;
     },
 
     getOverallProgress(totalTopics: number): { completed: number; total: number; percent: number } {
@@ -145,7 +178,7 @@ export function createProgressStore(storage: Storage) {
     /** Progress within one learning path, plus the first not-completed available topic in path order. */
     getPathProgress(pathId: string): PathProgress {
       const path = learningPaths.find((p) => p.id === pathId);
-      if (!path) return { completed: 0, available: 0, percent: 0, nextRecommendedId: null };
+      if (!path) return EMPTY_PATH_PROGRESS;
 
       const progress = load();
       const available = path.topicIds.map((id) => definitionsById[id]).filter((t) => t?.availability === "available");
@@ -154,6 +187,28 @@ export function createProgressStore(storage: Storage) {
       const nextRecommendedId =
         available.find((t) => (progress.topicsById[t.id]?.status ?? "not-started") !== "completed")?.id ?? null;
       return { completed, available: available.length, percent, nextRecommendedId };
+    },
+
+    /**
+     * First `available`, not-completed topic in curriculum order after `afterId`
+     * (or from the very start when `afterId` is null). Skips coming-soon and
+     * already-completed topics — unlike `nextAvailableTopicId`, which only skips
+     * coming-soon ones and can re-recommend something the user already finished.
+     */
+    getRecommendedNextTopicId(afterId: string | null): string | null {
+      const progress = load();
+      let startIndex = -1;
+      if (afterId !== null) {
+        startIndex = derivedTopicOrder.indexOf(afterId);
+        if (startIndex === -1) return null; // afterId isn't a real topic — mirrors nextAvailableFrom's behavior
+      }
+      for (let j = startIndex + 1; j < derivedTopicOrder.length; j++) {
+        const candidate = definitionsById[derivedTopicOrder[j]];
+        if (!candidate || candidate.availability !== "available") continue;
+        const status = progress.topicsById[candidate.id]?.status ?? "not-started";
+        if (status !== "completed") return candidate.id;
+      }
+      return null;
     },
 
     getCollapsedCategories(): string[] {
@@ -167,7 +222,7 @@ export function createProgressStore(storage: Storage) {
     },
 
     resetProgress(): void {
-      save({ ...DEFAULT_PROGRESS_V2, topicsById: {} });
+      save(createDefaultProgress());
     },
   };
 }
@@ -193,7 +248,7 @@ function getSafeStorage(): Storage {
   };
 }
 
-const _store = createProgressStore(getSafeStorage());
+const _store = createProgressStore(getSafeStorage(), notifyListeners);
 
 export const getProgress = _store.getProgress.bind(_store);
 export const getTopicProgress = _store.getTopicProgress.bind(_store);
@@ -208,6 +263,7 @@ export const getLastVisitedTopic = _store.getLastVisitedTopic.bind(_store);
 export const getOverallProgress = _store.getOverallProgress.bind(_store);
 export const getCategoryProgress = _store.getCategoryProgress.bind(_store);
 export const getPathProgress = _store.getPathProgress.bind(_store);
+export const getRecommendedNextTopicId = _store.getRecommendedNextTopicId.bind(_store);
 export const getCollapsedCategories = _store.getCollapsedCategories.bind(_store);
 export const setCollapsedCategories = _store.setCollapsedCategories.bind(_store);
 export const resetProgress = _store.resetProgress.bind(_store);

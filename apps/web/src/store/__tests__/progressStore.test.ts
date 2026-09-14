@@ -3,7 +3,7 @@
  * Each test gets a fresh in-memory Storage instance — no mocking required.
  */
 import { describe, it, expect, beforeEach } from "vitest";
-import { createProgressStore } from "../progressStore";
+import { createProgressStore, subscribeToProgress, setPreferredLanguage } from "../progressStore";
 
 function makeStorage(): Storage {
   const mem = new Map<string, string>();
@@ -219,6 +219,82 @@ describe("getPathProgress", () => {
   it("returns zeroes and a null recommendation for an unknown path id", () => {
     const p = store.getPathProgress("not-a-real-path");
     expect(p).toEqual({ completed: 0, available: 0, percent: 0, nextRecommendedId: null });
+  });
+});
+
+describe("getRecommendedNextTopicId", () => {
+  it("recommends the first available topic in curriculum order when nothing was visited yet", () => {
+    expect(store.getRecommendedNextTopicId(null)).toBe("bloom-filter");
+  });
+
+  it("recommends the next available topic in curriculum order after the given one", () => {
+    expect(store.getRecommendedNextTopicId("bloom-filter")).toBe("lru-cache");
+  });
+
+  it("skips a completed topic instead of re-recommending it", () => {
+    store.completeTopic("lru-cache");
+    // Next after bloom-filter is lru-cache, but it's done — should skip to consistent-hashing.
+    expect(store.getRecommendedNextTopicId("bloom-filter")).toBe("consistent-hashing");
+  });
+
+  it("skips a completed topic even when starting from the very beginning", () => {
+    store.completeTopic("bloom-filter");
+    expect(store.getRecommendedNextTopicId(null)).toBe("lru-cache");
+  });
+
+  it("returns null once every available topic from that point on is completed", () => {
+    expect(store.getRecommendedNextTopicId("rate-limiter")).toBeNull();
+  });
+
+  it("returns null for an id that isn't in curriculum order at all", () => {
+    expect(store.getRecommendedNextTopicId("not-a-real-topic")).toBeNull();
+  });
+});
+
+describe("onChange callback (same-tab reactivity plumbing)", () => {
+  it("fires after every mutating operation", () => {
+    let calls = 0;
+    const s = createProgressStore(makeStorage(), () => { calls++; });
+    s.completeTopic("bloom-filter");
+    expect(calls).toBe(1);
+    s.setPreferredLanguage("python");
+    expect(calls).toBe(2);
+    s.setCollapsedCategories(["caching"]);
+    expect(calls).toBe(3);
+  });
+
+  it("does not fire for read-only operations", () => {
+    let calls = 0;
+    const s = createProgressStore(makeStorage(), () => { calls++; });
+    s.getTopicProgress("bloom-filter");
+    s.getProgress();
+    s.getOverallProgress(5);
+    s.getCategoryProgress("caching");
+    s.getPathProgress("caching");
+    s.getRecommendedNextTopicId(null);
+    expect(calls).toBe(0);
+  });
+
+  it("is optional — omitting it doesn't throw", () => {
+    const s = createProgressStore(makeStorage());
+    expect(() => s.completeTopic("bloom-filter")).not.toThrow();
+  });
+});
+
+describe("subscribeToProgress", () => {
+  it("notifies subscribers when the app-singleton store changes, and unsubscribe stops further notifications", () => {
+    let calls = 0;
+    const unsubscribe = subscribeToProgress(() => { calls++; });
+    try {
+      setPreferredLanguage("python");
+      expect(calls).toBe(1);
+      unsubscribe();
+      setPreferredLanguage("java");
+      expect(calls).toBe(1);
+    } finally {
+      unsubscribe();
+      setPreferredLanguage("typescript"); // restore default — this store is a shared singleton
+    }
   });
 });
 

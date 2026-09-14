@@ -2,18 +2,20 @@
 
 import { useEffect, useState } from "react";
 import { learningPaths } from "@engineering-playbook/content";
-import { getPathProgress, type PathProgress } from "@/store/progressStore";
+import { getPathProgress, subscribeToProgress, EMPTY_PATH_PROGRESS, type PathProgress } from "@/store/progressStore";
 import { LearningPathCard } from "./LearningPathCard";
-
-const EMPTY_PROGRESS: PathProgress = { completed: 0, available: 0, percent: 0, nextRecommendedId: null };
 
 export function LearningPathsIndex() {
   const [progressByPath, setProgressByPath] = useState<Record<string, PathProgress>>({});
 
   useEffect(() => {
-    const next: Record<string, PathProgress> = {};
-    for (const path of learningPaths) next[path.id] = getPathProgress(path.id);
-    setProgressByPath(next);
+    function refresh() {
+      const next: Record<string, PathProgress> = {};
+      for (const path of learningPaths) next[path.id] = getPathProgress(path.id);
+      setProgressByPath(next);
+    }
+    refresh();
+    return subscribeToProgress(refresh);
   }, []);
 
   return (
@@ -25,7 +27,7 @@ export function LearningPathsIndex() {
 
       <div className="grid sm:grid-cols-2 lg:grid-cols-3 gap-3">
         {learningPaths.map((path) => (
-          <LearningPathCard key={path.id} path={path} progress={progressByPath[path.id] ?? EMPTY_PROGRESS} />
+          <LearningPathCard key={path.id} path={path} progress={progressByPath[path.id] ?? EMPTY_PATH_PROGRESS} />
         ))}
       </div>
     </div>

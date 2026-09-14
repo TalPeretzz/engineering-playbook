@@ -5,7 +5,13 @@ import Link from "next/link";
 import type { LearningPath, TopicDefinition } from "@engineering-playbook/content-schema";
 import type { TopicStatus } from "@engineering-playbook/shared-types";
 import { topicsById as definitionsById } from "@engineering-playbook/content";
-import { getTopicProgress, getPathProgress, type PathProgress } from "@/store/progressStore";
+import {
+  getTopicProgress,
+  getPathProgress,
+  subscribeToProgress,
+  EMPTY_PATH_PROGRESS,
+  type PathProgress,
+} from "@/store/progressStore";
 
 function StatusDot({ status }: { status: TopicStatus }) {
   if (status === "completed") return <span className="text-emerald-600 dark:text-emerald-400 text-sm font-bold" aria-label="Completed">✓</span>;
@@ -15,15 +21,19 @@ function StatusDot({ status }: { status: TopicStatus }) {
 
 export function LearningPathPage({ path, topics }: { path: LearningPath; topics: TopicDefinition[] }) {
   const [statuses, setStatuses] = useState<Record<string, TopicStatus>>({});
-  const [progress, setProgress] = useState<PathProgress>({ completed: 0, available: 0, percent: 0, nextRecommendedId: null });
+  const [progress, setProgress] = useState<PathProgress>(EMPTY_PATH_PROGRESS);
 
   useEffect(() => {
-    const next: Record<string, TopicStatus> = {};
-    for (const topic of topics) {
-      if (topic.availability === "available") next[topic.id] = getTopicProgress(topic.slug).status;
+    function refresh() {
+      const next: Record<string, TopicStatus> = {};
+      for (const topic of topics) {
+        if (topic.availability === "available") next[topic.id] = getTopicProgress(topic.slug).status;
+      }
+      setStatuses(next);
+      setProgress(getPathProgress(path.id));
     }
-    setStatuses(next);
-    setProgress(getPathProgress(path.id));
+    refresh();
+    return subscribeToProgress(refresh);
   }, [path.id, topics]);
 
   const topicIdSet = new Set(path.topicIds);
