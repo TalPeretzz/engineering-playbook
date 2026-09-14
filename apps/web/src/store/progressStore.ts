@@ -128,6 +128,16 @@ export function createProgressStore(storage: Storage) {
       return { completed, total: totalTopics, percent };
     },
 
+    getCollapsedCategories(): string[] {
+      return load().collapsedCategories;
+    },
+
+    setCollapsedCategories(categoryIds: string[]): void {
+      const progress = load();
+      progress.collapsedCategories = categoryIds;
+      save(progress);
+    },
+
     resetProgress(): void {
       save({ ...DEFAULT_PROGRESS_V2, topicsById: {} });
     },
@@ -168,4 +178,6 @@ export const getPreferredLanguage = _store.getPreferredLanguage.bind(_store);
 export const setLastVisitedTopic = _store.setLastVisitedTopic.bind(_store);
 export const getLastVisitedTopic = _store.getLastVisitedTopic.bind(_store);
 export const getOverallProgress = _store.getOverallProgress.bind(_store);
+export const getCollapsedCategories = _store.getCollapsedCategories.bind(_store);
+export const setCollapsedCategories = _store.setCollapsedCategories.bind(_store);
 export const resetProgress = _store.resetProgress.bind(_store);

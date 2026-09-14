@@ -26,7 +26,7 @@ export function AppShell({ children }: { children: React.ReactNode }) {
             />
           )}
 
-          <Sidebar topics={allTopics} isOpen={sidebarOpen} onClose={closeSidebar} />
+          <Sidebar isOpen={sidebarOpen} onClose={closeSidebar} />
 
           <main className="flex-1 overflow-y-auto bg-surface">
             <div className="max-w-5xl mx-auto px-6 py-8">{children}</div>

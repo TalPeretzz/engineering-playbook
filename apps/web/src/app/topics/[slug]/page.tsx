@@ -1,6 +1,7 @@
 import { notFound } from "next/navigation";
-import { topicsBySlug } from "@engineering-playbook/content";
+import { topicsBySlug, definitionsBySlug } from "@engineering-playbook/content";
 import { TopicPage } from "@/components/topic/TopicPage";
+import { TopicPageComingSoon } from "@/components/topic/TopicPageComingSoon";
 import type { Metadata } from "next";
 
 type Props = {
@@ -8,20 +9,27 @@ type Props = {
 };
 
 export async function generateStaticParams() {
-  const { allTopics } = await import("@engineering-playbook/content");
-  return allTopics.map((topic) => ({ slug: topic.slug }));
+  const { allTopicDefinitions } = await import("@engineering-playbook/content");
+  return allTopicDefinitions.map((definition) => ({ slug: definition.slug }));
 }
 
 export async function generateMetadata({ params }: Props): Promise<Metadata> {
-  const topic = topicsBySlug[params.slug];
-  if (!topic) return {};
+  const definition = definitionsBySlug[params.slug];
+  if (!definition) return {};
   return {
-    title: `${topic.title} — Engineering Playbook`,
-    description: topic.description,
+    title: `${definition.title} — Engineering Playbook`,
+    description: definition.summary,
   };
 }
 
 export default function TopicRoute({ params }: Props) {
+  const definition = definitionsBySlug[params.slug];
+  if (!definition) notFound();
+
+  if (definition.availability === "coming-soon") {
+    return <TopicPageComingSoon topic={definition} />;
+  }
+
   const topic = topicsBySlug[params.slug];
   if (!topic) notFound();
   return <TopicPage topic={topic} />;
