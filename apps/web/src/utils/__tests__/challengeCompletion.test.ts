@@ -38,9 +38,9 @@ describe("allRequiredCompleted", () => {
   });
 
   it("extra completed ids (e.g. optional) do not affect the result", () => {
-    expect(
-      allRequiredCompleted(CHALLENGES, ["ch-conceptual", "ch-impl", "ch-sysdesign"])
-    ).toBe(true);
+    expect(allRequiredCompleted(CHALLENGES, ["ch-conceptual", "ch-impl", "ch-sysdesign"])).toBe(
+      true
+    );
   });
 
   it("returns false when there are no required challenges", () => {

@@ -19,14 +19,21 @@ export function ComplexityTable({ entries }: ComplexityTableProps) {
         </thead>
         <tbody>
           {entries.map((entry, i) => (
-            <tr key={i} className="border-b border-wire/50 hover:bg-surface-overlay transition-colors">
+            <tr
+              key={i}
+              className="border-b border-wire/50 hover:bg-surface-overlay transition-colors"
+            >
               <td className="py-2.5 pr-4 text-ink font-mono text-xs">{entry.operation}</td>
               <td className="py-2.5 pr-4">
-                <span className="text-emerald-700 dark:text-emerald-400 font-mono text-xs font-medium">{entry.time}</span>
+                <span className="text-emerald-700 dark:text-emerald-400 font-mono text-xs font-medium">
+                  {entry.time}
+                </span>
               </td>
               <td className="py-2.5 pr-4">
                 {entry.space && (
-                  <span className="text-sky-700 dark:text-sky-400 font-mono text-xs font-medium">{entry.space}</span>
+                  <span className="text-sky-700 dark:text-sky-400 font-mono text-xs font-medium">
+                    {entry.space}
+                  </span>
                 )}
               </td>
               <td className="py-2.5 text-ink-muted text-xs">{entry.note ?? ""}</td>

@@ -6,20 +6,44 @@ import { usePathname } from "next/navigation";
 import type { TopicDefinition } from "@engineering-playbook/content-schema";
 import type { TopicStatus } from "@engineering-playbook/shared-types";
 import { allTopicDefinitions, categories, curriculum } from "@engineering-playbook/content";
-import { getTopicProgress, getCollapsedCategories, setCollapsedCategories, subscribeToProgress } from "@/store/progressStore";
+import {
+  getTopicProgress,
+  getCollapsedCategories,
+  setCollapsedCategories,
+  subscribeToProgress,
+} from "@/store/progressStore";
 
 const DEFINITIONS_BY_ID: Record<string, TopicDefinition> = Object.fromEntries(
   allTopicDefinitions.map((d) => [d.id, d])
 );
 
-const CATEGORY_TITLES: Record<string, string> = Object.fromEntries(categories.map((c) => [c.id, c.title]));
+const CATEGORY_TITLES: Record<string, string> = Object.fromEntries(
+  categories.map((c) => [c.id, c.title])
+);
 
 const CATEGORY_IDS = curriculum.categoriesInArea["backend-systems"] ?? [];
 
 function StatusIcon({ status }: { status: TopicStatus }) {
-  if (status === "completed") return <span className="text-emerald-600 dark:text-emerald-400 text-xs font-bold" aria-label="Completed">✓</span>;
-  if (status === "in-progress") return <span className="text-amber-600 dark:text-amber-400 text-xs" aria-label="In progress">◐</span>;
-  return <span className="text-ink-muted text-xs" aria-label="Not started">○</span>;
+  if (status === "completed")
+    return (
+      <span
+        className="text-emerald-600 dark:text-emerald-400 text-xs font-bold"
+        aria-label="Completed"
+      >
+        ✓
+      </span>
+    );
+  if (status === "in-progress")
+    return (
+      <span className="text-amber-600 dark:text-amber-400 text-xs" aria-label="In progress">
+        ◐
+      </span>
+    );
+  return (
+    <span className="text-ink-muted text-xs" aria-label="Not started">
+      ○
+    </span>
+  );
 }
 
 function matchesSearch(topic: TopicDefinition, categoryTitle: string, query: string): boolean {
@@ -140,7 +164,8 @@ export function Sidebar({ isOpen, onClose }: SidebarProps) {
 
       <nav className="flex-1 overflow-y-auto py-3 space-y-1 px-2">
         {filteredGroups.map((group) => {
-          const isCollapsed = hydrated && !searching && collapsed.has(group.id) && group.id !== activeCategoryId;
+          const isCollapsed =
+            hydrated && !searching && collapsed.has(group.id) && group.id !== activeCategoryId;
           const panelId = `sidebar-group-${group.id}`;
           return (
             <div key={group.id}>
@@ -154,7 +179,8 @@ export function Sidebar({ isOpen, onClose }: SidebarProps) {
                 <span className="truncate">{group.title}</span>
                 <span className="flex items-center gap-1.5 shrink-0">
                   <span className="text-ink-faint normal-case tracking-normal font-normal">
-                    {group.topics.filter((t) => t.availability === "available").length}/{group.topics.length}
+                    {group.topics.filter((t) => t.availability === "available").length}/
+                    {group.topics.length}
                   </span>
                   <svg
                     xmlns="http://www.w3.org/2000/svg"

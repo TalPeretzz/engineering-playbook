@@ -14,12 +14,35 @@ import {
 } from "@/store/progressStore";
 
 function StatusDot({ status }: { status: TopicStatus }) {
-  if (status === "completed") return <span className="text-emerald-600 dark:text-emerald-400 text-sm font-bold" aria-label="Completed">✓</span>;
-  if (status === "in-progress") return <span className="text-amber-600 dark:text-amber-400 text-sm" aria-label="In progress">◐</span>;
-  return <span className="text-ink-faint text-sm" aria-label="Not started">○</span>;
+  if (status === "completed")
+    return (
+      <span
+        className="text-emerald-600 dark:text-emerald-400 text-sm font-bold"
+        aria-label="Completed"
+      >
+        ✓
+      </span>
+    );
+  if (status === "in-progress")
+    return (
+      <span className="text-amber-600 dark:text-amber-400 text-sm" aria-label="In progress">
+        ◐
+      </span>
+    );
+  return (
+    <span className="text-ink-faint text-sm" aria-label="Not started">
+      ○
+    </span>
+  );
 }
 
-export function LearningPathPage({ path, topics }: { path: LearningPath; topics: TopicDefinition[] }) {
+export function LearningPathPage({
+  path,
+  topics,
+}: {
+  path: LearningPath;
+  topics: TopicDefinition[];
+}) {
   const [statuses, setStatuses] = useState<Record<string, TopicStatus>>({});
   const [progress, setProgress] = useState<PathProgress>(EMPTY_PATH_PROGRESS);
 
@@ -27,7 +50,8 @@ export function LearningPathPage({ path, topics }: { path: LearningPath; topics:
     function refresh() {
       const next: Record<string, TopicStatus> = {};
       for (const topic of topics) {
-        if (topic.availability === "available") next[topic.id] = getTopicProgress(topic.slug).status;
+        if (topic.availability === "available")
+          next[topic.id] = getTopicProgress(topic.slug).status;
       }
       setStatuses(next);
       setProgress(getPathProgress(path.id));
@@ -89,13 +113,19 @@ export function LearningPathPage({ path, topics }: { path: LearningPath; topics:
               >
                 <span className="text-ink-faint text-xs tabular-nums w-5 shrink-0">{i + 1}.</span>
                 {isComingSoon ? (
-                  <span className="text-ink-faint text-xs" aria-hidden="true">·</span>
+                  <span className="text-ink-faint text-xs" aria-hidden="true">
+                    ·
+                  </span>
                 ) : (
                   <StatusDot status={status} />
                 )}
-                <span className={`flex-1 text-sm ${isComingSoon ? "text-ink-faint" : "text-ink"}`}>{topic.title}</span>
+                <span className={`flex-1 text-sm ${isComingSoon ? "text-ink-faint" : "text-ink"}`}>
+                  {topic.title}
+                </span>
                 {isRecommended && (
-                  <span className="text-[10px] text-brand-text font-medium uppercase tracking-wide">Up next</span>
+                  <span className="text-[10px] text-brand-text font-medium uppercase tracking-wide">
+                    Up next
+                  </span>
                 )}
                 {isComingSoon && (
                   <span className="text-[10px] text-ink-faint bg-surface-overlay border border-wire rounded px-1.5 py-0.5">

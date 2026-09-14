@@ -6,9 +6,7 @@ export default defineConfig({
   plugins: [react()],
   test: {
     globals: true,
-    environmentMatchGlobs: [
-      ["src/store/**", "node"],
-    ],
+    environmentMatchGlobs: [["src/store/**", "node"]],
     environment: "jsdom",
   },
   resolve: {

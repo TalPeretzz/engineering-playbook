@@ -65,9 +65,7 @@ function simulateLRU(
 
 // ─── Example sequence ─────────────────────────────────────────────────────────
 
-type ExampleOp =
-  | { type: "put"; key: string; value: string }
-  | { type: "get"; key: string };
+type ExampleOp = { type: "put"; key: string; value: string } | { type: "get"; key: string };
 
 const EXAMPLE_CAPACITY = 3;
 
@@ -96,8 +94,7 @@ function buildSnapshots(ops: ExampleOp[], capacity: number): Snapshot[] {
     const { next, result } = simulateLRU(current, capacity, op);
     current = next;
 
-    const opLabel =
-      op.type === "put" ? `put("${op.key}", ${op.value})` : `get("${op.key}")`;
+    const opLabel = op.type === "put" ? `put("${op.key}", ${op.value})` : `get("${op.key}")`;
     let description = "";
 
     switch (result.kind) {
@@ -130,15 +127,32 @@ const SNAPSHOTS = buildSnapshots(EXAMPLE_OPS, EXAMPLE_CAPACITY);
 
 function ResultBadge({ result }: { result: OpResult }) {
   const config = {
-    hit: { label: "HIT", cls: "bg-emerald-100 dark:bg-emerald-900/40 text-emerald-700 dark:text-emerald-300 border-emerald-300 dark:border-emerald-700/50" },
-    miss: { label: "MISS", cls: "bg-red-100 dark:bg-red-900/40 text-red-700 dark:text-red-300 border-red-300 dark:border-red-700/50" },
-    insert: { label: "INSERTED", cls: "bg-sky-100 dark:bg-sky-900/40 text-sky-700 dark:text-sky-300 border-sky-300 dark:border-sky-700/50" },
-    update: { label: "UPDATED", cls: "bg-amber-100 dark:bg-amber-900/40 text-amber-700 dark:text-amber-300 border-amber-300 dark:border-amber-700/50" },
-    evict: { label: "EVICTED", cls: "bg-orange-100 dark:bg-orange-900/40 text-orange-700 dark:text-orange-300 border-orange-300 dark:border-orange-700/50" },
+    hit: {
+      label: "HIT",
+      cls: "bg-emerald-100 dark:bg-emerald-900/40 text-emerald-700 dark:text-emerald-300 border-emerald-300 dark:border-emerald-700/50",
+    },
+    miss: {
+      label: "MISS",
+      cls: "bg-red-100 dark:bg-red-900/40 text-red-700 dark:text-red-300 border-red-300 dark:border-red-700/50",
+    },
+    insert: {
+      label: "INSERTED",
+      cls: "bg-sky-100 dark:bg-sky-900/40 text-sky-700 dark:text-sky-300 border-sky-300 dark:border-sky-700/50",
+    },
+    update: {
+      label: "UPDATED",
+      cls: "bg-amber-100 dark:bg-amber-900/40 text-amber-700 dark:text-amber-300 border-amber-300 dark:border-amber-700/50",
+    },
+    evict: {
+      label: "EVICTED",
+      cls: "bg-orange-100 dark:bg-orange-900/40 text-orange-700 dark:text-orange-300 border-orange-300 dark:border-orange-700/50",
+    },
   };
   const { label, cls } = config[result.kind];
   return (
-    <span className={`inline-block text-[10px] font-bold uppercase tracking-wider px-2 py-0.5 rounded border ${cls}`}>
+    <span
+      className={`inline-block text-[10px] font-bold uppercase tracking-wider px-2 py-0.5 rounded border ${cls}`}
+    >
       {label}
     </span>
   );
@@ -161,9 +175,7 @@ function LinkedListNode({
 }) {
   const anim = reduceMotion ? "" : "transition-all duration-300";
   return (
-    <div
-      className={`flex flex-col items-center ${anim} ${isEvicted ? "opacity-30" : ""}`}
-    >
+    <div className={`flex flex-col items-center ${anim} ${isEvicted ? "opacity-30" : ""}`}>
       {isMru && (
         <span className="text-[9px] font-bold text-emerald-600 dark:text-emerald-400 uppercase tracking-widest mb-1">
           MRU
@@ -180,14 +192,12 @@ function LinkedListNode({
           isHighlight
             ? "border-brand bg-emerald-50 dark:bg-emerald-950/40 text-ink scale-110 shadow-md"
             : isEvicted
-            ? "border-red-400 dark:border-red-600 bg-red-50 dark:bg-red-950/20 text-red-600 dark:text-red-400"
-            : "border-wire-strong bg-surface-raised text-ink"
+              ? "border-red-400 dark:border-red-600 bg-red-50 dark:bg-red-950/20 text-red-600 dark:text-red-400"
+              : "border-wire-strong bg-surface-raised text-ink"
         }`}
         aria-label={`Key ${entry.key}, value ${entry.value}${isMru ? " (most recently used)" : ""}${isLru ? " (least recently used)" : ""}`}
       >
-        <span className="text-[10px] text-ink-faint font-normal leading-none mb-0.5">
-          key
-        </span>
+        <span className="text-[10px] text-ink-faint font-normal leading-none mb-0.5">key</span>
         <span className="text-sm leading-none">{entry.key}</span>
         <span className="text-[10px] text-ink-faint font-normal leading-none mt-0.5">
           val={entry.value}
@@ -199,7 +209,10 @@ function LinkedListNode({
 
 function Arrow({ double = true }: { double?: boolean }) {
   return (
-    <div className="flex items-center self-center mt-6 text-ink-faint text-sm select-none" aria-hidden="true">
+    <div
+      className="flex items-center self-center mt-6 text-ink-faint text-sm select-none"
+      aria-hidden="true"
+    >
       {double ? "↔" : "→"}
     </div>
   );
@@ -248,7 +261,10 @@ export function LruCacheVisual() {
 
   const handleGet = useCallback(() => {
     const key = keyInput.trim();
-    if (!key) { setInputError("Key is required"); return; }
+    if (!key) {
+      setInputError("Key is required");
+      return;
+    }
     setInputError("");
     const { next, result } = simulateLRU(liveEntries, liveCapacity, { type: "get", key });
     setLiveEntries(next);
@@ -264,7 +280,10 @@ export function LruCacheVisual() {
   const handlePut = useCallback(() => {
     const key = keyInput.trim();
     const value = valueInput.trim() || "?";
-    if (!key) { setInputError("Key is required"); return; }
+    if (!key) {
+      setInputError("Key is required");
+      return;
+    }
     setInputError("");
     const { next, result } = simulateLRU(liveEntries, liveCapacity, {
       type: "put",
@@ -277,8 +296,8 @@ export function LruCacheVisual() {
       result.kind === "update"
         ? `"${key}" already cached. Value updated to ${value} and promoted to MRU.`
         : result.kind === "evict"
-        ? `Cache full. "${result.evictedKey}" (LRU) evicted. "${key}" inserted as MRU.`
-        : `"${key}" added with value ${value}. Cache: ${next.length}/${liveCapacity}.`
+          ? `Cache full. "${result.evictedKey}" (LRU) evicted. "${key}" inserted as MRU.`
+          : `"${key}" added with value ${value}. Cache: ${next.length}/${liveCapacity}.`
     );
     setMode("manual");
     setKeyInput("");
@@ -363,7 +382,9 @@ export function LruCacheVisual() {
             </span>
           )}
         </div>
-        <p className="text-xs text-ink-muted leading-relaxed">{displayMessage || "Step through the example or enter your own operations."}</p>
+        <p className="text-xs text-ink-muted leading-relaxed">
+          {displayMessage || "Step through the example or enter your own operations."}
+        </p>
       </div>
 
       {/* Visualization */}
@@ -376,9 +397,7 @@ export function LruCacheVisual() {
             </p>
             <div className="rounded-lg border border-wire overflow-hidden">
               {entries.length === 0 ? (
-                <div className="px-3 py-3 text-xs text-ink-faint text-center italic">
-                  empty
-                </div>
+                <div className="px-3 py-3 text-xs text-ink-faint text-center italic">empty</div>
               ) : (
                 <table className="w-full text-xs font-mono" aria-label="Hash map contents">
                   <thead>
@@ -396,14 +415,12 @@ export function LruCacheVisual() {
                           e.key === highlightKey
                             ? "bg-emerald-50 dark:bg-emerald-950/30"
                             : e.key === evictedKey
-                            ? "bg-red-50 dark:bg-red-950/20 opacity-50"
-                            : ""
+                              ? "bg-red-50 dark:bg-red-950/20 opacity-50"
+                              : ""
                         }`}
                       >
                         <td className="px-3 py-1.5 font-bold text-ink">{e.key}</td>
-                        <td className="px-3 py-1.5 text-ink-faint">
-                          node_{e.key}
-                        </td>
+                        <td className="px-3 py-1.5 text-ink-faint">node_{e.key}</td>
                         <td className="px-3 py-1.5 text-ink-muted">{e.value}</td>
                       </tr>
                     ))}
@@ -455,7 +472,10 @@ export function LruCacheVisual() {
         {/* Manual operations */}
         <div className="flex flex-wrap gap-2 items-end">
           <div className="flex flex-col gap-1">
-            <label htmlFor="lru-key" className="text-[10px] font-medium text-ink-muted uppercase tracking-wider">
+            <label
+              htmlFor="lru-key"
+              className="text-[10px] font-medium text-ink-muted uppercase tracking-wider"
+            >
               Key
             </label>
             <input
@@ -463,7 +483,10 @@ export function LruCacheVisual() {
               ref={keyRef}
               type="text"
               value={keyInput}
-              onChange={(e) => { setKeyInput(e.target.value); if (inputError) setInputError(""); }}
+              onChange={(e) => {
+                setKeyInput(e.target.value);
+                if (inputError) setInputError("");
+              }}
               onKeyDown={handleKeyDown}
               placeholder="e.g. A"
               maxLength={8}
@@ -472,7 +495,10 @@ export function LruCacheVisual() {
             />
           </div>
           <div className="flex flex-col gap-1">
-            <label htmlFor="lru-value" className="text-[10px] font-medium text-ink-muted uppercase tracking-wider">
+            <label
+              htmlFor="lru-value"
+              className="text-[10px] font-medium text-ink-muted uppercase tracking-wider"
+            >
               Value
             </label>
             <input
@@ -504,7 +530,10 @@ export function LruCacheVisual() {
 
           <div className="flex items-end gap-2 ml-auto">
             <div className="flex flex-col gap-1">
-              <label htmlFor="lru-cap" className="text-[10px] font-medium text-ink-muted uppercase tracking-wider">
+              <label
+                htmlFor="lru-cap"
+                className="text-[10px] font-medium text-ink-muted uppercase tracking-wider"
+              >
                 Capacity
               </label>
               <input
@@ -515,7 +544,10 @@ export function LruCacheVisual() {
                 max={8}
                 step={1}
                 value={capacityInput}
-                onChange={(e) => { setCapacityInput(e.target.value); if (capacityError) setCapacityError(""); }}
+                onChange={(e) => {
+                  setCapacityInput(e.target.value);
+                  if (capacityError) setCapacityError("");
+                }}
                 onBlur={commitCapacity}
                 onKeyDown={handleCapacityKeyDown}
                 aria-invalid={capacityError ? true : undefined}
@@ -556,7 +588,10 @@ export function LruCacheVisual() {
             Example
           </span>
           <button
-            onClick={() => { setStepIndex((s) => Math.max(0, s - 1)); setMode("example"); }}
+            onClick={() => {
+              setStepIndex((s) => Math.max(0, s - 1));
+              setMode("example");
+            }}
             disabled={stepIndex === 0}
             className="text-xs px-2.5 py-1 rounded border border-wire text-ink-muted hover:text-ink hover:border-wire-strong disabled:opacity-30 disabled:cursor-not-allowed transition-colors cursor-pointer focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-brand"
             aria-label="Previous example step"
@@ -567,7 +602,10 @@ export function LruCacheVisual() {
             {stepIndex + 1} / {SNAPSHOTS.length}
           </span>
           <button
-            onClick={() => { setStepIndex((s) => Math.min(SNAPSHOTS.length - 1, s + 1)); setMode("example"); }}
+            onClick={() => {
+              setStepIndex((s) => Math.min(SNAPSHOTS.length - 1, s + 1));
+              setMode("example");
+            }}
             disabled={stepIndex === SNAPSHOTS.length - 1}
             className="text-xs px-2.5 py-1 rounded border border-wire text-ink-muted hover:text-ink hover:border-wire-strong disabled:opacity-30 disabled:cursor-not-allowed transition-colors cursor-pointer focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-brand"
             aria-label="Next example step"
@@ -576,7 +614,10 @@ export function LruCacheVisual() {
           </button>
           {mode === "manual" && (
             <button
-              onClick={() => { setStepIndex(0); setMode("example"); }}
+              onClick={() => {
+                setStepIndex(0);
+                setMode("example");
+              }}
               className="text-xs px-2.5 py-1 rounded border border-wire text-ink-faint hover:text-ink-muted hover:border-wire-strong transition-colors cursor-pointer focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-brand ml-1"
             >
               Back to example

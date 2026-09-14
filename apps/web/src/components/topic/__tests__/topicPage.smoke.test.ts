@@ -7,7 +7,9 @@ import { TopicPageComingSoon } from "../TopicPageComingSoon";
 import { LanguageProvider } from "@/hooks/useLanguage";
 
 function renderTopicPage(topic: Parameters<typeof TopicPage>[0]["topic"]): string {
-  return renderToStaticMarkup(createElement(LanguageProvider, null, createElement(TopicPage, { topic })));
+  return renderToStaticMarkup(
+    createElement(LanguageProvider, null, createElement(TopicPage, { topic }))
+  );
 }
 
 describe("TopicPage smoke test", () => {

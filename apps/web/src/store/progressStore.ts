@@ -22,7 +22,12 @@ export type GroupProgress = { completed: number; available: number; percent: num
 export type PathProgress = GroupProgress & { nextRecommendedId: string | null };
 
 /** Shared "no data yet" value — one instance, so every consumer's default is reference-equal. */
-export const EMPTY_PATH_PROGRESS: PathProgress = { completed: 0, available: 0, percent: 0, nextRecommendedId: null };
+export const EMPTY_PATH_PROGRESS: PathProgress = {
+  completed: 0,
+  available: 0,
+  percent: 0,
+  nextRecommendedId: null,
+};
 
 /** Topic ids equal slugs for every topic today; this indirection is what lets a future slug rename keep old progress. */
 function resolveId(slug: string): string {
@@ -99,13 +104,18 @@ export function createProgressStore(storage: Storage, onChange?: () => void) {
 
     getTopicProgress(slug: string): TopicProgress {
       const progress = load();
-      return progress.topicsById[resolveId(slug)] ?? { status: "not-started", completedChallenges: [] };
+      return (
+        progress.topicsById[resolveId(slug)] ?? { status: "not-started", completedChallenges: [] }
+      );
     },
 
     setTopicStatus(slug: string, status: TopicStatus): void {
       const progress = load();
       const id = resolveId(slug);
-      const existing = progress.topicsById[id] ?? { status: "not-started", completedChallenges: [] };
+      const existing = progress.topicsById[id] ?? {
+        status: "not-started",
+        completedChallenges: [],
+      };
       progress.topicsById[id] = { ...existing, status };
       save(progress);
     },
@@ -124,7 +134,10 @@ export function createProgressStore(storage: Storage, onChange?: () => void) {
     completeChallenge(topicSlug: string, challengeId: string): void {
       const progress = load();
       const id = resolveId(topicSlug);
-      const existing = progress.topicsById[id] ?? { status: "not-started", completedChallenges: [] };
+      const existing = progress.topicsById[id] ?? {
+        status: "not-started",
+        completedChallenges: [],
+      };
       if (!existing.completedChallenges.includes(challengeId)) {
         existing.completedChallenges = [...existing.completedChallenges, challengeId];
       }
@@ -159,7 +172,9 @@ export function createProgressStore(storage: Storage, onChange?: () => void) {
 
     getOverallProgress(totalTopics: number): { completed: number; total: number; percent: number } {
       const progress = load();
-      const completed = Object.values(progress.topicsById).filter((t) => t.status === "completed").length;
+      const completed = Object.values(progress.topicsById).filter(
+        (t) => t.status === "completed"
+      ).length;
       const percent = totalTopics === 0 ? 0 : Math.round((completed / totalTopics) * 100);
       return { completed, total: totalTopics, percent };
     },
@@ -170,7 +185,9 @@ export function createProgressStore(storage: Storage, onChange?: () => void) {
       const available = (curriculum.topicsInCategory[categoryId] ?? [])
         .map((id) => definitionsById[id])
         .filter((t) => t?.availability === "available");
-      const completed = available.filter((t) => progress.topicsById[t.id]?.status === "completed").length;
+      const completed = available.filter(
+        (t) => progress.topicsById[t.id]?.status === "completed"
+      ).length;
       const percent = available.length === 0 ? 0 : Math.round((completed / available.length) * 100);
       return { completed, available: available.length, percent };
     },
@@ -181,11 +198,16 @@ export function createProgressStore(storage: Storage, onChange?: () => void) {
       if (!path) return EMPTY_PATH_PROGRESS;
 
       const progress = load();
-      const available = path.topicIds.map((id) => definitionsById[id]).filter((t) => t?.availability === "available");
-      const completed = available.filter((t) => progress.topicsById[t.id]?.status === "completed").length;
+      const available = path.topicIds
+        .map((id) => definitionsById[id])
+        .filter((t) => t?.availability === "available");
+      const completed = available.filter(
+        (t) => progress.topicsById[t.id]?.status === "completed"
+      ).length;
       const percent = available.length === 0 ? 0 : Math.round((completed / available.length) * 100);
       const nextRecommendedId =
-        available.find((t) => (progress.topicsById[t.id]?.status ?? "not-started") !== "completed")?.id ?? null;
+        available.find((t) => (progress.topicsById[t.id]?.status ?? "not-started") !== "completed")
+          ?.id ?? null;
       return { completed, available: available.length, percent, nextRecommendedId };
     },
 
@@ -240,10 +262,18 @@ function getSafeStorage(): Storage {
   const mem = new Map<string, string>();
   return {
     getItem: (k) => mem.get(k) ?? null,
-    setItem: (k, v) => { mem.set(k, v); },
-    removeItem: (k) => { mem.delete(k); },
-    clear: () => { mem.clear(); },
-    get length() { return mem.size; },
+    setItem: (k, v) => {
+      mem.set(k, v);
+    },
+    removeItem: (k) => {
+      mem.delete(k);
+    },
+    clear: () => {
+      mem.clear();
+    },
+    get length() {
+      return mem.size;
+    },
     key: (i) => [...mem.keys()][i] ?? null,
   };
 }

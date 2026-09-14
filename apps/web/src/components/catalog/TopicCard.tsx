@@ -4,9 +4,12 @@ import type { TopicStatus } from "@engineering-playbook/shared-types";
 import { ComingSoonBadge } from "./ComingSoonBadge";
 
 const DIFFICULTY_COLORS: Record<string, string> = {
-  beginner: "text-emerald-700 dark:text-emerald-400 bg-emerald-50 dark:bg-emerald-900/30 border-emerald-200 dark:border-emerald-800/50",
-  intermediate: "text-amber-700 dark:text-amber-400 bg-amber-50 dark:bg-amber-900/30 border-amber-200 dark:border-amber-800/50",
-  advanced: "text-red-700 dark:text-red-400 bg-red-50 dark:bg-red-900/30 border-red-200 dark:border-red-800/50",
+  beginner:
+    "text-emerald-700 dark:text-emerald-400 bg-emerald-50 dark:bg-emerald-900/30 border-emerald-200 dark:border-emerald-800/50",
+  intermediate:
+    "text-amber-700 dark:text-amber-400 bg-amber-50 dark:bg-amber-900/30 border-amber-200 dark:border-amber-800/50",
+  advanced:
+    "text-red-700 dark:text-red-400 bg-red-50 dark:bg-red-900/30 border-red-200 dark:border-red-800/50",
 };
 
 type TopicCardProps = {
@@ -30,7 +33,9 @@ export function TopicCard({ topic, categoryTitle, status }: TopicCardProps) {
       }`}
     >
       <div className="flex items-start justify-between gap-2">
-        <h3 className={`font-medium leading-snug ${isComingSoon ? "text-ink-muted" : "text-ink"}`}>{topic.title}</h3>
+        <h3 className={`font-medium leading-snug ${isComingSoon ? "text-ink-muted" : "text-ink"}`}>
+          {topic.title}
+        </h3>
         {isComingSoon ? (
           <ComingSoonBadge />
         ) : (
@@ -51,7 +56,9 @@ export function TopicCard({ topic, categoryTitle, status }: TopicCardProps) {
       <p className="text-sm text-ink-muted leading-relaxed line-clamp-2">{topic.summary}</p>
 
       <div className="flex flex-wrap items-center gap-x-3 gap-y-1 mt-auto pt-1 text-xs">
-        <span className={`px-1.5 py-0.5 rounded border font-medium ${DIFFICULTY_COLORS[topic.difficulty]}`}>
+        <span
+          className={`px-1.5 py-0.5 rounded border font-medium ${DIFFICULTY_COLORS[topic.difficulty]}`}
+        >
           {topic.difficulty}
         </span>
         <span className="text-ink-faint">~{topic.estimatedMinutes}m</span>

@@ -13,7 +13,12 @@ import { SectionHeading } from "./SectionHeading";
 import { TopicSectionRenderer } from "./TopicSectionRenderer";
 import { allRequiredCompleted } from "@/utils/challengeCompletion";
 import Link from "next/link";
-import { allTopics, topicsById, nextAvailableTopicId, prevAvailableTopicId } from "@engineering-playbook/content";
+import {
+  allTopics,
+  topicsById,
+  nextAvailableTopicId,
+  prevAvailableTopicId,
+} from "@engineering-playbook/content";
 
 type TopicPageProps = {
   topic: Topic;
@@ -38,8 +43,9 @@ function tocLabel(heading: string): string {
 }
 
 export function TopicPage({ topic }: TopicPageProps) {
-  const { progress, completeChallenge, completeTopic, markInProgress } =
-    useTopicProgress(topic.slug);
+  const { progress, completeChallenge, completeTopic, markInProgress } = useTopicProgress(
+    topic.slug
+  );
 
   useEffect(() => {
     setLastVisitedTopic(topic.slug);
@@ -92,7 +98,6 @@ export function TopicPage({ topic }: TopicPageProps) {
     <div className="xl:flex xl:gap-12">
       {/* Main content */}
       <article className="min-w-0 flex-1 pb-24">
-
         {/* Header cluster: header + prereqs + CTA grouped tightly */}
         <div className="space-y-4 pb-8 mb-8 border-b border-wire">
           <TopicHeader topic={topic} progress={progress} />

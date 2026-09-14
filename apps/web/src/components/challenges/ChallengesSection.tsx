@@ -44,7 +44,9 @@ export function ChallengesSection({
         <h2 className="text-xl font-semibold text-ink mb-1">Ready to apply it?</h2>
         <p className="text-sm text-ink-muted">
           {isTopicComplete ? (
-            <span className="text-emerald-700 dark:text-emerald-400 font-medium">All required challenges completed.</span>
+            <span className="text-emerald-700 dark:text-emerald-400 font-medium">
+              All required challenges completed.
+            </span>
           ) : (
             <>
               <span className="text-ink font-medium">{doneReq}</span>
@@ -64,10 +66,14 @@ export function ChallengesSection({
         <div className="rounded-lg border border-emerald-200 dark:border-emerald-800/40 bg-emerald-50 dark:bg-emerald-950/20 p-5">
           <div className="flex items-start gap-3">
             <div className="w-7 h-7 rounded-full bg-emerald-100 dark:bg-emerald-900/60 border border-emerald-300 dark:border-emerald-700/50 flex items-center justify-center shrink-0 mt-0.5">
-              <span className="text-emerald-700 dark:text-emerald-400 text-sm" aria-hidden="true">✓</span>
+              <span className="text-emerald-700 dark:text-emerald-400 text-sm" aria-hidden="true">
+                ✓
+              </span>
             </div>
             <div className="flex-1 min-w-0">
-              <p className="text-emerald-800 dark:text-emerald-300 font-medium text-sm">{topic.title} completed</p>
+              <p className="text-emerald-800 dark:text-emerald-300 font-medium text-sm">
+                {topic.title} completed
+              </p>
               <p className="text-ink-muted text-xs mt-0.5">
                 You&apos;ve worked through all required challenges. The optional challenges below
                 are still available.

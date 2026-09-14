@@ -4,8 +4,7 @@ export const conceptualChallenge: MultipleChoiceChallenge = {
   type: "multiple-choice",
   id: "bloom-filter-conceptual",
   required: true,
-  question:
-    "You query a Bloom Filter for a key and it returns true. What can you conclude?",
+  question: "You query a Bloom Filter for a key and it returns true. What can you conclude?",
   options: [
     {
       id: "a",

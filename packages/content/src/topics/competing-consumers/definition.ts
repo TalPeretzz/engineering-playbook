@@ -4,7 +4,8 @@ export const competingConsumers: TopicDefinition = {
   id: "competing-consumers",
   slug: "competing-consumers",
   title: "Competing Consumers",
-  summary: "A pattern where multiple consumer instances read from the same queue so each message is processed by exactly one of them.",
+  summary:
+    "A pattern where multiple consumer instances read from the same queue so each message is processed by exactly one of them.",
   categories: ["messaging"],
   tags: ["messaging", "scalability"],
   depth: "standard",

@@ -7,7 +7,12 @@ type ProgressRingProps = {
   className?: string;
 };
 
-export function ProgressRing({ percent, size = 40, strokeWidth = 3, className = "" }: ProgressRingProps) {
+export function ProgressRing({
+  percent,
+  size = 40,
+  strokeWidth = 3,
+  className = "",
+}: ProgressRingProps) {
   const radius = (size - strokeWidth) / 2;
   const circumference = 2 * Math.PI * radius;
   const offset = circumference - (percent / 100) * circumference;

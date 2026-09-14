@@ -10,7 +10,7 @@ The product combines technical documentation, structured learning paths, progres
 
 ## Product Vision
 
-Engineering Playbook teaches concepts that matter in real systems: not just definitions, but *why* they exist, *when* to use them, and *how* to implement them. Every topic follows a consistent structure:
+Engineering Playbook teaches concepts that matter in real systems: not just definitions, but _why_ they exist, _when_ to use them, and _how_ to implement them. Every topic follows a consistent structure:
 
 1. What problem does it solve?
 2. How does it work? (with visual explanation)
@@ -27,13 +27,13 @@ Progress is tracked in localStorage and surfaced throughout the UI — sidebar i
 
 ## MVP Topics
 
-| Topic | Category |
-|-------|----------|
-| Bloom Filter | Data Structures |
-| LRU Cache | Data Structures |
+| Topic              | Category            |
+| ------------------ | ------------------- |
+| Bloom Filter       | Data Structures     |
+| LRU Cache          | Data Structures     |
 | Consistent Hashing | Distributed Systems |
-| Rate Limiter | Backend / API |
-| Idempotency | Backend / API |
+| Rate Limiter       | Backend / API       |
+| Idempotency        | Backend / API       |
 
 ---
 
@@ -113,14 +113,12 @@ export const myTopic: Topic = {
   difficulty: "intermediate",
   estimatedMinutes: 20,
   prerequisites: ["bloom-filter"], // slugs of prerequisite topics
-  nextTopics: ["lru-cache"],        // slugs of recommended next topics
+  nextTopics: ["lru-cache"], // slugs of recommended next topics
   content: {
     problemStatement: "...",
     howItWorks: "...",
     visualExplanation: "ASCII diagram here",
-    complexity: [
-      { operation: "lookup", time: "O(1)", space: "O(n)" },
-    ],
+    complexity: [{ operation: "lookup", time: "O(1)", space: "O(n)" }],
     tradeoffs: {
       pros: ["Fast", "Simple"],
       cons: ["No deletion"],
@@ -280,10 +278,10 @@ The architecture is designed to support these additions without restructuring:
 
 ## Tech Stack
 
-| Layer | Technology |
-|-------|-----------|
-| Monorepo | pnpm workspaces + Turborepo |
-| Frontend | Next.js 14, React 18, TypeScript strict |
-| Styling | Tailwind CSS (dark mode) |
-| Testing | Vitest |
+| Layer       | Technology                                                    |
+| ----------- | ------------------------------------------------------------- |
+| Monorepo    | pnpm workspaces + Turborepo                                   |
+| Frontend    | Next.js 14, React 18, TypeScript strict                       |
+| Styling     | Tailwind CSS (dark mode)                                      |
+| Testing     | Vitest                                                        |
 | Type safety | Strongly typed content schema, discriminated union challenges |

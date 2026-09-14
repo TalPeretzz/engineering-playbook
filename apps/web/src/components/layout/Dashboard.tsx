@@ -54,7 +54,8 @@ export function Dashboard() {
       setStats(getOverallProgress(allTopics.length));
 
       const catProgress: Record<string, GroupProgress> = {};
-      for (const category of categories) catProgress[category.id] = getCategoryProgress(category.id);
+      for (const category of categories)
+        catProgress[category.id] = getCategoryProgress(category.id);
       setCategoryProgress(catProgress);
 
       const pProgress: Record<string, PathProgress> = {};
@@ -94,7 +95,10 @@ export function Dashboard() {
         </div>
         <p className="text-ink-muted text-xs mt-2">
           {stats.percent}% complete
-          <span className="text-ink-faint"> · out of {allTopicDefinitions.length} planned topics</span>
+          <span className="text-ink-faint">
+            {" "}
+            · out of {allTopicDefinitions.length} planned topics
+          </span>
         </p>
       </div>
 
@@ -114,7 +118,9 @@ export function Dashboard() {
                 {lastVisitedTopic.estimatedMinutes} min · {lastVisitedTopic.difficulty}
               </p>
             </div>
-            <span className="text-brand-text text-lg" aria-hidden="true">→</span>
+            <span className="text-brand-text text-lg" aria-hidden="true">
+              →
+            </span>
           </Link>
         </div>
       )}
@@ -133,7 +139,9 @@ export function Dashboard() {
                 {recommendedNext.estimatedMinutes} min · {recommendedNext.difficulty}
               </p>
             </div>
-            <span className="text-brand-text text-lg" aria-hidden="true">→</span>
+            <span className="text-brand-text text-lg" aria-hidden="true">
+              →
+            </span>
           </Link>
         </div>
       )}
@@ -149,7 +157,9 @@ export function Dashboard() {
               className="group border rounded-xl p-4 transition-colors cursor-pointer bg-surface-raised hover:bg-surface-overlay border-wire hover:border-wire-strong focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-brand focus-visible:ring-offset-2"
             >
               <p className="font-medium text-ink">{topic.title}</p>
-              <p className="text-ink-muted text-xs mt-1.5 leading-relaxed line-clamp-2">{topic.summary}</p>
+              <p className="text-ink-muted text-xs mt-1.5 leading-relaxed line-clamp-2">
+                {topic.summary}
+              </p>
               <div className="flex items-center gap-3 mt-3">
                 <span className={`text-xs font-medium ${DIFFICULTY_COLORS[topic.difficulty]}`}>
                   {topic.difficulty}
@@ -168,13 +178,20 @@ export function Dashboard() {
       <div>
         <div className="flex items-center justify-between mb-3">
           <h2 className="text-base font-semibold text-ink">Learning Paths</h2>
-          <Link href="/learn" className="text-sm text-brand-text hover:underline underline-offset-2">
+          <Link
+            href="/learn"
+            className="text-sm text-brand-text hover:underline underline-offset-2"
+          >
             View all →
           </Link>
         </div>
         <div className="grid sm:grid-cols-3 gap-3">
           {FEATURED_PATHS.map((path) => (
-            <LearningPathCard key={path.id} path={path} progress={pathProgress[path.id] ?? EMPTY_PATH_PROGRESS} />
+            <LearningPathCard
+              key={path.id}
+              path={path}
+              progress={pathProgress[path.id] ?? EMPTY_PATH_PROGRESS}
+            />
           ))}
         </div>
       </div>
@@ -191,7 +208,9 @@ export function Dashboard() {
                 href={`/topics?category=${category.id}`}
                 className="flex items-center justify-between px-4 py-3 rounded-lg border border-wire hover:border-wire-strong hover:bg-surface-overlay transition-colors group"
               >
-                <span className="text-sm font-medium text-ink group-hover:text-ink">{category.title}</span>
+                <span className="text-sm font-medium text-ink group-hover:text-ink">
+                  {category.title}
+                </span>
                 <span className="text-xs text-ink-muted tabular-nums">
                   {progress.completed}/{progress.available} completed
                 </span>

@@ -55,22 +55,36 @@ function renderInner(section: Section, onFirstInteraction?: () => void) {
       return (
         <div className="grid sm:grid-cols-2 gap-4">
           <div>
-            <p className="text-xs font-semibold text-emerald-700 dark:text-emerald-400 uppercase tracking-wider mb-3">When to use</p>
+            <p className="text-xs font-semibold text-emerald-700 dark:text-emerald-400 uppercase tracking-wider mb-3">
+              When to use
+            </p>
             <ul className="space-y-2">
               {section.whenToUse.map((item, i) => (
                 <li key={i} className="flex gap-2 text-ink-muted text-sm">
-                  <span className="text-emerald-600 dark:text-emerald-400 mt-0.5 shrink-0" aria-hidden="true">✓</span>
+                  <span
+                    className="text-emerald-600 dark:text-emerald-400 mt-0.5 shrink-0"
+                    aria-hidden="true"
+                  >
+                    ✓
+                  </span>
                   <span>{item}</span>
                 </li>
               ))}
             </ul>
           </div>
           <div>
-            <p className="text-xs font-semibold text-red-700 dark:text-red-400 uppercase tracking-wider mb-3">When NOT to use</p>
+            <p className="text-xs font-semibold text-red-700 dark:text-red-400 uppercase tracking-wider mb-3">
+              When NOT to use
+            </p>
             <ul className="space-y-2">
               {section.whenNotToUse.map((item, i) => (
                 <li key={i} className="flex gap-2 text-ink-muted text-sm">
-                  <span className="text-red-600 dark:text-red-400 mt-0.5 shrink-0" aria-hidden="true">✗</span>
+                  <span
+                    className="text-red-600 dark:text-red-400 mt-0.5 shrink-0"
+                    aria-hidden="true"
+                  >
+                    ✗
+                  </span>
                   <span>{item}</span>
                 </li>
               ))}
@@ -89,7 +103,10 @@ function renderInner(section: Section, onFirstInteraction?: () => void) {
             <thead>
               <tr className="border-b border-wire">
                 {section.columns.map((col) => (
-                  <th key={col} className="text-left py-2 pr-4 text-ink-muted font-medium first:text-ink">
+                  <th
+                    key={col}
+                    className="text-left py-2 pr-4 text-ink-muted font-medium first:text-ink"
+                  >
                     {col}
                   </th>
                 ))}
@@ -97,9 +114,15 @@ function renderInner(section: Section, onFirstInteraction?: () => void) {
             </thead>
             <tbody>
               {section.rows.map((row, i) => (
-                <tr key={i} className="border-b border-wire/50 hover:bg-surface-overlay transition-colors">
+                <tr
+                  key={i}
+                  className="border-b border-wire/50 hover:bg-surface-overlay transition-colors"
+                >
                   {section.columns.map((col) => (
-                    <td key={col} className="py-2.5 pr-4 text-ink-muted text-sm first:font-medium first:text-ink">
+                    <td
+                      key={col}
+                      className="py-2.5 pr-4 text-ink-muted text-sm first:font-medium first:text-ink"
+                    >
                       {row[col] ?? ""}
                     </td>
                   ))}
@@ -132,7 +155,9 @@ function RichTextRenderer({ body }: { body: RichParagraph[] }) {
               <ul key={i} className="space-y-1.5 pl-1">
                 {node.items.map((item, j) => (
                   <li key={j} className="flex gap-2 text-ink-muted text-sm leading-relaxed">
-                    <span className="text-ink-faint shrink-0 mt-1" aria-hidden="true">•</span>
+                    <span className="text-ink-faint shrink-0 mt-1" aria-hidden="true">
+                      •
+                    </span>
                     <InlineBold text={item} />
                   </li>
                 ))}

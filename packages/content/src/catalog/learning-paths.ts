@@ -47,7 +47,8 @@ export const learningPaths: LearningPath[] = [
     id: "messaging",
     slug: "messaging",
     title: "Messaging",
-    summary: "Reliable, ordered, and scalable communication between services via queues and streams.",
+    summary:
+      "Reliable, ordered, and scalable communication between services via queues and streams.",
     audience: "Backend engineers",
     topicIds: [
       "pub-sub",
@@ -82,7 +83,8 @@ export const learningPaths: LearningPath[] = [
     id: "probabilistic",
     slug: "probabilistic",
     title: "Probabilistic Data Structures",
-    summary: "Trading exactness for massive space and time savings — filters, sketches, and cardinality estimators.",
+    summary:
+      "Trading exactness for massive space and time savings — filters, sketches, and cardinality estimators.",
     audience: "Backend / data engineers",
     topicIds: ["bloom-filter", "hyperloglog", "count-min-sketch", "bitmaps-bitsets"],
   },

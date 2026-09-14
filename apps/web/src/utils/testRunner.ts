@@ -54,7 +54,10 @@ function stripTypeScript(code: string): string {
       // Remove null assertions: node! → node
       .replace(/(\w)\!/g, "$1")
       // Remove type assertions: value as Type
-      .replace(/\bas\s+[A-Z]\w*(?:<[^>]*>)?(?:\[\])?(?:\s*\|\s*(?:null|undefined|[A-Z]\w*))*\b/g, "")
+      .replace(
+        /\bas\s+[A-Z]\w*(?:<[^>]*>)?(?:\[\])?(?:\s*\|\s*(?:null|undefined|[A-Z]\w*))*\b/g,
+        ""
+      )
   );
 }
 
@@ -72,9 +75,7 @@ export function runTests(
     const factory = new Function(`"use strict"; ${jsCode}; return ${className};`);
     Cls = factory();
     if (typeof Cls !== "function") {
-      throw new Error(
-        `${className} class not found — make sure your class is named ${className}`
-      );
+      throw new Error(`${className} class not found — make sure your class is named ${className}`);
     }
   } catch (e) {
     const msg = e instanceof Error ? e.message : String(e);

@@ -236,10 +236,19 @@ Add Node D at 160°:
       id: "complexity",
       heading: "Complexity",
       entries: [
-        { operation: "Find node for key", time: "O(log N)", note: "Binary search on sorted ring positions" },
+        {
+          operation: "Find node for key",
+          time: "O(log N)",
+          note: "Binary search on sorted ring positions",
+        },
         { operation: "Add node", time: "O(log N + K/N)", note: "K/N keys remapped on average" },
         { operation: "Remove node", time: "O(log N + K/N)" },
-        { operation: "Space (total)", time: "—", space: "O(N × V)", note: "V virtual nodes per physical node" },
+        {
+          operation: "Space (total)",
+          time: "—",
+          space: "O(N × V)",
+          note: "V virtual nodes per physical node",
+        },
       ],
     },
     {

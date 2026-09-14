@@ -4,7 +4,8 @@ export const dependencyInjection: TopicDefinition = {
   id: "dependency-injection",
   slug: "dependency-injection",
   title: "Dependency Injection",
-  summary: "A pattern where an object's dependencies are provided from the outside rather than constructed internally, improving testability and decoupling.",
+  summary:
+    "A pattern where an object's dependencies are provided from the outside rather than constructed internally, improving testability and decoupling.",
   categories: ["design-patterns"],
   tags: ["design-pattern", "architecture"],
   depth: "standard",

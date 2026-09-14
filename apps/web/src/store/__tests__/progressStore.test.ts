@@ -9,10 +9,18 @@ function makeStorage(): Storage {
   const mem = new Map<string, string>();
   return {
     getItem: (k: string) => mem.get(k) ?? null,
-    setItem: (k: string, v: string) => { mem.set(k, v); },
-    removeItem: (k: string) => { mem.delete(k); },
-    clear: () => { mem.clear(); },
-    get length() { return mem.size; },
+    setItem: (k: string, v: string) => {
+      mem.set(k, v);
+    },
+    removeItem: (k: string) => {
+      mem.delete(k);
+    },
+    clear: () => {
+      mem.clear();
+    },
+    get length() {
+      return mem.size;
+    },
     key: (i: number) => [...mem.keys()][i] ?? null,
   };
 }
@@ -86,9 +94,9 @@ describe("completeChallenge", () => {
   it("does not add duplicate challenge ids", () => {
     store.completeChallenge("bloom-filter", "ch-conceptual");
     store.completeChallenge("bloom-filter", "ch-conceptual");
-    const ids = store.getTopicProgress("bloom-filter").completedChallenges.filter(
-      (c) => c === "ch-conceptual"
-    );
+    const ids = store
+      .getTopicProgress("bloom-filter")
+      .completedChallenges.filter((c) => c === "ch-conceptual");
     expect(ids).toHaveLength(1);
   });
 
@@ -254,7 +262,9 @@ describe("getRecommendedNextTopicId", () => {
 describe("onChange callback (same-tab reactivity plumbing)", () => {
   it("fires after every mutating operation", () => {
     let calls = 0;
-    const s = createProgressStore(makeStorage(), () => { calls++; });
+    const s = createProgressStore(makeStorage(), () => {
+      calls++;
+    });
     s.completeTopic("bloom-filter");
     expect(calls).toBe(1);
     s.setPreferredLanguage("python");
@@ -265,7 +275,9 @@ describe("onChange callback (same-tab reactivity plumbing)", () => {
 
   it("does not fire for read-only operations", () => {
     let calls = 0;
-    const s = createProgressStore(makeStorage(), () => { calls++; });
+    const s = createProgressStore(makeStorage(), () => {
+      calls++;
+    });
     s.getTopicProgress("bloom-filter");
     s.getProgress();
     s.getOverallProgress(5);
@@ -284,7 +296,9 @@ describe("onChange callback (same-tab reactivity plumbing)", () => {
 describe("subscribeToProgress", () => {
   it("notifies subscribers when the app-singleton store changes, and unsubscribe stops further notifications", () => {
     let calls = 0;
-    const unsubscribe = subscribeToProgress(() => { calls++; });
+    const unsubscribe = subscribeToProgress(() => {
+      calls++;
+    });
     try {
       setPreferredLanguage("python");
       expect(calls).toBe(1);

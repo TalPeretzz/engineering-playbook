@@ -21,13 +21,17 @@ function isPlainObject(value: unknown): value is Record<string, unknown> {
 }
 
 function sanitizeLanguage(value: unknown): ProgrammingLanguage {
-  return VALID_LANGUAGES.includes(value as ProgrammingLanguage) ? (value as ProgrammingLanguage) : "typescript";
+  return VALID_LANGUAGES.includes(value as ProgrammingLanguage)
+    ? (value as ProgrammingLanguage)
+    : "typescript";
 }
 
 /** Malformed shape falls back to a safe default rather than throwing or invalidating the rest of the record. */
 function sanitizeTopicProgress(value: unknown): TopicProgress {
   const raw = isPlainObject(value) ? value : {};
-  const status = VALID_STATUSES.includes(raw.status as TopicStatus) ? (raw.status as TopicStatus) : "not-started";
+  const status = VALID_STATUSES.includes(raw.status as TopicStatus)
+    ? (raw.status as TopicStatus)
+    : "not-started";
   const completedChallenges = Array.isArray(raw.completedChallenges)
     ? raw.completedChallenges.filter((id): id is string => typeof id === "string")
     : [];
@@ -67,7 +71,9 @@ type V1Progress = {
 };
 
 function buildSlugToIdMap(): Record<string, string> {
-  return Object.fromEntries(allTopicDefinitions.map((definition) => [definition.slug, definition.id]));
+  return Object.fromEntries(
+    allTopicDefinitions.map((definition) => [definition.slug, definition.id])
+  );
 }
 
 /** Transparent v1 (slug-keyed) -> v2 (id-keyed) migration, run on every load. Validates and normalizes in both directions. */

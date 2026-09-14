@@ -4,12 +4,20 @@ import React, { useState, useRef } from "react";
 import type { VisualStep } from "@engineering-playbook/content-schema";
 
 const RESULT_STYLES = {
-  "in-set": "bg-emerald-50 dark:bg-emerald-950/40 border-emerald-200 dark:border-emerald-800/50 text-emerald-800 dark:text-emerald-300",
+  "in-set":
+    "bg-emerald-50 dark:bg-emerald-950/40 border-emerald-200 dark:border-emerald-800/50 text-emerald-800 dark:text-emerald-300",
   "not-in-set": "bg-surface-overlay border-wire text-ink-muted",
-  "false-positive": "bg-amber-50 dark:bg-amber-950/40 border-amber-200 dark:border-amber-800/50 text-amber-800 dark:text-amber-300",
+  "false-positive":
+    "bg-amber-50 dark:bg-amber-950/40 border-amber-200 dark:border-amber-800/50 text-amber-800 dark:text-amber-300",
 };
 
-export function StepVisual({ steps, onFirstStep }: { steps: VisualStep[]; onFirstStep?: () => void }) {
+export function StepVisual({
+  steps,
+  onFirstStep,
+}: {
+  steps: VisualStep[];
+  onFirstStep?: () => void;
+}) {
   const [stepIndex, setStepIndex] = useState(0);
   const current = steps[stepIndex];
   const hasCalledFirstStep = useRef(false);
@@ -97,9 +105,11 @@ export function StepVisual({ steps, onFirstStep }: { steps: VisualStep[]; onFirs
               let cls =
                 "w-8 h-8 shrink-0 flex items-center justify-center rounded text-sm font-mono font-bold transition-all duration-200 ";
               if (isActive && bit === 1) {
-                cls += "bg-emerald-500 text-white ring-2 ring-emerald-300 ring-offset-1 ring-offset-surface-raised";
+                cls +=
+                  "bg-emerald-500 text-white ring-2 ring-emerald-300 ring-offset-1 ring-offset-surface-raised";
               } else if (isActive && bit === 0) {
-                cls += "bg-red-900/60 text-red-400 ring-2 ring-red-500 ring-offset-1 ring-offset-surface-raised";
+                cls +=
+                  "bg-red-900/60 text-red-400 ring-2 ring-red-500 ring-offset-1 ring-offset-surface-raised";
               } else if (bit === 1) {
                 cls += "bg-surface-overlay text-ink-muted";
               } else {
@@ -127,13 +137,14 @@ export function StepVisual({ steps, onFirstStep }: { steps: VisualStep[]; onFirs
 
         {/* Invariant callout */}
         <div className="flex items-start gap-3 px-4 py-3 bg-surface-overlay border border-wire rounded-lg text-xs text-ink-muted leading-relaxed">
-          <span className="text-ink-faint shrink-0 mt-0.5" aria-hidden="true">ℹ</span>
+          <span className="text-ink-faint shrink-0 mt-0.5" aria-hidden="true">
+            ℹ
+          </span>
           <span>
             A Bloom Filter only answers{" "}
-            <strong className="text-ink">&ldquo;Definitely not present&rdquo;</strong>{" "}
-            or{" "}
-            <strong className="text-ink">&ldquo;Probably present&rdquo;</strong>.
-            {" "}It never gives a definitive yes.
+            <strong className="text-ink">&ldquo;Definitely not present&rdquo;</strong> or{" "}
+            <strong className="text-ink">&ldquo;Probably present&rdquo;</strong>. It never gives a
+            definitive yes.
           </span>
         </div>
 
@@ -151,9 +162,7 @@ export function StepVisual({ steps, onFirstStep }: { steps: VisualStep[]; onFirs
               }}
               aria-label={`Go to step ${i + 1}`}
               className={`h-1.5 rounded-full transition-all duration-200 cursor-pointer ${
-                i === stepIndex
-                  ? "bg-brand w-5"
-                  : "bg-wire-strong hover:bg-ink-faint w-1.5"
+                i === stepIndex ? "bg-brand w-5" : "bg-wire-strong hover:bg-ink-faint w-1.5"
               }`}
             />
           ))}

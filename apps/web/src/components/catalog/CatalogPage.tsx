@@ -5,11 +5,17 @@ import { useSearchParams } from "next/navigation";
 import type { TopicStatus } from "@engineering-playbook/shared-types";
 import { allTopicDefinitions, categories } from "@engineering-playbook/content";
 import { getTopicProgress, subscribeToProgress } from "@/store/progressStore";
-import { filterCatalog, DEFAULT_FILTER_STATE, type CatalogFilterState } from "@/utils/catalogFilters";
+import {
+  filterCatalog,
+  DEFAULT_FILTER_STATE,
+  type CatalogFilterState,
+} from "@/utils/catalogFilters";
 import { TopicCard } from "./TopicCard";
 import { FilterBar } from "./FilterBar";
 
-const CATEGORY_TITLES: Record<string, string> = Object.fromEntries(categories.map((c) => [c.id, c.title]));
+const CATEGORY_TITLES: Record<string, string> = Object.fromEntries(
+  categories.map((c) => [c.id, c.title])
+);
 
 export function CatalogPage() {
   const searchParams = useSearchParams();
@@ -30,7 +36,8 @@ export function CatalogPage() {
     function refreshStatuses() {
       const next: Record<string, TopicStatus> = {};
       for (const topic of allTopicDefinitions) {
-        if (topic.availability === "available") next[topic.slug] = getTopicProgress(topic.slug).status;
+        if (topic.availability === "available")
+          next[topic.slug] = getTopicProgress(topic.slug).status;
       }
       setStatuses(next);
     }
@@ -52,7 +59,12 @@ export function CatalogPage() {
         </p>
       </div>
 
-      <FilterBar state={filters} onChange={setFilters} categories={categories} resultCount={results.length} />
+      <FilterBar
+        state={filters}
+        onChange={setFilters}
+        categories={categories}
+        resultCount={results.length}
+      />
 
       {results.length === 0 ? (
         <div className="text-center py-16 border border-dashed border-wire rounded-xl">

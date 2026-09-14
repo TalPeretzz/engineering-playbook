@@ -4,7 +4,8 @@ export const ordering: TopicDefinition = {
   id: "ordering",
   slug: "ordering",
   title: "Ordering",
-  summary: "Techniques for preserving the sequence in which events were produced when they're processed across partitions or consumers.",
+  summary:
+    "Techniques for preserving the sequence in which events were produced when they're processed across partitions or consumers.",
   categories: ["messaging"],
   tags: ["messaging", "consistency"],
   depth: "standard",

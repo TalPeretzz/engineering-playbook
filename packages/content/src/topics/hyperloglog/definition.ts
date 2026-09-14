@@ -4,7 +4,8 @@ export const hyperloglog: TopicDefinition = {
   id: "hyperloglog",
   slug: "hyperloglog",
   title: "HyperLogLog",
-  summary: "A probabilistic algorithm that estimates the number of distinct elements in a massive stream using a fixed, tiny amount of memory.",
+  summary:
+    "A probabilistic algorithm that estimates the number of distinct elements in a massive stream using a fixed, tiny amount of memory.",
   categories: ["practical-data-structures"],
   tags: ["probabilistic", "cardinality-estimation"],
   depth: "flagship",
