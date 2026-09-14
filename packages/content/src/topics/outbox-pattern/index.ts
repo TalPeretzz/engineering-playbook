@@ -1,0 +1,1 @@
+export { outboxPattern } from "./definition";

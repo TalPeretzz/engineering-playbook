@@ -1,0 +1,1 @@
+export { ttl } from "./definition";

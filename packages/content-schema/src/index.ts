@@ -208,3 +208,113 @@ export type Topic = {
   sections: Section[];
   challenges: Challenge[];
 };
+
+// ---------------------------------------------------------------------------
+// Catalog — data-driven content areas, categories, and topic definitions.
+//
+// This is additive: `Topic`/`TopicCategory` above are untouched so existing
+// consumers (Sidebar, Dashboard, TopicPage) keep working unmodified.
+// `TopicDefinition` is the new source of truth; `buildTopic()` (in
+// packages/content) derives a `Topic` from it for those consumers.
+// See docs/architecture/catalog-refactor-plan.md.
+// ---------------------------------------------------------------------------
+
+export type TopicDepth = "flagship" | "standard" | "reference";
+
+export type TopicAvailability = "available" | "coming-soon";
+
+/** Bare string, validated by tests against the `CategoryDefinition[]` registry — not the compiler. */
+export type TopicCategoryId = string;
+
+export type ContentArea = {
+  id: string;
+  title: string;
+  summary: string;
+  order: number;
+  icon?: string;
+};
+
+export type CategoryDefinition = {
+  id: string;
+  contentAreaId: string;
+  title: string;
+  summary?: string;
+  order: number;
+};
+
+export type VisualizationSlot =
+  | { kind: "component"; component: "lru-cache" | "bloom-filter"; heading: string; id: string; phase?: string }
+  | { kind: "steps"; heading: string; id: string; phase?: string; steps: VisualStep[] }
+  | { kind: "ascii"; heading: string; id: string; phase?: string; content: string };
+
+export type LessonContent = {
+  /** Optional structured slots — renderers pick these up in order when present. */
+  problem?: TextSection;
+  intuition?: TextSection;
+  visualization?: VisualizationSlot;
+  howItWorks?: TextSection;
+  complexity?: ComplexitySection;
+  comparisons?: ComparisonSection[];
+  tradeoffs?: TradeoffsSection;
+  useCases?: UseCasesSection;
+  production?: TextSection;
+  realWorldUsage?: TextSection;
+  recap?: ComparisonSection;
+
+  /** Legacy escape hatch — flagship lessons (Bloom Filter, LRU Cache, ...) stay on this. */
+  sections?: Section[];
+
+  implementations?: Partial<Record<ProgrammingLanguage, string>>;
+  challenges?: Challenge[];
+};
+
+export type TopicDefinition = {
+  id: string;
+  slug: string;
+  title: string;
+  shortTitle?: string;
+  summary: string;
+
+  categories: TopicCategoryId[];
+  primaryCategoryId?: TopicCategoryId;
+  tags: string[];
+
+  depth: TopicDepth;
+  availability: TopicAvailability;
+  contentType?: "lesson";
+
+  difficulty: TopicDifficulty;
+  estimatedMinutes: number;
+
+  prerequisites: string[];
+  relatedTopics: string[];
+  learningPaths: string[];
+
+  whyItMatters?: string;
+
+  /** Full lesson. Absent for coming-soon topics. */
+  lesson?: LessonContent;
+};
+
+export type LearningPath = {
+  id: string;
+  slug: string;
+  title: string;
+  summary: string;
+  audience?: string;
+  topicIds: string[];
+};
+
+export type Curriculum = {
+  /** Order in which content areas render. */
+  areaOrder: string[];
+
+  /** Ordered category ids inside each area. */
+  categoriesInArea: Record<string, TopicCategoryId[]>;
+
+  /** Ordered topic ids inside each category (multi-category topics may appear in more than one). */
+  topicsInCategory: Record<TopicCategoryId, string[]>;
+
+  /** Optional hand-authored global order that trumps the derived one. Rarely needed. */
+  topicOrderOverride?: string[];
+};
