@@ -1,0 +1,1 @@
+export { dependencyInjection } from "./definition";

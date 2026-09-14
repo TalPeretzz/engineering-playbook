@@ -1,0 +1,1 @@
+export { writeBehind } from "./definition";

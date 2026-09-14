@@ -1,0 +1,1 @@
+export { eventSourcing } from "./definition";

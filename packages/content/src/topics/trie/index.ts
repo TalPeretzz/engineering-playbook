@@ -1,0 +1,1 @@
+export { trie } from "./definition";

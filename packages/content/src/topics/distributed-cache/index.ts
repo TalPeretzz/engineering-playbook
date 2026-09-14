@@ -1,0 +1,1 @@
+export { distributedCache } from "./definition";
