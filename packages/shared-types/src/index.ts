@@ -9,8 +9,14 @@ export type TopicProgress = {
   completedChallenges: string[];
 };
 
+/**
+ * v2: keyed by topic id (stable) rather than slug (may change with a
+ * redirect). See docs/architecture/catalog-refactor-plan.md §6.3.
+ */
 export type UserProgress = {
-  topics: Record<string, TopicProgress>;
+  version: 2;
+  topicsById: Record<string, TopicProgress>;
+  collapsedCategories: string[];
   preferredLanguage: ProgrammingLanguage;
-  lastVisitedTopic: string | null;
+  lastVisitedTopicId: string | null;
 };
