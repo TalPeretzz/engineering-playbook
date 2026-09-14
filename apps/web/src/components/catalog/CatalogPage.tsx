@@ -1,6 +1,7 @@
 "use client";
 
 import { useMemo, useState, useEffect } from "react";
+import { useSearchParams } from "next/navigation";
 import type { TopicStatus } from "@engineering-playbook/shared-types";
 import { allTopicDefinitions, categories } from "@engineering-playbook/content";
 import { getTopicProgress } from "@/store/progressStore";
@@ -26,7 +27,12 @@ function matches(topic: (typeof allTopicDefinitions)[number], state: CatalogFilt
 }
 
 export function CatalogPage() {
-  const [filters, setFilters] = useState<CatalogFilterState>(DEFAULT_FILTER_STATE);
+  const searchParams = useSearchParams();
+  const categoryFromUrl = searchParams.get("category");
+  const [filters, setFilters] = useState<CatalogFilterState>(() => ({
+    ...DEFAULT_FILTER_STATE,
+    categoryId: categoryFromUrl && CATEGORY_TITLES[categoryFromUrl] ? categoryFromUrl : null,
+  }));
   const [statuses, setStatuses] = useState<Record<string, TopicStatus>>({});
 
   useEffect(() => {
