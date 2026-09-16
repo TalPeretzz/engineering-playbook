@@ -3,6 +3,11 @@
 import React from "react";
 import type { Topic } from "@engineering-playbook/content-schema";
 import type { TopicProgress } from "@engineering-playbook/shared-types";
+import { categories } from "@engineering-playbook/content";
+
+const CATEGORY_TITLES: Record<string, string> = Object.fromEntries(
+  categories.map((c) => [c.id, c.title])
+);
 
 type TopicHeaderProps = {
   topic: Topic;
@@ -18,18 +23,9 @@ const DIFFICULTY_COLORS: Record<string, string> = {
     "text-red-700 dark:text-red-400 bg-red-50 dark:bg-red-900/30 border-red-200 dark:border-red-800/50",
 };
 
-const CATEGORY_LABELS: Record<string, string> = {
-  fundamentals: "Fundamentals",
-  "data-structures": "Data Structures",
-  "distributed-systems": "Distributed Systems",
-  resilience: "Resilience",
-  messaging: "Messaging",
-  caching: "Caching",
-  "backend-patterns": "Backend / API",
-};
-
 export function TopicHeader({ topic, progress }: TopicHeaderProps) {
   const isCompleted = progress.status === "completed";
+  const categoryTitle = CATEGORY_TITLES[topic.categories[0]] ?? topic.categories[0];
 
   const requiredChallenges = topic.challenges.filter((c) => c.required);
   const doneRequired = requiredChallenges.filter((c) =>
@@ -41,7 +37,7 @@ export function TopicHeader({ topic, progress }: TopicHeaderProps) {
       {/* Category + status row */}
       <div className="flex flex-wrap items-center gap-2 mb-4">
         <span className="text-xs text-ink-muted bg-surface-overlay px-2 py-0.5 rounded border border-wire">
-          {CATEGORY_LABELS[topic.category] ?? topic.category}
+          {categoryTitle}
         </span>
         {progress.status !== "not-started" && (
           <span
@@ -71,9 +67,7 @@ export function TopicHeader({ topic, progress }: TopicHeaderProps) {
         <span className="text-ink-faint" aria-hidden="true">
           ·
         </span>
-        <span className="text-ink-muted text-sm">
-          {CATEGORY_LABELS[topic.category] ?? topic.category}
-        </span>
+        <span className="text-ink-muted text-sm">{categoryTitle}</span>
       </div>
 
       {/* Challenge progress — hollow vs filled dots + screen reader progress */}

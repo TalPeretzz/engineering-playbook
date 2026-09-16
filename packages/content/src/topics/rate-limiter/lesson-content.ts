@@ -1,15 +1,16 @@
 import type { Topic } from "@engineering-playbook/content-schema";
 
-export const rateLimiter: Topic = {
+// This is legacy pre-catalog data — id/categories now live in ./definition.ts.
+type LegacyLessonContent = Omit<Topic, "id" | "categories">;
+
+export const rateLimiter: LegacyLessonContent = {
   slug: "rate-limiter",
   title: "Rate Limiter",
   description:
     "A mechanism that controls the rate at which clients can call an API or consume a resource — protecting services from abuse, overload, and ensuring fair usage.",
-  category: "backend-patterns",
   difficulty: "intermediate",
   estimatedMinutes: 20,
   prerequisites: [],
-  nextTopics: ["idempotency", "circuit-breaker"],
 
   implementations: {
     typescript: `class TokenBucketRateLimiter {

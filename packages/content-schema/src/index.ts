@@ -193,14 +193,14 @@ export type Challenge = MultipleChoiceChallenge | ImplementationChallenge | Syst
 // ---------------------------------------------------------------------------
 
 export type Topic = {
+  id: string;
   slug: string;
   title: string;
   description: string;
-  category: TopicCategory;
+  categories: string[];
   difficulty: TopicDifficulty;
   estimatedMinutes: number;
   prerequisites: string[];
-  nextTopics: string[];
   implementations: Partial<Record<ProgrammingLanguage, string>>;
   sections: Section[];
   challenges: Challenge[];
