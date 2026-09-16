@@ -271,8 +271,8 @@ describe("getRecommendedNextTopicId", () => {
   });
 
   it("returns null once every available topic from that point on is completed", () => {
-    // cache-aside is the last available topic in curriculum order today.
-    expect(store.getRecommendedNextTopicId("cache-aside")).toBeNull();
+    // strategy (design-patterns, the final category) is the last available topic today.
+    expect(store.getRecommendedNextTopicId("strategy")).toBeNull();
   });
 
   it("returns null for an id that isn't in curriculum order at all", () => {
