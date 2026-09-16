@@ -11,6 +11,7 @@ export type CatalogFilterState = {
   difficulty: TopicDifficulty | null;
   availability: TopicAvailability | null;
   depth: TopicDepth | null;
+  tag: string | null;
 };
 
 export const DEFAULT_FILTER_STATE: CatalogFilterState = {
@@ -19,7 +20,13 @@ export const DEFAULT_FILTER_STATE: CatalogFilterState = {
   difficulty: null,
   availability: null,
   depth: null,
+  tag: null,
 };
+
+/** Every tag used by at least one topic, alphabetized — the tag facet's option list. */
+export function getAllTags(topics: TopicDefinition[]): string[] {
+  return [...new Set(topics.flatMap((t) => t.tags))].sort();
+}
 
 /** Pure predicate: does `topic` satisfy every active facet in `state`? Used by both CatalogPage and its tests. */
 export function matchesFilters(
@@ -31,6 +38,7 @@ export function matchesFilters(
   if (state.difficulty && topic.difficulty !== state.difficulty) return false;
   if (state.availability && topic.availability !== state.availability) return false;
   if (state.depth && topic.depth !== state.depth) return false;
+  if (state.tag && !topic.tags.includes(state.tag)) return false;
 
   if (state.search.trim() !== "") {
     const q = state.search.toLowerCase();

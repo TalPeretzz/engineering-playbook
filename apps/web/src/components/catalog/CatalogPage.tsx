@@ -7,6 +7,7 @@ import { allTopicDefinitions, categories } from "@engineering-playbook/content";
 import { getTopicProgress, subscribeToProgress } from "@/store/progressStore";
 import {
   filterCatalog,
+  getAllTags,
   DEFAULT_FILTER_STATE,
   type CatalogFilterState,
 } from "@/utils/catalogFilters";
@@ -16,6 +17,7 @@ import { FilterBar } from "./FilterBar";
 const CATEGORY_TITLES: Record<string, string> = Object.fromEntries(
   categories.map((c) => [c.id, c.title])
 );
+const ALL_TAGS = getAllTags(allTopicDefinitions);
 
 export function CatalogPage() {
   const searchParams = useSearchParams();
@@ -63,6 +65,7 @@ export function CatalogPage() {
         state={filters}
         onChange={setFilters}
         categories={categories}
+        tags={ALL_TAGS}
         resultCount={results.length}
       />
 

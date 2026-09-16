@@ -1,6 +1,6 @@
 import { describe, it, expect } from "vitest";
 import { allTopicDefinitions, categories } from "@engineering-playbook/content";
-import { filterCatalog, matchesFilters, DEFAULT_FILTER_STATE } from "../catalogFilters";
+import { filterCatalog, matchesFilters, getAllTags, DEFAULT_FILTER_STATE } from "../catalogFilters";
 
 const CATEGORY_TITLES: Record<string, string> = Object.fromEntries(
   categories.map((c) => [c.id, c.title])
@@ -100,5 +100,42 @@ describe("filterCatalog / matchesFilters", () => {
   it("an empty search matches everything (no facets active)", () => {
     const results = filterCatalog(allTopicDefinitions, DEFAULT_FILTER_STATE, CATEGORY_TITLES);
     expect(results.length).toBe(allTopicDefinitions.length);
+  });
+
+  it("filters by tag", () => {
+    const results = filterCatalog(
+      allTopicDefinitions,
+      { ...DEFAULT_FILTER_STATE, tag: "cardinality-estimation" },
+      CATEGORY_TITLES
+    );
+    expect(results.map((t) => t.id)).toEqual(["hyperloglog"]);
+  });
+
+  it("combines tag with other facets as an intersection", () => {
+    // "reliability" is used by several messaging/distributed-systems topics; narrow to messaging.
+    const results = filterCatalog(
+      allTopicDefinitions,
+      { ...DEFAULT_FILTER_STATE, tag: "reliability", categoryId: "messaging" },
+      CATEGORY_TITLES
+    );
+    expect(results.length).toBeGreaterThan(0);
+    for (const topic of results) {
+      expect(topic.tags).toContain("reliability");
+      expect(topic.categories).toContain("messaging");
+    }
+  });
+});
+
+describe("getAllTags", () => {
+  it("returns every tag used by at least one topic, deduplicated and sorted", () => {
+    const tags = getAllTags(allTopicDefinitions);
+    expect(tags).toContain("probabilistic");
+    expect(tags).toContain("messaging");
+    expect(new Set(tags).size).toBe(tags.length);
+    expect(tags).toEqual([...tags].sort());
+  });
+
+  it("returns an empty array for an empty topic list", () => {
+    expect(getAllTags([])).toEqual([]);
   });
 });
