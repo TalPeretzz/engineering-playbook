@@ -7,16 +7,17 @@ import {
 
 describe("nextAvailableTopicId / prevAvailableTopicId", () => {
   it("nextAvailableFrom skips coming-soon topics", () => {
-    // consistent-hashing is followed by seven coming-soon practical-data-structures topics
-    // before the next available one (idempotency, in distributed-systems).
+    // consistent-hashing is followed by seven coming-soon practical-data-structures topics,
+    // then six more coming-soon distributed-systems topics, before the next available one
+    // (circuit-breaker).
     const nextId = nextAvailableTopicId("consistent-hashing");
     expect(nextId).not.toBeNull();
     expect(topicsById[nextId!].availability).toBe("available");
-    expect(nextId).toBe("idempotency");
+    expect(nextId).toBe("circuit-breaker");
   });
 
   it("prevAvailableFrom skips coming-soon topics", () => {
-    const prevId = prevAvailableTopicId("idempotency");
+    const prevId = prevAvailableTopicId("circuit-breaker");
     expect(prevId).not.toBeNull();
     expect(topicsById[prevId!].availability).toBe("available");
     expect(prevId).toBe("consistent-hashing");
@@ -27,6 +28,7 @@ describe("nextAvailableTopicId / prevAvailableTopicId", () => {
       "bloom-filter",
       "lru-cache",
       "consistent-hashing",
+      "circuit-breaker",
       "idempotency",
       "rate-limiter",
     ]) {

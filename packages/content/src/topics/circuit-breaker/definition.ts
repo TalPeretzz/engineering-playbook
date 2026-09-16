@@ -1,4 +1,5 @@
 import type { TopicDefinition } from "@engineering-playbook/content-schema";
+import { sections, implementations, challenges } from "./lesson-content";
 
 export const circuitBreaker: TopicDefinition = {
   id: "circuit-breaker",
@@ -9,10 +10,15 @@ export const circuitBreaker: TopicDefinition = {
   categories: ["distributed-systems"],
   tags: ["resilience", "fault-tolerance"],
   depth: "standard",
-  availability: "coming-soon",
+  availability: "available",
   difficulty: "intermediate",
   estimatedMinutes: 20,
   prerequisites: [],
   relatedTopics: [],
   learningPaths: [],
+  lesson: {
+    sections,
+    implementations,
+    challenges,
+  },
 };
