@@ -37,16 +37,18 @@ type FilterBarProps = {
   state: CatalogFilterState;
   onChange: (state: CatalogFilterState) => void;
   categories: CategoryDefinition[];
+  tags: string[];
   resultCount: number;
 };
 
-export function FilterBar({ state, onChange, categories, resultCount }: FilterBarProps) {
+export function FilterBar({ state, onChange, categories, tags, resultCount }: FilterBarProps) {
   const hasActiveFilters =
     state.search !== "" ||
     state.categoryId ||
     state.difficulty ||
     state.availability ||
-    state.depth;
+    state.depth ||
+    state.tag;
 
   return (
     <div className="space-y-3 mb-6">
@@ -58,6 +60,21 @@ export function FilterBar({ state, onChange, categories, resultCount }: FilterBa
           onChange={(e) => onChange({ ...state, search: e.target.value })}
           className="flex-1 bg-surface-overlay border border-wire-strong rounded-lg px-3 py-2 text-sm text-ink placeholder:text-ink-faint focus:outline-none focus:ring-1 focus:ring-brand"
         />
+        <select
+          value={state.tag ?? ""}
+          onChange={(e) =>
+            onChange({ ...state, tag: e.target.value === "" ? null : e.target.value })
+          }
+          aria-label="Filter by tag"
+          className="bg-surface-overlay border border-wire-strong text-ink text-sm rounded-lg px-2.5 py-2 focus:outline-none focus:ring-1 focus:ring-brand cursor-pointer"
+        >
+          <option value="">All tags</option>
+          {tags.map((tag) => (
+            <option key={tag} value={tag}>
+              {tag}
+            </option>
+          ))}
+        </select>
         <span className="text-sm text-ink-muted whitespace-nowrap">
           {resultCount} topic{resultCount === 1 ? "" : "s"}
         </span>
