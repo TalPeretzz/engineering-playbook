@@ -1,4 +1,5 @@
 import type { TopicDefinition } from "@engineering-playbook/content-schema";
+import { sections, implementations, challenges } from "./lesson-content";
 
 export const retryExponentialBackoff: TopicDefinition = {
   id: "retry-exponential-backoff",
@@ -9,10 +10,15 @@ export const retryExponentialBackoff: TopicDefinition = {
   categories: ["distributed-systems"],
   tags: ["resilience", "retries"],
   depth: "standard",
-  availability: "coming-soon",
+  availability: "available",
   difficulty: "beginner",
   estimatedMinutes: 15,
   prerequisites: [],
-  relatedTopics: [],
+  relatedTopics: ["circuit-breaker", "idempotency"],
   learningPaths: [],
+  lesson: {
+    sections,
+    implementations,
+    challenges,
+  },
 };

@@ -35,6 +35,7 @@ export const learningPaths: LearningPath[] = [
       "gossip-protocol",
       "heartbeats",
       "circuit-breaker",
+      "retry-exponential-backoff",
       "distributed-lock",
       "lease",
       "idempotency",
