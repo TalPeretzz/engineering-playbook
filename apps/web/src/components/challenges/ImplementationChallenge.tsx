@@ -24,7 +24,13 @@ const ERROR_KIND_LABEL: Record<string, string> = {
   runtime: "Runtime error",
 };
 
-export function ImplementationChallenge({ challenge, isCompleted, onComplete, testCases, testClassName }: Props) {
+export function ImplementationChallenge({
+  challenge,
+  isCompleted,
+  onComplete,
+  testCases,
+  testClassName,
+}: Props) {
   const { language } = useLanguage();
 
   const [drafts, setDrafts] = useState(() => buildDraftRecord(challenge.starterCode));
@@ -38,8 +44,7 @@ export function ImplementationChallenge({ challenge, isCompleted, onComplete, te
   const userCode = drafts[language] ?? "";
   const solutionCode = challenge.solution[language] ?? challenge.solution.typescript ?? "";
 
-  const setUserCode = (code: string) =>
-    setDrafts((prev) => ({ ...prev, [language]: code }));
+  const setUserCode = (code: string) => setDrafts((prev) => ({ ...prev, [language]: code }));
 
   const handleReset = () => {
     setDrafts((prev) => ({
@@ -72,7 +77,12 @@ export function ImplementationChallenge({ challenge, isCompleted, onComplete, te
   const canCompleteManually = !challenge.required || !testCases;
 
   return (
-    <ChallengeCard title={challenge.title} type="implementation" required={challenge.required} isCompleted={isCompleted}>
+    <ChallengeCard
+      title={challenge.title}
+      type="implementation"
+      required={challenge.required}
+      isCompleted={isCompleted}
+    >
       <div className="space-y-4">
         <p className="text-ink-muted text-sm leading-relaxed whitespace-pre-line">
           {challenge.description}
@@ -81,7 +91,9 @@ export function ImplementationChallenge({ challenge, isCompleted, onComplete, te
         {/* Editor */}
         <div className="rounded-lg border border-wire-strong overflow-hidden">
           <div className="flex items-center justify-between px-4 py-2 bg-surface-raised border-b border-wire">
-            <span className="text-xs font-medium text-ink-muted">{LANG_LABELS[language] ?? language}</span>
+            <span className="text-xs font-medium text-ink-muted">
+              {LANG_LABELS[language] ?? language}
+            </span>
             <button
               onClick={handleReset}
               className="text-xs text-ink-faint hover:text-ink-muted transition-colors px-2 py-1 rounded hover:bg-surface-overlay cursor-pointer focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-brand"
@@ -150,10 +162,13 @@ export function ImplementationChallenge({ challenge, isCompleted, onComplete, te
 
         {showHints && (
           <div className="bg-amber-50 dark:bg-amber-950/20 border border-amber-200 dark:border-amber-900/30 rounded-lg p-4 space-y-2">
-            <p className="text-amber-700 dark:text-amber-400 text-xs font-semibold uppercase tracking-wider">Hints</p>
+            <p className="text-amber-700 dark:text-amber-400 text-xs font-semibold uppercase tracking-wider">
+              Hints
+            </p>
             {challenge.hints.slice(0, currentHint + 1).map((hint, i) => (
               <p key={i} className="text-ink-muted text-sm leading-relaxed">
-                <span className="text-amber-600 dark:text-amber-500 mr-2">{i + 1}.</span>{hint}
+                <span className="text-amber-600 dark:text-amber-500 mr-2">{i + 1}.</span>
+                {hint}
               </p>
             ))}
             {currentHint < challenge.hints.length - 1 && (
@@ -169,7 +184,9 @@ export function ImplementationChallenge({ challenge, isCompleted, onComplete, te
 
         {showSolution && (
           <div>
-            <p className="text-xs font-semibold text-ink-faint uppercase tracking-wider mb-2">Solution</p>
+            <p className="text-xs font-semibold text-ink-faint uppercase tracking-wider mb-2">
+              Solution
+            </p>
             <CodeBlock code={solutionCode} language={language} label="Solution" />
           </div>
         )}
@@ -178,7 +195,8 @@ export function ImplementationChallenge({ challenge, isCompleted, onComplete, te
         {testResults && (
           <div className="space-y-2">
             <p className="text-xs font-semibold text-ink-muted uppercase tracking-wider">
-              Test results — {testResults.filter((r) => r.passed).length} / {testResults.length} passed
+              Test results — {testResults.filter((r) => r.passed).length} / {testResults.length}{" "}
+              passed
             </p>
             {testResults.map((r, i) => (
               <div
@@ -196,7 +214,9 @@ export function ImplementationChallenge({ challenge, isCompleted, onComplete, te
                   {r.passed ? "✓" : "✗"}
                 </span>
                 <div className="min-w-0">
-                  <p className={`font-medium ${r.passed ? "text-emerald-800 dark:text-emerald-200" : "text-red-800 dark:text-red-200"}`}>
+                  <p
+                    className={`font-medium ${r.passed ? "text-emerald-800 dark:text-emerald-200" : "text-red-800 dark:text-red-200"}`}
+                  >
                     {r.name}
                   </p>
                   {r.error && (

@@ -30,8 +30,20 @@ export function Topbar({ totalTopics, onSidebarToggle }: TopbarProps) {
         aria-label="Open navigation"
         className="lg:hidden flex items-center justify-center w-8 h-8 rounded text-ink-muted hover:text-ink hover:bg-surface-overlay transition-colors cursor-pointer"
       >
-        <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" strokeWidth={1.5} stroke="currentColor" className="w-5 h-5" aria-hidden="true">
-          <path strokeLinecap="round" strokeLinejoin="round" d="M3.75 6.75h16.5M3.75 12h16.5m-16.5 5.25h16.5" />
+        <svg
+          xmlns="http://www.w3.org/2000/svg"
+          fill="none"
+          viewBox="0 0 24 24"
+          strokeWidth={1.5}
+          stroke="currentColor"
+          className="w-5 h-5"
+          aria-hidden="true"
+        >
+          <path
+            strokeLinecap="round"
+            strokeLinejoin="round"
+            d="M3.75 6.75h16.5M3.75 12h16.5m-16.5 5.25h16.5"
+          />
         </svg>
       </button>
 

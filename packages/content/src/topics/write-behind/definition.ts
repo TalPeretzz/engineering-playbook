@@ -4,7 +4,8 @@ export const writeBehind: TopicDefinition = {
   id: "write-behind",
   slug: "write-behind",
   title: "Write-Behind",
-  summary: "A caching strategy that writes to the cache immediately and to the database asynchronously, trading durability risk for write speed.",
+  summary:
+    "A caching strategy that writes to the cache immediately and to the database asynchronously, trading durability risk for write speed.",
   categories: ["caching"],
   tags: ["caching", "write-path"],
   depth: "standard",

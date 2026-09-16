@@ -42,17 +42,21 @@ export function MultipleChoiceChallenge({ challenge, isCompleted, onComplete }: 
 
           if (revealed) {
             if (isCorrectOption) {
-              optionStyle = "border-emerald-400 dark:border-emerald-600 bg-emerald-50 dark:bg-emerald-950/40 cursor-default";
-              indicatorStyle = "border-emerald-500 text-emerald-700 dark:text-emerald-400 bg-emerald-50 dark:bg-emerald-900/40";
+              optionStyle =
+                "border-emerald-400 dark:border-emerald-600 bg-emerald-50 dark:bg-emerald-950/40 cursor-default";
+              indicatorStyle =
+                "border-emerald-500 text-emerald-700 dark:text-emerald-400 bg-emerald-50 dark:bg-emerald-900/40";
             } else {
               optionStyle = "border-wire bg-surface-overlay opacity-40 cursor-default";
               indicatorStyle = "border-wire-strong text-ink-faint";
             }
           } else if (isWrong) {
-            optionStyle = "border-red-400 dark:border-red-700 bg-red-50 dark:bg-red-950/20 cursor-pointer";
+            optionStyle =
+              "border-red-400 dark:border-red-700 bg-red-50 dark:bg-red-950/20 cursor-pointer";
             indicatorStyle = "border-red-500 text-red-700 dark:text-red-400";
           } else {
-            optionStyle = "border-wire bg-surface-overlay hover:border-wire-strong hover:bg-surface-overlay cursor-pointer";
+            optionStyle =
+              "border-wire bg-surface-overlay hover:border-wire-strong hover:bg-surface-overlay cursor-pointer";
             indicatorStyle = "border-wire-strong text-ink-faint";
           }
 
@@ -64,10 +68,24 @@ export function MultipleChoiceChallenge({ challenge, isCompleted, onComplete }: 
               className={`w-full text-left px-4 py-3 rounded-lg border text-sm transition-all ${optionStyle}`}
             >
               <div className="flex items-center gap-3">
-                <span className={`w-6 h-6 rounded-full border flex items-center justify-center text-xs font-bold shrink-0 ${indicatorStyle}`}>
-                  {revealed && isCorrectOption ? "✓" : revealed ? option.id.toUpperCase() : isWrong ? "✗" : option.id.toUpperCase()}
+                <span
+                  className={`w-6 h-6 rounded-full border flex items-center justify-center text-xs font-bold shrink-0 ${indicatorStyle}`}
+                >
+                  {revealed && isCorrectOption
+                    ? "✓"
+                    : revealed
+                      ? option.id.toUpperCase()
+                      : isWrong
+                        ? "✗"
+                        : option.id.toUpperCase()}
                 </span>
-                <span className={revealed && isCorrectOption ? "text-emerald-800 dark:text-emerald-200" : "text-ink-muted"}>
+                <span
+                  className={
+                    revealed && isCorrectOption
+                      ? "text-emerald-800 dark:text-emerald-200"
+                      : "text-ink-muted"
+                  }
+                >
                   {option.text}
                 </span>
               </div>

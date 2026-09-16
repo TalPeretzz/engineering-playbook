@@ -1,4 +1,8 @@
-import type { CategoryDefinition, TopicDepth, TopicDifficulty } from "@engineering-playbook/content-schema";
+import type {
+  CategoryDefinition,
+  TopicDepth,
+  TopicDifficulty,
+} from "@engineering-playbook/content-schema";
 import { DEFAULT_FILTER_STATE, type CatalogFilterState } from "@/utils/catalogFilters";
 
 const DIFFICULTIES: TopicDifficulty[] = ["beginner", "intermediate", "advanced"];
@@ -38,7 +42,11 @@ type FilterBarProps = {
 
 export function FilterBar({ state, onChange, categories, resultCount }: FilterBarProps) {
   const hasActiveFilters =
-    state.search !== "" || state.categoryId || state.difficulty || state.availability || state.depth;
+    state.search !== "" ||
+    state.categoryId ||
+    state.difficulty ||
+    state.availability ||
+    state.depth;
 
   return (
     <div className="space-y-3 mb-6">
@@ -56,14 +64,19 @@ export function FilterBar({ state, onChange, categories, resultCount }: FilterBa
       </div>
 
       <div className="flex flex-wrap items-center gap-1.5">
-        <Chip active={state.categoryId === null} onClick={() => onChange({ ...state, categoryId: null })}>
+        <Chip
+          active={state.categoryId === null}
+          onClick={() => onChange({ ...state, categoryId: null })}
+        >
           All categories
         </Chip>
         {categories.map((c) => (
           <Chip
             key={c.id}
             active={state.categoryId === c.id}
-            onClick={() => onChange({ ...state, categoryId: state.categoryId === c.id ? null : c.id })}
+            onClick={() =>
+              onChange({ ...state, categoryId: state.categoryId === c.id ? null : c.id })
+            }
           >
             {c.title}
           </Chip>
@@ -93,14 +106,22 @@ export function FilterBar({ state, onChange, categories, resultCount }: FilterBa
         <span className="w-px h-4 bg-wire mx-1" aria-hidden="true" />
         <Chip
           active={state.availability === "available"}
-          onClick={() => onChange({ ...state, availability: state.availability === "available" ? null : "available" })}
+          onClick={() =>
+            onChange({
+              ...state,
+              availability: state.availability === "available" ? null : "available",
+            })
+          }
         >
           Available
         </Chip>
         <Chip
           active={state.availability === "coming-soon"}
           onClick={() =>
-            onChange({ ...state, availability: state.availability === "coming-soon" ? null : "coming-soon" })
+            onChange({
+              ...state,
+              availability: state.availability === "coming-soon" ? null : "coming-soon",
+            })
           }
         >
           Coming soon

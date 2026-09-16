@@ -549,8 +549,7 @@ export const sections: Section[] = [
     rows: [
       {
         Property: "Eviction policy",
-        "What it means":
-          "Removes the entry accessed least recently when the cache is at capacity.",
+        "What it means": "Removes the entry accessed least recently when the cache is at capacity.",
       },
       {
         Property: "Reads update recency",
@@ -559,8 +558,7 @@ export const sections: Section[] = [
       },
       {
         Property: "Updates update recency",
-        "What it means":
-          "put() on an existing key updates the value AND promotes the node to MRU.",
+        "What it means": "put() on an existing key updates the value AND promotes the node to MRU.",
       },
       {
         Property: "O(1) avg via hash map",

@@ -186,10 +186,7 @@ export type SystemDesignChallenge = {
   discussionPoints: string[];
 };
 
-export type Challenge =
-  | MultipleChoiceChallenge
-  | ImplementationChallenge
-  | SystemDesignChallenge;
+export type Challenge = MultipleChoiceChallenge | ImplementationChallenge | SystemDesignChallenge;
 
 // ---------------------------------------------------------------------------
 // Topic
@@ -243,7 +240,13 @@ export type CategoryDefinition = {
 };
 
 export type VisualizationSlot =
-  | { kind: "component"; component: "lru-cache" | "bloom-filter"; heading: string; id: string; phase?: string }
+  | {
+      kind: "component";
+      component: "lru-cache" | "bloom-filter";
+      heading: string;
+      id: string;
+      phase?: string;
+    }
   | { kind: "steps"; heading: string; id: string; phase?: string; steps: VisualStep[] }
   | { kind: "ascii"; heading: string; id: string; phase?: string; content: string };
 

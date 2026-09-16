@@ -4,7 +4,8 @@ export const writeThrough: TopicDefinition = {
   id: "write-through",
   slug: "write-through",
   title: "Write-Through",
-  summary: "A caching strategy that writes to the cache and the database synchronously, keeping them always in sync at the cost of write latency.",
+  summary:
+    "A caching strategy that writes to the cache and the database synchronously, keeping them always in sync at the cost of write latency.",
   categories: ["caching"],
   tags: ["caching", "write-path"],
   depth: "standard",

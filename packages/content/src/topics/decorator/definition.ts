@@ -4,7 +4,8 @@ export const decorator: TopicDefinition = {
   id: "decorator",
   slug: "decorator",
   title: "Decorator Pattern",
-  summary: "A pattern that attaches new behavior to an object dynamically by wrapping it, without modifying its class.",
+  summary:
+    "A pattern that attaches new behavior to an object dynamically by wrapping it, without modifying its class.",
   categories: ["design-patterns"],
   tags: ["design-pattern", "structural"],
   depth: "standard",

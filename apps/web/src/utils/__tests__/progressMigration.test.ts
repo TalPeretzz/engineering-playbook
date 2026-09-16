@@ -17,7 +17,9 @@ describe("migrateProgress", () => {
   it("passes a well-formed v2 payload through with equivalent values", () => {
     const v2 = {
       version: 2 as const,
-      topicsById: { "bloom-filter": { status: "completed" as const, completedChallenges: ["ch-1"] } },
+      topicsById: {
+        "bloom-filter": { status: "completed" as const, completedChallenges: ["ch-1"] },
+      },
       collapsedCategories: ["caching"],
       preferredLanguage: "python" as const,
       lastVisitedTopicId: "bloom-filter",
@@ -34,15 +36,23 @@ describe("migrateProgress", () => {
     const migrated = migrateProgress(v1);
     expect(migrated.version).toBe(2);
     // bloom-filter's id equals its slug today, so this is an identity mapping.
-    expect(migrated.topicsById["bloom-filter"]).toEqual({ status: "completed", completedChallenges: ["ch-1"] });
+    expect(migrated.topicsById["bloom-filter"]).toEqual({
+      status: "completed",
+      completedChallenges: ["ch-1"],
+    });
     expect(migrated.preferredLanguage).toBe("java");
     expect(migrated.lastVisitedTopicId).toBe("bloom-filter");
   });
 
   it("drops an unknown slug without crashing, keyed by the raw string", () => {
-    const v1 = { topics: { "totally-unknown-topic": { status: "in-progress", completedChallenges: [] } } };
+    const v1 = {
+      topics: { "totally-unknown-topic": { status: "in-progress", completedChallenges: [] } },
+    };
     const migrated = migrateProgress(v1);
-    expect(migrated.topicsById["totally-unknown-topic"]).toEqual({ status: "in-progress", completedChallenges: [] });
+    expect(migrated.topicsById["totally-unknown-topic"]).toEqual({
+      status: "in-progress",
+      completedChallenges: [],
+    });
   });
 
   it("defaults preferredLanguage and lastVisitedTopicId when absent from v1", () => {
@@ -72,13 +82,18 @@ describe("migrateProgress", () => {
         },
       });
       expect(migrated.topicsById["bloom-filter"].status).toBe("not-started");
-      expect(migrated.topicsById["lru-cache"]).toEqual({ status: "completed", completedChallenges: ["ch-1"] });
+      expect(migrated.topicsById["lru-cache"]).toEqual({
+        status: "completed",
+        completedChallenges: ["ch-1"],
+      });
     });
 
     it("coerces a non-array completedChallenges to an empty array", () => {
       const migrated = migrateProgress({
         version: 2,
-        topicsById: { "bloom-filter": { status: "in-progress", completedChallenges: "not-an-array" } },
+        topicsById: {
+          "bloom-filter": { status: "in-progress", completedChallenges: "not-an-array" },
+        },
       });
       expect(migrated.topicsById["bloom-filter"].completedChallenges).toEqual([]);
     });
@@ -86,7 +101,12 @@ describe("migrateProgress", () => {
     it("filters non-string entries out of completedChallenges", () => {
       const migrated = migrateProgress({
         version: 2,
-        topicsById: { "bloom-filter": { status: "in-progress", completedChallenges: ["ch-1", 42, null, "ch-2"] } },
+        topicsById: {
+          "bloom-filter": {
+            status: "in-progress",
+            completedChallenges: ["ch-1", 42, null, "ch-2"],
+          },
+        },
       });
       expect(migrated.topicsById["bloom-filter"].completedChallenges).toEqual(["ch-1", "ch-2"]);
     });

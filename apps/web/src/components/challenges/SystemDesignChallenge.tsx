@@ -22,7 +22,12 @@ export function SystemDesignChallenge({ challenge, isCompleted, onComplete }: Pr
   };
 
   return (
-    <ChallengeCard title={challenge.title} type="system-design" required={challenge.required} isCompleted={isCompleted}>
+    <ChallengeCard
+      title={challenge.title}
+      type="system-design"
+      required={challenge.required}
+      isCompleted={isCompleted}
+    >
       <div className="space-y-4">
         <div className="bg-surface-overlay border border-wire rounded-lg p-4">
           <p className="text-ink-muted text-sm leading-relaxed whitespace-pre-line">
@@ -32,7 +37,10 @@ export function SystemDesignChallenge({ challenge, isCompleted, onComplete }: Pr
 
         <div className="flex flex-wrap gap-2">
           <button
-            onClick={() => { setShowHints(!showHints); if (!showHints && revealedHints === 0) setRevealedHints(1); }}
+            onClick={() => {
+              setShowHints(!showHints);
+              if (!showHints && revealedHints === 0) setRevealedHints(1);
+            }}
             className="text-xs px-3 py-1.5 rounded border border-wire text-ink-muted hover:text-ink hover:border-wire-strong transition-colors cursor-pointer"
           >
             {showHints ? "Hide hints" : "Reveal hints"}
@@ -57,10 +65,13 @@ export function SystemDesignChallenge({ challenge, isCompleted, onComplete }: Pr
 
         {showHints && revealedHints > 0 && (
           <div className="bg-amber-50 dark:bg-amber-950/20 border border-amber-200 dark:border-amber-900/30 rounded-lg p-4 space-y-2">
-            <p className="text-amber-700 dark:text-amber-400 text-xs font-semibold uppercase tracking-wider">Hints</p>
+            <p className="text-amber-700 dark:text-amber-400 text-xs font-semibold uppercase tracking-wider">
+              Hints
+            </p>
             {challenge.hints.slice(0, revealedHints).map((hint, i) => (
               <p key={i} className="text-ink-muted text-sm leading-relaxed">
-                <span className="text-amber-600 dark:text-amber-500 mr-2">{i + 1}.</span>{hint}
+                <span className="text-amber-600 dark:text-amber-500 mr-2">{i + 1}.</span>
+                {hint}
               </p>
             ))}
             {revealedHints < challenge.hints.length && (
@@ -76,7 +87,9 @@ export function SystemDesignChallenge({ challenge, isCompleted, onComplete }: Pr
 
         {showDiscussion && (
           <div className="bg-sky-50 dark:bg-sky-950/20 border border-sky-200 dark:border-sky-900/30 rounded-lg p-4">
-            <p className="text-sky-700 dark:text-sky-400 text-xs font-semibold uppercase tracking-wider mb-3">Discussion Points</p>
+            <p className="text-sky-700 dark:text-sky-400 text-xs font-semibold uppercase tracking-wider mb-3">
+              Discussion Points
+            </p>
             <ul className="space-y-3">
               {challenge.discussionPoints.map((point, i) => (
                 <li key={i} className="text-ink-muted text-sm leading-relaxed">
@@ -97,7 +110,11 @@ function InlineBold({ text }: { text: string }) {
     <>
       {parts.map((part, i) => {
         if (part.startsWith("**") && part.endsWith("**")) {
-          return <strong key={i} className="text-ink font-semibold">{part.slice(2, -2)}</strong>;
+          return (
+            <strong key={i} className="text-ink font-semibold">
+              {part.slice(2, -2)}
+            </strong>
+          );
         }
         return <span key={i}>{part}</span>;
       })}

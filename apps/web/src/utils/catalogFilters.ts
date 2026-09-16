@@ -35,7 +35,8 @@ export function matchesFilters(
   if (state.search.trim() !== "") {
     const q = state.search.toLowerCase();
     const categoryTitleText = topic.categories.map((id) => categoryTitles[id] ?? id).join(" ");
-    const haystack = `${topic.title} ${topic.summary} ${topic.tags.join(" ")} ${categoryTitleText}`.toLowerCase();
+    const haystack =
+      `${topic.title} ${topic.summary} ${topic.tags.join(" ")} ${categoryTitleText}`.toLowerCase();
     if (!haystack.includes(q)) return false;
   }
 

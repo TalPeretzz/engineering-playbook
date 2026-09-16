@@ -15,9 +15,12 @@ const TYPE_LABELS: Record<ChallengeCardProps["type"], string> = {
 };
 
 const TYPE_COLORS: Record<ChallengeCardProps["type"], string> = {
-  "multiple-choice": "text-sky-700 dark:text-sky-400 bg-sky-50 dark:bg-sky-900/20 border-sky-300 dark:border-sky-800/40",
-  implementation: "text-purple-700 dark:text-purple-400 bg-purple-50 dark:bg-purple-900/20 border-purple-300 dark:border-purple-800/40",
-  "system-design": "text-amber-700 dark:text-amber-400 bg-amber-50 dark:bg-amber-900/20 border-amber-300 dark:border-amber-800/40",
+  "multiple-choice":
+    "text-sky-700 dark:text-sky-400 bg-sky-50 dark:bg-sky-900/20 border-sky-300 dark:border-sky-800/40",
+  implementation:
+    "text-purple-700 dark:text-purple-400 bg-purple-50 dark:bg-purple-900/20 border-purple-300 dark:border-purple-800/40",
+  "system-design":
+    "text-amber-700 dark:text-amber-400 bg-amber-50 dark:bg-amber-900/20 border-amber-300 dark:border-amber-800/40",
 };
 
 export function ChallengeCard({
@@ -50,7 +53,9 @@ export function ChallengeCard({
               </span>
             )}
             {isCompleted && (
-              <span className="text-[11px] text-emerald-700 dark:text-emerald-400 font-medium">✓ Completed</span>
+              <span className="text-[11px] text-emerald-700 dark:text-emerald-400 font-medium">
+                ✓ Completed
+              </span>
             )}
           </div>
           <h3 className="text-sm font-semibold text-ink leading-snug">{title}</h3>

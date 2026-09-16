@@ -224,7 +224,12 @@ Fixed Window (limit=5/min) — boundary burst:
         { operation: "Token Bucket check", time: "O(1)", space: "O(1) per client" },
         { operation: "Fixed Window check", time: "O(1)", space: "O(1) per client" },
         { operation: "Sliding Window Counter", time: "O(1)", space: "O(1) per client" },
-        { operation: "Sliding Window Log", time: "O(log N)", space: "O(N) per client", note: "N = requests in window" },
+        {
+          operation: "Sliding Window Log",
+          time: "O(log N)",
+          space: "O(N) per client",
+          note: "N = requests in window",
+        },
       ],
     },
     {

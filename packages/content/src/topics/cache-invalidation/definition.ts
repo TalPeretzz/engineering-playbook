@@ -4,7 +4,8 @@ export const cacheInvalidation: TopicDefinition = {
   id: "cache-invalidation",
   slug: "cache-invalidation",
   title: "Cache Invalidation",
-  summary: "Strategies for removing or updating stale cache entries when the underlying data changes.",
+  summary:
+    "Strategies for removing or updating stale cache entries when the underlying data changes.",
   categories: ["caching"],
   tags: ["caching", "consistency"],
   depth: "standard",

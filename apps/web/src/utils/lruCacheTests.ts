@@ -33,7 +33,7 @@ export const lruCacheTests: TestCase[] = [
       const cache = new LRUCache(2);
       cache.put(1, 1);
       cache.put(2, 2);
-      cache.get(1);    // key 1 becomes MRU; key 2 becomes LRU
+      cache.get(1); // key 1 becomes MRU; key 2 becomes LRU
       cache.put(3, 3); // evicts key 2 (LRU)
       return cache.get(1) === 1 && cache.get(2) === -1 && cache.get(3) === 3;
     },
@@ -54,7 +54,7 @@ export const lruCacheTests: TestCase[] = [
       cache.put(1, 1);
       cache.put(2, 2);
       cache.put(1, 100); // update key 1 → becomes MRU; key 2 becomes LRU
-      cache.put(3, 3);   // evicts key 2 (LRU)
+      cache.put(3, 3); // evicts key 2 (LRU)
       return cache.get(1) === 100 && cache.get(2) === -1 && cache.get(3) === 3;
     },
   },
@@ -100,43 +100,67 @@ export const lruCacheTests: TestCase[] = [
   {
     name: "Constructor rejects capacity 0",
     run: (LRUCache) => {
-      try { new LRUCache(0); return false; }
-      catch (e) { return e instanceof RangeError; }
+      try {
+        new LRUCache(0);
+        return false;
+      } catch (e) {
+        return e instanceof RangeError;
+      }
     },
   },
   {
     name: "Constructor rejects negative capacity",
     run: (LRUCache) => {
-      try { new LRUCache(-1); return false; }
-      catch (e) { return e instanceof RangeError; }
+      try {
+        new LRUCache(-1);
+        return false;
+      } catch (e) {
+        return e instanceof RangeError;
+      }
     },
   },
   {
     name: "Constructor rejects fractional capacity",
     run: (LRUCache) => {
-      try { new LRUCache(2.5); return false; }
-      catch (e) { return e instanceof RangeError; }
+      try {
+        new LRUCache(2.5);
+        return false;
+      } catch (e) {
+        return e instanceof RangeError;
+      }
     },
   },
   {
     name: "Constructor rejects NaN capacity",
     run: (LRUCache) => {
-      try { new LRUCache(NaN); return false; }
-      catch (e) { return e instanceof RangeError; }
+      try {
+        new LRUCache(NaN);
+        return false;
+      } catch (e) {
+        return e instanceof RangeError;
+      }
     },
   },
   {
     name: "Constructor rejects Infinity capacity",
     run: (LRUCache) => {
-      try { new LRUCache(Infinity); return false; }
-      catch (e) { return e instanceof RangeError; }
+      try {
+        new LRUCache(Infinity);
+        return false;
+      } catch (e) {
+        return e instanceof RangeError;
+      }
     },
   },
   {
     name: "Constructor rejects -Infinity capacity",
     run: (LRUCache) => {
-      try { new LRUCache(-Infinity); return false; }
-      catch (e) { return e instanceof RangeError; }
+      try {
+        new LRUCache(-Infinity);
+        return false;
+      } catch (e) {
+        return e instanceof RangeError;
+      }
     },
   },
 ];

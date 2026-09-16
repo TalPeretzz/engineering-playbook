@@ -21,9 +21,8 @@ export const topicsById: Record<string, (typeof allTopicDefinitions)[number]> = 
 );
 
 /** Every topic (available or coming-soon) by slug — for route dispatch. `topicsBySlug` below is available-only. */
-export const definitionsBySlug: Record<string, (typeof allTopicDefinitions)[number]> = Object.fromEntries(
-  allTopicDefinitions.map((definition) => [definition.slug, definition])
-);
+export const definitionsBySlug: Record<string, (typeof allTopicDefinitions)[number]> =
+  Object.fromEntries(allTopicDefinitions.map((definition) => [definition.slug, definition]));
 
 /** Next/previous `available` topic id in curriculum order, skipping coming-soon topics. */
 export function nextAvailableTopicId(currentId: string): string | null {

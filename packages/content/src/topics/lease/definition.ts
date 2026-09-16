@@ -4,7 +4,8 @@ export const lease: TopicDefinition = {
   id: "lease",
   slug: "lease",
   title: "Lease",
-  summary: "A time-bound distributed lock that expires automatically, avoiding indefinite blocking if the holder crashes.",
+  summary:
+    "A time-bound distributed lock that expires automatically, avoiding indefinite blocking if the holder crashes.",
   categories: ["distributed-systems"],
   tags: ["coordination", "fault-tolerance"],
   depth: "standard",

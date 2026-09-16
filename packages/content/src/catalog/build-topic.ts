@@ -11,8 +11,14 @@ import type { Topic, TopicCategory, TopicDefinition } from "@engineering-playboo
 const LEGACY_TOPIC_OVERRIDES: Record<string, { category: TopicCategory; nextTopics: string[] }> = {
   "bloom-filter": { category: "data-structures", nextTopics: ["lru-cache", "consistent-hashing"] },
   "lru-cache": { category: "data-structures", nextTopics: ["consistent-hashing"] },
-  "consistent-hashing": { category: "distributed-systems", nextTopics: ["replication", "rate-limiter"] },
-  idempotency: { category: "backend-patterns", nextTopics: ["outbox-pattern", "saga-pattern", "rate-limiter"] },
+  "consistent-hashing": {
+    category: "distributed-systems",
+    nextTopics: ["replication", "rate-limiter"],
+  },
+  idempotency: {
+    category: "backend-patterns",
+    nextTopics: ["outbox-pattern", "saga-pattern", "rate-limiter"],
+  },
   "rate-limiter": { category: "backend-patterns", nextTopics: ["idempotency", "circuit-breaker"] },
 };
 

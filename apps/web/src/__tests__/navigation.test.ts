@@ -1,5 +1,9 @@
 import { describe, it, expect } from "vitest";
-import { nextAvailableTopicId, prevAvailableTopicId, topicsById } from "@engineering-playbook/content";
+import {
+  nextAvailableTopicId,
+  prevAvailableTopicId,
+  topicsById,
+} from "@engineering-playbook/content";
 
 describe("nextAvailableTopicId / prevAvailableTopicId", () => {
   it("nextAvailableFrom skips coming-soon topics", () => {
@@ -19,7 +23,13 @@ describe("nextAvailableTopicId / prevAvailableTopicId", () => {
   });
 
   it("never returns the current topic itself", () => {
-    for (const id of ["bloom-filter", "lru-cache", "consistent-hashing", "idempotency", "rate-limiter"]) {
+    for (const id of [
+      "bloom-filter",
+      "lru-cache",
+      "consistent-hashing",
+      "idempotency",
+      "rate-limiter",
+    ]) {
       expect(nextAvailableTopicId(id)).not.toBe(id);
       expect(prevAvailableTopicId(id)).not.toBe(id);
     }

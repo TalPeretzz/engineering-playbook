@@ -4,7 +4,8 @@ export const eventSourcing: TopicDefinition = {
   id: "event-sourcing",
   slug: "event-sourcing",
   title: "Event Sourcing",
-  summary: "Storing every state change as an immutable event and deriving current state by replaying them, instead of storing only the latest state.",
+  summary:
+    "Storing every state change as an immutable event and deriving current state by replaying them, instead of storing only the latest state.",
   categories: ["distributed-systems"],
   tags: ["architecture", "audit-trail"],
   depth: "standard",

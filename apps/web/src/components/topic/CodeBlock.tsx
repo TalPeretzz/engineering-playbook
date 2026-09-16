@@ -13,7 +13,12 @@ const LANG_LABELS: Record<ProgrammingLanguage, string> = {
 const LANG_ORDER: ProgrammingLanguage[] = ["typescript", "python", "java"];
 
 type CodeBlockProps =
-  | { implementations: Partial<Record<ProgrammingLanguage, string>>; code?: never; language?: never; label?: string }
+  | {
+      implementations: Partial<Record<ProgrammingLanguage, string>>;
+      code?: never;
+      language?: never;
+      label?: string;
+    }
   | { code: string; language: ProgrammingLanguage; implementations?: never; label?: string };
 
 export function CodeBlock(props: CodeBlockProps) {

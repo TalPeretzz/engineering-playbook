@@ -4,7 +4,8 @@ export const skipList: TopicDefinition = {
   id: "skip-list",
   slug: "skip-list",
   title: "Skip List",
-  summary: "A layered linked-list structure that gives O(log n) search and insertion without the rebalancing logic of a tree.",
+  summary:
+    "A layered linked-list structure that gives O(log n) search and insertion without the rebalancing logic of a tree.",
   categories: ["practical-data-structures"],
   tags: ["ordered-data", "probabilistic"],
   depth: "reference",

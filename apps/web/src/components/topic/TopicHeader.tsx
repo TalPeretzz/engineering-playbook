@@ -10,9 +10,12 @@ type TopicHeaderProps = {
 };
 
 const DIFFICULTY_COLORS: Record<string, string> = {
-  beginner: "text-emerald-700 dark:text-emerald-400 bg-emerald-50 dark:bg-emerald-900/30 border-emerald-200 dark:border-emerald-800/50",
-  intermediate: "text-amber-700 dark:text-amber-400 bg-amber-50 dark:bg-amber-900/30 border-amber-200 dark:border-amber-800/50",
-  advanced: "text-red-700 dark:text-red-400 bg-red-50 dark:bg-red-900/30 border-red-200 dark:border-red-800/50",
+  beginner:
+    "text-emerald-700 dark:text-emerald-400 bg-emerald-50 dark:bg-emerald-900/30 border-emerald-200 dark:border-emerald-800/50",
+  intermediate:
+    "text-amber-700 dark:text-amber-400 bg-amber-50 dark:bg-amber-900/30 border-amber-200 dark:border-amber-800/50",
+  advanced:
+    "text-red-700 dark:text-red-400 bg-red-50 dark:bg-red-900/30 border-red-200 dark:border-red-800/50",
 };
 
 const CATEGORY_LABELS: Record<string, string> = {
@@ -54,12 +57,8 @@ export function TopicHeader({ topic, progress }: TopicHeaderProps) {
       </div>
 
       {/* Title */}
-      <h1 className="text-3xl font-bold text-ink mb-2 tracking-tight">
-        {topic.title}
-      </h1>
-      <p className="text-ink-muted text-base leading-relaxed max-w-xl mb-5">
-        {topic.description}
-      </p>
+      <h1 className="text-3xl font-bold text-ink mb-2 tracking-tight">{topic.title}</h1>
+      <p className="text-ink-muted text-base leading-relaxed max-w-xl mb-5">{topic.description}</p>
 
       {/* Meta row */}
       <div className="flex flex-wrap items-center gap-x-4 gap-y-2 text-sm mb-5">
@@ -69,8 +68,12 @@ export function TopicHeader({ topic, progress }: TopicHeaderProps) {
           {topic.difficulty}
         </span>
         <span className="text-ink-muted text-sm">~{topic.estimatedMinutes} min</span>
-        <span className="text-ink-faint" aria-hidden="true">·</span>
-        <span className="text-ink-muted text-sm">{CATEGORY_LABELS[topic.category] ?? topic.category}</span>
+        <span className="text-ink-faint" aria-hidden="true">
+          ·
+        </span>
+        <span className="text-ink-muted text-sm">
+          {CATEGORY_LABELS[topic.category] ?? topic.category}
+        </span>
       </div>
 
       {/* Challenge progress — hollow vs filled dots + screen reader progress */}
@@ -91,9 +94,7 @@ export function TopicHeader({ topic, progress }: TopicHeaderProps) {
                   key={c.id}
                   title={`Challenge ${i + 1}: ${isDone ? "completed" : "not completed"}`}
                   className={`w-3 h-3 rounded-full border-2 transition-all ${
-                    isDone
-                      ? "bg-brand border-brand"
-                      : "bg-transparent border-wire-strong"
+                    isDone ? "bg-brand border-brand" : "bg-transparent border-wire-strong"
                   }`}
                 />
               );
@@ -101,9 +102,7 @@ export function TopicHeader({ topic, progress }: TopicHeaderProps) {
           </div>
           <span className="text-xs text-ink-muted">
             {doneRequired} / {requiredChallenges.length} required challenges
-            {isCompleted && (
-              <span className="text-brand-text ml-1.5 font-medium">— all done</span>
-            )}
+            {isCompleted && <span className="text-brand-text ml-1.5 font-medium">— all done</span>}
           </span>
         </div>
       )}

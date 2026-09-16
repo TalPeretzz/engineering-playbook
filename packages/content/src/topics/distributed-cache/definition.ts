@@ -4,7 +4,8 @@ export const distributedCache: TopicDefinition = {
   id: "distributed-cache",
   slug: "distributed-cache",
   title: "Distributed Cache",
-  summary: "A cache shared across multiple application instances, typically backed by a system like Redis or Memcached.",
+  summary:
+    "A cache shared across multiple application instances, typically backed by a system like Redis or Memcached.",
   categories: ["caching"],
   tags: ["caching", "scalability"],
   depth: "standard",

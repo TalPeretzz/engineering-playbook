@@ -2,7 +2,13 @@ import Link from "next/link";
 import type { LearningPath } from "@engineering-playbook/content-schema";
 import type { PathProgress } from "@/store/progressStore";
 
-export function LearningPathCard({ path, progress }: { path: LearningPath; progress: PathProgress }) {
+export function LearningPathCard({
+  path,
+  progress,
+}: {
+  path: LearningPath;
+  progress: PathProgress;
+}) {
   return (
     <Link
       href={`/learn/${path.slug}`}

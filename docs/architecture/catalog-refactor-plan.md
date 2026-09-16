@@ -11,9 +11,10 @@
 
 **Goal:** Move Engineering Playbook from a hand-rolled 5-topic site to a data-driven catalog that starts at ~50 topics in a single "Backend & Systems" area and grows without a rewrite to 200+ topics across multiple content areas (Frontend Foundations, Database Foundations, System Design, Networking, and future areas).
 
-Preserve Bloom Filter and LRU Cache exactly. Let future lessons be added as **data** — a per-topic definition file plus an optional `LessonContent` — rather than by writing new components. Let future *content areas* be added by dropping in one entry to a registry.
+Preserve Bloom Filter and LRU Cache exactly. Let future lessons be added as **data** — a per-topic definition file plus an optional `LessonContent` — rather than by writing new components. Let future _content areas_ be added by dropping in one entry to a registry.
 
 **Non-goals (deferred):**
+
 - Writing full lesson content for the ~48 new topics.
 - Custom interactive visualizations beyond the two that already exist.
 - Auth, backend, DB, deployment changes.
@@ -37,6 +38,7 @@ Preserve Bloom Filter and LRU Cache exactly. Let future lessons be added as **da
 - Homepage renders all topics × categories as an equal-weight grid.
 
 **Assets to preserve verbatim:**
+
 - `packages/content/src/topics/bloom-filter/` directory (all files, all exports).
 - `packages/content/src/topics/lru-cache/` directory (all files, all exports).
 - `apps/web/src/components/topic/LruCacheVisual.tsx` and `StepVisual.tsx`.
@@ -106,14 +108,15 @@ apps/web                    rendering, routing, progress, navigation
 
 The catalog is designed to grow along four axes: topic count, category count, content-area count, and content-type count. Each axis has an explicit strategy so growth doesn't force a rewrite.
 
-| Growth axis            | Small (today)                     | Medium (~200 topics)                            | Large (500+)                        | Mechanism                                   |
-| ---------------------- | --------------------------------- | ----------------------------------------------- | ----------------------------------- | ------------------------------------------- |
-| Topics per category    | 5–10                              | 10–20                                           | 20+                                 | Per-category ordering; sidebar list         |
-| Categories per area    | 5                                 | 8–12 per area                                   | 12+                                 | Data-driven `CategoryDefinition[]`          |
-| Content areas          | 1 ("Backend & Systems")           | 3–5 (add Frontend, Data, Systems Design)        | 6–10                                | Data-driven `ContentArea[]`; sidebar accordion switches to area-tabbed layout |
-| Content types          | 1 (`lesson`)                      | Optionally add cheatsheets, case-studies       | Multiple                            | `TopicDefinition.contentType?: string` (deferred; add only when needed) |
+| Growth axis         | Small (today)           | Medium (~200 topics)                     | Large (500+) | Mechanism                                                                     |
+| ------------------- | ----------------------- | ---------------------------------------- | ------------ | ----------------------------------------------------------------------------- |
+| Topics per category | 5–10                    | 10–20                                    | 20+          | Per-category ordering; sidebar list                                           |
+| Categories per area | 5                       | 8–12 per area                            | 12+          | Data-driven `CategoryDefinition[]`                                            |
+| Content areas       | 1 ("Backend & Systems") | 3–5 (add Frontend, Data, Systems Design) | 6–10         | Data-driven `ContentArea[]`; sidebar accordion switches to area-tabbed layout |
+| Content types       | 1 (`lesson`)            | Optionally add cheatsheets, case-studies | Multiple     | `TopicDefinition.contentType?: string` (deferred; add only when needed)       |
 
 **Composition, not centralization.** No file lists all topics inline. Instead:
+
 - Each topic has its own `definition.ts` file.
 - A registry file (`packages/content/topics/index.ts`) explicitly imports each definition — grep-friendly, tree-shakeable, git-conflict-tolerant.
 - Categories, content areas, learning paths, and curriculum order each live in their own small files.
@@ -146,19 +149,19 @@ Categories move from a hardcoded TS enum to a **data-driven registry**. Above ca
 
 ```ts
 export type ContentArea = {
-  id: string;                    // "backend-systems", "frontend-foundations", "data", ...
-  title: string;                 // "Backend & Systems"
-  summary: string;               // one line
-  order: number;                 // display order
-  icon?: string;                 // optional icon name (lucide identifier)
+  id: string; // "backend-systems", "frontend-foundations", "data", ...
+  title: string; // "Backend & Systems"
+  summary: string; // one line
+  order: number; // display order
+  icon?: string; // optional icon name (lucide identifier)
 };
 
 export type CategoryDefinition = {
-  id: string;                    // "distributed-systems"
-  contentAreaId: string;         // references ContentArea.id
-  title: string;                 // "Distributed Systems"
+  id: string; // "distributed-systems"
+  contentAreaId: string; // references ContentArea.id
+  title: string; // "Distributed Systems"
   summary?: string;
-  order: number;                 // display order within the area
+  order: number; // display order within the area
 };
 
 // TopicCategory becomes a bare string; validity is enforced by tests, not the compiler.
@@ -200,15 +203,15 @@ ContentArea "system-design" ("System Design")
 
 **Old category migration** (from the current codebase to the new registry):
 
-| Old key (current code)   | New category id                  | Content area        |
-| ------------------------ | -------------------------------- | ------------------- |
-| `data-structures`        | `practical-data-structures`      | backend-systems     |
-| `distributed-systems`    | `distributed-systems`            | backend-systems     |
-| `resilience`             | `distributed-systems`            | backend-systems     |
-| `messaging`              | `messaging`                      | backend-systems     |
-| `caching`                | `caching`                        | backend-systems     |
-| `backend-patterns`       | `design-patterns`                | backend-systems     |
-| `fundamentals`           | (dropped — unused)               | —                   |
+| Old key (current code) | New category id             | Content area    |
+| ---------------------- | --------------------------- | --------------- |
+| `data-structures`      | `practical-data-structures` | backend-systems |
+| `distributed-systems`  | `distributed-systems`       | backend-systems |
+| `resilience`           | `distributed-systems`       | backend-systems |
+| `messaging`            | `messaging`                 | backend-systems |
+| `caching`              | `caching`                   | backend-systems |
+| `backend-patterns`     | `design-patterns`           | backend-systems |
+| `fundamentals`         | (dropped — unused)          | —               |
 
 Existing 5 topic files use the old string keys. Migration is a mechanical string replace in each `metadata.ts` / flat file.
 
@@ -216,28 +219,28 @@ Existing 5 topic files use the old string keys. Migration is a mechanical string
 
 ```ts
 export type TopicDefinition = {
-  id: string;                        // stable slug-like ID; MAY equal slug
-  slug: string;                      // URL segment; unique across all topics
+  id: string; // stable slug-like ID; MAY equal slug
+  slug: string; // URL segment; unique across all topics
   title: string;
-  shortTitle?: string;               // sidebar/breadcrumb; falls back to title
-  summary: string;                   // 1–2 sentences, shown everywhere
+  shortTitle?: string; // sidebar/breadcrumb; falls back to title
+  summary: string; // 1–2 sentences, shown everywhere
 
-  categories: TopicCategoryId[];     // one or more; first is canonical
+  categories: TopicCategoryId[]; // one or more; first is canonical
   primaryCategoryId?: TopicCategoryId; // optional override; defaults to categories[0]
-  tags: string[];                    // free-form for filters/search — the escape hatch for future cross-cutting facets
+  tags: string[]; // free-form for filters/search — the escape hatch for future cross-cutting facets
 
-  depth: TopicDepth;                 // flagship | standard | reference
-  availability: TopicAvailability;   // available | coming-soon
-  contentType?: "lesson";            // default "lesson"; reserved for future ("cheatsheet", "case-study", "interview-question"). Deferred until needed.
+  depth: TopicDepth; // flagship | standard | reference
+  availability: TopicAvailability; // available | coming-soon
+  contentType?: "lesson"; // default "lesson"; reserved for future ("cheatsheet", "case-study", "interview-question"). Deferred until needed.
 
   difficulty: TopicDifficulty;
   estimatedMinutes: number;
 
-  prerequisites: string[];           // topic IDs
-  relatedTopics: string[];           // topic IDs
-  learningPaths: string[];           // learning path IDs
+  prerequisites: string[]; // topic IDs
+  relatedTopics: string[]; // topic IDs
+  learningPaths: string[]; // learning path IDs
 
-  whyItMatters?: string;             // shown on reference/coming-soon pages
+  whyItMatters?: string; // shown on reference/coming-soon pages
 
   /** Full lesson. Absent for coming-soon topics. */
   lesson?: LessonContent;
@@ -245,6 +248,7 @@ export type TopicDefinition = {
 ```
 
 Rules:
+
 - `id` is stable. Once assigned, never changes even if `slug` or `title` changes. Progress storage keys on `id`.
 - `slug` may change (with a redirect); `id` is the immutable handle.
 - `categories` is always ≥ 1. Multi-category is allowed and tested for. The first entry (or `primaryCategoryId` if set) determines canonical position in the curriculum.
@@ -268,7 +272,7 @@ export type LessonContent = {
   tradeoffs?: TradeoffsSection;
   useCases?: UseCasesSection;
   production?: TextSection;
-  realWorldUsage?: TextSection;      // uses new `sources` rich node
+  realWorldUsage?: TextSection; // uses new `sources` rich node
   recap?: ComparisonSection;
 
   /** Legacy escape hatch — flagship lessons stay on this. */
@@ -279,7 +283,13 @@ export type LessonContent = {
 };
 
 export type VisualizationSlot =
-  | { kind: "component"; component: "lru-cache" | "bloom-filter"; heading: string; id: string; phase?: string }
+  | {
+      kind: "component";
+      component: "lru-cache" | "bloom-filter";
+      heading: string;
+      id: string;
+      phase?: string;
+    }
   | { kind: "steps"; heading: string; id: string; phase?: string; steps: VisualStep[] }
   | { kind: "ascii"; heading: string; id: string; phase?: string; content: string };
 ```
@@ -313,14 +323,14 @@ export type Topic = {
   slug: string;
   title: string;
   description: string;
-  categories: TopicCategory[];        // <- was `category`
+  categories: TopicCategory[]; // <- was `category`
   difficulty: TopicDifficulty;
   estimatedMinutes: number;
   prerequisites: string[];
-  nextTopics: string[];               // computed from curriculum, not authored
+  nextTopics: string[]; // computed from curriculum, not authored
   relatedTopics: string[];
   implementations: Partial<Record<ProgrammingLanguage, string>>;
-  sections: Section[];                // flattened from LessonContent (§4.4)
+  sections: Section[]; // flattened from LessonContent (§4.4)
   challenges: Challenge[];
 };
 ```
@@ -337,8 +347,8 @@ export type LearningPath = {
   slug: string;
   title: string;
   summary: string;
-  audience?: string;                  // e.g., "Backend engineers"
-  topicIds: string[];                 // ordered
+  audience?: string; // e.g., "Backend engineers"
+  topicIds: string[]; // ordered
 };
 ```
 
@@ -351,13 +361,13 @@ At 50 topics a single flat `topicOrder: string[]` is manageable. At 200+ it's a 
 ```ts
 export type Curriculum = {
   /** Order in which content areas render. */
-  areaOrder: string[];                                  // ["backend-systems", "frontend-foundations", ...]
+  areaOrder: string[]; // ["backend-systems", "frontend-foundations", ...]
 
   /** Ordered category ids inside each area. */
-  categoriesInArea: Record<string, TopicCategoryId[]>;  // areaId → ordered categories
+  categoriesInArea: Record<string, TopicCategoryId[]>; // areaId → ordered categories
 
   /** Ordered topic ids inside each category. */
-  topicsInCategory: Record<TopicCategoryId, string[]>;  // categoryId → ordered topics
+  topicsInCategory: Record<TopicCategoryId, string[]>; // categoryId → ordered topics
 
   /**
    * Optional explicit override — a hand-authored global linear reading order
@@ -485,6 +495,7 @@ Content is preserved verbatim in the split. No rewriting.
 ### 6.3 Progress migration (v1 → v2)
 
 **Existing storage format (v1):**
+
 ```json
 {
   "topics": { "bloom-filter": { "status": "completed", "completedChallenges": [...] } },
@@ -494,6 +505,7 @@ Content is preserved verbatim in the split. No rewriting.
 ```
 
 **New format (v2):** same shape, but keyed by canonical topic **id** and versioned.
+
 ```json
 {
   "version": 2,
@@ -513,10 +525,10 @@ export function migrateProgress(raw: unknown): UserProgress {
   const v1 = raw as V1Progress | null;
   if (!v1) return DEFAULT_PROGRESS_V2;
 
-  const slugToId = buildSlugToIdMap();      // from catalog
+  const slugToId = buildSlugToIdMap(); // from catalog
   const topicsById: Record<string, TopicProgress> = {};
   for (const [oldKey, prog] of Object.entries(v1.topics ?? {})) {
-    const id = slugToId[oldKey] ?? oldKey;  // slug == id today, so identity for Bloom/LRU
+    const id = slugToId[oldKey] ?? oldKey; // slug == id today, so identity for Bloom/LRU
     topicsById[id] = prog;
   }
 
@@ -537,8 +549,9 @@ The `progressStore` public functions (`getTopicProgress`, `completeTopic`, `comp
 ### 6.4 Coming-soon topics cannot progress
 
 `markInProgress`, `completeChallenge`, `setTopicStatus` all check the definition:
+
 ```ts
-if (definition.availability === "coming-soon") return;  // no-op
+if (definition.availability === "coming-soon") return; // no-op
 ```
 
 Reference topics render `TopicPageComingSoon` which does not import `useProgress`.
@@ -581,7 +594,7 @@ The trigger `contentAreas.length ≥ 2` is evaluated at render time from the cat
 <Sidebar>
   <SearchInput />
   <FilterChips />
-  {categoriesOrdered.map(cat => (
+  {categoriesOrdered.map((cat) => (
     <CategoryGroup id={cat} defaultOpen={isActive(cat) || !isCollapsed(cat)}>
       <CategoryHeader count={availableCount(cat)} total={totalCount(cat)} />
       <TopicList topics={topicsInCategory(cat, filterState)} />
@@ -612,6 +625,7 @@ Coming-soon cards use a muted background, a "Coming Soon" chip in the top-right,
 ## 9. `TopicPageComingSoon`
 
 A reduced variant of `TopicPage`. Shows:
+
 - `TopicHeader` with a "Coming soon" banner replacing the CTA.
 - Summary and why-it-matters paragraph.
 - Difficulty, estimated time, categories.
@@ -670,6 +684,7 @@ Multi-category topics have exactly one position in `topicOrder`. Whether they we
 
 `/learn` — landing page listing all 6 paths with progress bars.
 `/learn/[slug]` — one path:
+
 - Ordered numbered list of topics.
 - "Recommended next" = first available topic in path where current progress status is `not-started` or `in-progress`.
 - Path progress: `completedInPath / availableInPath` (coming-soon topics don't count against denominator).
@@ -686,8 +701,8 @@ Topic membership in multiple paths is expected (LRU appears in "Caching" and cou
 ```ts
 export type UserProgressV2 = {
   version: 2;
-  topicsById: Record<string, TopicProgress>;   // keyed by TopicDefinition.id
-  collapsedCategories: TopicCategory[];        // sidebar persistence
+  topicsById: Record<string, TopicProgress>; // keyed by TopicDefinition.id
+  collapsedCategories: TopicCategory[]; // sidebar persistence
   preferredLanguage: ProgrammingLanguage;
   lastVisitedTopicId: string | null;
 };
@@ -768,6 +783,7 @@ Separate file `docs/architecture/content-production.md`, referenced from the mai
 7. Verify: `pnpm test` (catalog integrity), `pnpm build`, then browser smoke.
 
 Includes three worked examples (~20 lines each):
+
 - **Flagship**: HyperLogLog (with `sections[]` for a custom visualization).
 - **Standard**: Retry + Exponential Backoff (structured `LessonContent` slots only).
 - **Reference**: Skip List (metadata only, `availability: "coming-soon"`).
@@ -783,6 +799,7 @@ Future content areas (Frontend Foundations, Data Foundations, System Design, …
 Grouping by target category and depth mark:
 
 **Practical Data Structures** (10 topics)
+
 - `bloom-filter` — flagship, available
 - `lru-cache` — flagship, available
 - `consistent-hashing` — flagship, coming-soon (multi-category: also distributed-systems)
@@ -795,6 +812,7 @@ Grouping by target category and depth mark:
 - `merkle-tree` — standard, coming-soon
 
 **Distributed Systems** (15 topics — Consistent Hashing dual-listed above)
+
 - `leader-election` — standard, coming-soon
 - `replication` — standard, coming-soon
 - `sharding` — standard, coming-soon
@@ -812,6 +830,7 @@ Grouping by target category and depth mark:
 - `event-sourcing` — standard, coming-soon
 
 **Messaging** (8 topics)
+
 - `pub-sub` — standard, coming-soon
 - `consumer-groups` — standard, coming-soon
 - `dead-letter-queue` — standard, coming-soon
@@ -822,6 +841,7 @@ Grouping by target category and depth mark:
 - `competing-consumers` — standard, coming-soon
 
 **Caching** (8 topics — LRU dual-listed above)
+
 - `cache-aside` — flagship, coming-soon
 - `write-through` — standard, coming-soon
 - `write-behind` — standard, coming-soon
@@ -832,6 +852,7 @@ Grouping by target category and depth mark:
 - `distributed-cache` — standard, coming-soon
 
 **Design Patterns** (8 topics)
+
 - `strategy` — flagship, coming-soon
 - `factory` — standard, coming-soon
 - `adapter` — standard, coming-soon
@@ -896,24 +917,24 @@ At each step run `pnpm lint && pnpm typecheck && pnpm test && pnpm build`. Commi
 
 ## 18. Acceptance-criteria coverage
 
-| # | Criterion                                                | Covered by                                                                  |
-| - | -------------------------------------------------------- | --------------------------------------------------------------------------- |
-| 1 | All planned topics in the catalog                        | §16 (49 definitions) + step 3                                               |
-| 2 | Bloom Filter and LRU still work exactly                  | §6.1 + step 5 (small edit only) + smoke tests                               |
-| 3 | Consistent Hashing dual-category, one canonical entry    | §4.3 `categories[]`; §16 dual-listed once; §11 single position in topicOrder |
-| 4 | Search never returns duplicates                          | §7 (filter by unique id); tested in `catalogFilters.test.ts`                |
-| 5 | Sidebar usable with full catalog                         | §7.2 collapsed-by-default; step 6                                           |
-| 6 | Catalog filters work individually and combined           | §8 + `catalogFilters.test.ts`                                               |
-| 7 | Coming-soon pages render, cannot affect progress         | §9 + §6.4; tested in `topicPage.smoke.test.ts`                              |
-| 8 | Learning paths render from data                          | §12 + step 9                                                                |
-| 9 | Prev/next skips unavailable                              | §11 + `navigation.test.ts`                                                  |
-| 10 | Existing progress survives                              | §6.3 + `progressMigration.test.ts`                                          |
-| 11 | Tests, lint, typecheck, build pass                      | Step-by-step gate + final CI                                                |
-| 12 | No new console errors                                   | Browser smoke (step 13)                                                     |
-| 13 | Both themes and widths                                  | Browser smoke (step 13)                                                     |
-| 14 | Screenshots delivered                                   | Step 13 captures 6 shots                                                    |
-| 15 | Written summary                                         | Delivered with the final PR description                                     |
-| 16 | Ready for open-ended catalog growth                     | §3.3 principles + §4.2 content areas + §4.7 nested curriculum + §5 per-topic files + §20 growth playbook |
+| #   | Criterion                                             | Covered by                                                                                               |
+| --- | ----------------------------------------------------- | -------------------------------------------------------------------------------------------------------- |
+| 1   | All planned topics in the catalog                     | §16 (49 definitions) + step 3                                                                            |
+| 2   | Bloom Filter and LRU still work exactly               | §6.1 + step 5 (small edit only) + smoke tests                                                            |
+| 3   | Consistent Hashing dual-category, one canonical entry | §4.3 `categories[]`; §16 dual-listed once; §11 single position in topicOrder                             |
+| 4   | Search never returns duplicates                       | §7 (filter by unique id); tested in `catalogFilters.test.ts`                                             |
+| 5   | Sidebar usable with full catalog                      | §7.2 collapsed-by-default; step 6                                                                        |
+| 6   | Catalog filters work individually and combined        | §8 + `catalogFilters.test.ts`                                                                            |
+| 7   | Coming-soon pages render, cannot affect progress      | §9 + §6.4; tested in `topicPage.smoke.test.ts`                                                           |
+| 8   | Learning paths render from data                       | §12 + step 9                                                                                             |
+| 9   | Prev/next skips unavailable                           | §11 + `navigation.test.ts`                                                                               |
+| 10  | Existing progress survives                            | §6.3 + `progressMigration.test.ts`                                                                       |
+| 11  | Tests, lint, typecheck, build pass                    | Step-by-step gate + final CI                                                                             |
+| 12  | No new console errors                                 | Browser smoke (step 13)                                                                                  |
+| 13  | Both themes and widths                                | Browser smoke (step 13)                                                                                  |
+| 14  | Screenshots delivered                                 | Step 13 captures 6 shots                                                                                 |
+| 15  | Written summary                                       | Delivered with the final PR description                                                                  |
+| 16  | Ready for open-ended catalog growth                   | §3.3 principles + §4.2 content areas + §4.7 nested curriculum + §5 per-topic files + §20 growth playbook |
 
 ---
 

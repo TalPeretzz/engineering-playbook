@@ -4,7 +4,8 @@ export const deduplication: TopicDefinition = {
   id: "deduplication",
   slug: "deduplication",
   title: "Deduplication",
-  summary: "Detecting and discarding duplicate messages or requests, typically using an idempotency key or a seen-set.",
+  summary:
+    "Detecting and discarding duplicate messages or requests, typically using an idempotency key or a seen-set.",
   categories: ["messaging"],
   tags: ["messaging", "reliability"],
   depth: "standard",

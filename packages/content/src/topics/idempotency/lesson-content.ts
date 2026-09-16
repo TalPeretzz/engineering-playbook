@@ -204,7 +204,12 @@ Network failure — client retries:
       entries: [
         { operation: "Key lookup (Redis)", time: "O(1)", space: "O(1) per key" },
         { operation: "Key storage", time: "O(1)", space: "O(1) per key" },
-        { operation: "Total storage", time: "—", space: "O(K)", note: "K = unique requests within the TTL window" },
+        {
+          operation: "Total storage",
+          time: "—",
+          space: "O(K)",
+          note: "K = unique requests within the TTL window",
+        },
       ],
     },
     {

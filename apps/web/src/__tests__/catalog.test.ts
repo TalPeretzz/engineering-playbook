@@ -25,7 +25,9 @@ describe("catalog integrity", () => {
   it("every prerequisites[] entry references a real topic id", () => {
     for (const topic of allTopicDefinitions) {
       for (const prereqId of topic.prerequisites) {
-        expect(topicIds.has(prereqId), `${topic.id} has unknown prerequisite "${prereqId}"`).toBe(true);
+        expect(topicIds.has(prereqId), `${topic.id} has unknown prerequisite "${prereqId}"`).toBe(
+          true
+        );
       }
     }
   });
@@ -33,7 +35,10 @@ describe("catalog integrity", () => {
   it("every relatedTopics[] entry references a real topic id", () => {
     for (const topic of allTopicDefinitions) {
       for (const relatedId of topic.relatedTopics) {
-        expect(topicIds.has(relatedId), `${topic.id} has unknown related topic "${relatedId}"`).toBe(true);
+        expect(
+          topicIds.has(relatedId),
+          `${topic.id} has unknown related topic "${relatedId}"`
+        ).toBe(true);
       }
     }
   });
@@ -49,7 +54,10 @@ describe("catalog integrity", () => {
   it("every learning path's topicIds[] references real topic ids", () => {
     for (const path of learningPaths) {
       for (const topicId of path.topicIds) {
-        expect(topicIds.has(topicId), `path "${path.id}" references unknown topic "${topicId}"`).toBe(true);
+        expect(
+          topicIds.has(topicId),
+          `path "${path.id}" references unknown topic "${topicId}"`
+        ).toBe(true);
       }
     }
   });
@@ -58,7 +66,10 @@ describe("catalog integrity", () => {
     for (const topic of allTopicDefinitions) {
       expect(topic.categories.length).toBeGreaterThan(0);
       for (const categoryId of topic.categories) {
-        expect(categoryIds.has(categoryId), `${topic.id} has unknown category "${categoryId}"`).toBe(true);
+        expect(
+          categoryIds.has(categoryId),
+          `${topic.id} has unknown category "${categoryId}"`
+        ).toBe(true);
       }
     }
   });

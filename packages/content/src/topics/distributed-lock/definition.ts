@@ -4,7 +4,8 @@ export const distributedLock: TopicDefinition = {
   id: "distributed-lock",
   slug: "distributed-lock",
   title: "Distributed Lock",
-  summary: "A mechanism that ensures only one process across a cluster can hold a resource at a time.",
+  summary:
+    "A mechanism that ensures only one process across a cluster can hold a resource at a time.",
   categories: ["distributed-systems"],
   tags: ["coordination", "concurrency"],
   depth: "standard",

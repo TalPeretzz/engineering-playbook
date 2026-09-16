@@ -4,7 +4,8 @@ export const outboxPattern: TopicDefinition = {
   id: "outbox-pattern",
   slug: "outbox-pattern",
   title: "Outbox Pattern",
-  summary: "A pattern that atomically persists a state change and the event describing it, avoiding dual-write inconsistency between a database and a message broker.",
+  summary:
+    "A pattern that atomically persists a state change and the event describing it, avoiding dual-write inconsistency between a database and a message broker.",
   categories: ["distributed-systems"],
   tags: ["messaging", "consistency"],
   depth: "flagship",
