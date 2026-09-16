@@ -1,4 +1,5 @@
 import type { TopicDefinition } from "@engineering-playbook/content-schema";
+import { sections, implementations, challenges } from "./lesson-content";
 
 export const cacheAside: TopicDefinition = {
   id: "cache-aside",
@@ -9,10 +10,15 @@ export const cacheAside: TopicDefinition = {
   categories: ["caching"],
   tags: ["caching", "read-path"],
   depth: "flagship",
-  availability: "coming-soon",
+  availability: "available",
   difficulty: "beginner",
   estimatedMinutes: 20,
   prerequisites: [],
-  relatedTopics: [],
+  relatedTopics: ["lru-cache", "cache-stampede", "write-through"],
   learningPaths: [],
+  lesson: {
+    sections,
+    implementations,
+    challenges,
+  },
 };

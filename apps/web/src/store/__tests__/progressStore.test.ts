@@ -187,18 +187,23 @@ describe("resetProgress", () => {
 });
 
 describe("getCategoryProgress", () => {
-  // "caching" category has 9 topics in the catalog; only lru-cache is available today.
+  // "caching" category has 9 topics in the catalog; lru-cache and cache-aside are available today.
   it("counts only available topics against the denominator", () => {
     const p = store.getCategoryProgress("caching");
-    expect(p.available).toBe(1);
+    expect(p.available).toBe(2);
     expect(p.completed).toBe(0);
     expect(p.percent).toBe(0);
   });
 
-  it("reflects completion of the available topic", () => {
+  it("reflects completion of the available topics", () => {
     store.completeTopic("lru-cache");
-    const p = store.getCategoryProgress("caching");
+    let p = store.getCategoryProgress("caching");
     expect(p.completed).toBe(1);
+    expect(p.percent).toBe(50);
+
+    store.completeTopic("cache-aside");
+    p = store.getCategoryProgress("caching");
+    expect(p.completed).toBe(2);
     expect(p.percent).toBe(100);
   });
 
@@ -209,17 +214,27 @@ describe("getCategoryProgress", () => {
 });
 
 describe("getPathProgress", () => {
-  // "caching" learning path has 9 topics; only lru-cache is available today.
+  // "caching" learning path has 9 topics; lru-cache and cache-aside are available today,
+  // in that order.
   it("recommends the first not-completed available topic", () => {
     const p = store.getPathProgress("caching");
-    expect(p.available).toBe(1);
+    expect(p.available).toBe(2);
     expect(p.nextRecommendedId).toBe("lru-cache");
   });
 
-  it("clears the recommendation once the only available topic is completed", () => {
+  it("advances the recommendation to the next available topic once the first is completed", () => {
     store.completeTopic("lru-cache");
     const p = store.getPathProgress("caching");
     expect(p.completed).toBe(1);
+    expect(p.percent).toBe(50);
+    expect(p.nextRecommendedId).toBe("cache-aside");
+  });
+
+  it("clears the recommendation once every available topic is completed", () => {
+    store.completeTopic("lru-cache");
+    store.completeTopic("cache-aside");
+    const p = store.getPathProgress("caching");
+    expect(p.completed).toBe(2);
     expect(p.percent).toBe(100);
     expect(p.nextRecommendedId).toBeNull();
   });
@@ -250,8 +265,14 @@ describe("getRecommendedNextTopicId", () => {
     expect(store.getRecommendedNextTopicId(null)).toBe("lru-cache");
   });
 
+  it("finds the next available topic even across coming-soon categories (messaging is entirely coming-soon)", () => {
+    // rate-limiter (distributed-systems) -> cache-aside (caching), skipping all of messaging.
+    expect(store.getRecommendedNextTopicId("rate-limiter")).toBe("cache-aside");
+  });
+
   it("returns null once every available topic from that point on is completed", () => {
-    expect(store.getRecommendedNextTopicId("rate-limiter")).toBeNull();
+    // cache-aside is the last available topic in curriculum order today.
+    expect(store.getRecommendedNextTopicId("cache-aside")).toBeNull();
   });
 
   it("returns null for an id that isn't in curriculum order at all", () => {

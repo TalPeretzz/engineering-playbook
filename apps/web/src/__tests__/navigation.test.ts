@@ -29,17 +29,24 @@ describe("nextAvailableTopicId / prevAvailableTopicId", () => {
       "lru-cache",
       "consistent-hashing",
       "circuit-breaker",
+      "retry-exponential-backoff",
       "idempotency",
       "rate-limiter",
+      "cache-aside",
     ]) {
       expect(nextAvailableTopicId(id)).not.toBe(id);
       expect(prevAvailableTopicId(id)).not.toBe(id);
     }
   });
 
+  it("finds the next available topic across an entirely coming-soon category (messaging)", () => {
+    // rate-limiter (distributed-systems) -> cache-aside (caching), skipping all of messaging.
+    expect(nextAvailableTopicId("rate-limiter")).toBe("cache-aside");
+  });
+
   it("returns null when no next available topic exists (last available topic in curriculum order)", () => {
-    // rate-limiter is the last available topic; everything after it is coming-soon.
-    expect(nextAvailableTopicId("rate-limiter")).toBeNull();
+    // cache-aside is the last available topic; everything after it is coming-soon.
+    expect(nextAvailableTopicId("cache-aside")).toBeNull();
   });
 
   it("returns null when no previous available topic exists (first topic in curriculum order)", () => {
