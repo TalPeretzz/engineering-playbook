@@ -1,6 +1,6 @@
 "use client";
 
-import React, { useState, useEffect, useMemo } from "react";
+import React, { useState, useEffect, useMemo, useRef } from "react";
 import Link from "next/link";
 import { usePathname } from "next/navigation";
 import type { TopicDefinition } from "@engineering-playbook/content-schema";
@@ -67,6 +67,8 @@ export function Sidebar({ isOpen, onClose }: SidebarProps) {
   const [statuses, setStatuses] = useState<Record<string, TopicStatus>>({});
   const [collapsed, setCollapsed] = useState<Set<string>>(new Set());
   const [hydrated, setHydrated] = useState(false);
+  const asideRef = useRef<HTMLElement>(null);
+  const [isMobileViewport, setIsMobileViewport] = useState(false);
 
   const activeSlug = pathname?.startsWith("/topics/") ? pathname.slice("/topics/".length) : null;
 
@@ -120,6 +122,66 @@ export function Sidebar({ isOpen, onClose }: SidebarProps) {
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [pathname]);
 
+  // Track whether we're below the `lg` breakpoint, where the sidebar renders as a
+  // slide-over instead of a persistent column — that's the only time it behaves as
+  // a modal dialog (focus-trapped, Escape closes it, background scroll locked).
+  useEffect(() => {
+    const mq = window.matchMedia("(max-width: 1023px)");
+    setIsMobileViewport(mq.matches);
+    const handler = (e: MediaQueryListEvent) => setIsMobileViewport(e.matches);
+    mq.addEventListener("change", handler);
+    return () => mq.removeEventListener("change", handler);
+  }, []);
+
+  const isMobileDialog = isOpen && isMobileViewport;
+
+  useEffect(() => {
+    if (!isMobileDialog) return;
+
+    const previouslyFocused = document.activeElement as HTMLElement | null;
+    const originalOverflow = document.body.style.overflow;
+    document.body.style.overflow = "hidden";
+
+    const getFocusable = (): HTMLElement[] => {
+      const container = asideRef.current;
+      if (!container) return [];
+      return Array.from(
+        container.querySelectorAll<HTMLElement>(
+          'a[href], button:not([disabled]), input:not([disabled]), [tabindex]:not([tabindex="-1"])'
+        )
+      );
+    };
+
+    getFocusable()[0]?.focus();
+
+    function handleKeyDown(e: KeyboardEvent) {
+      if (e.key === "Escape") {
+        onClose();
+        return;
+      }
+      if (e.key !== "Tab") return;
+      const focusable = getFocusable();
+      if (focusable.length === 0) return;
+      const first = focusable[0];
+      const last = focusable[focusable.length - 1];
+      if (e.shiftKey && document.activeElement === first) {
+        e.preventDefault();
+        last.focus();
+      } else if (!e.shiftKey && document.activeElement === last) {
+        e.preventDefault();
+        first.focus();
+      }
+    }
+
+    document.addEventListener("keydown", handleKeyDown);
+
+    return () => {
+      document.removeEventListener("keydown", handleKeyDown);
+      document.body.style.overflow = originalOverflow;
+      previouslyFocused?.focus();
+    };
+  }, [isMobileDialog, onClose]);
+
   function toggleCategory(categoryId: string) {
     setCollapsed((prev) => {
       const next = new Set(prev);
@@ -142,6 +204,7 @@ export function Sidebar({ isOpen, onClose }: SidebarProps) {
 
   return (
     <aside
+      ref={asideRef}
       className={`
         fixed inset-y-0 left-0 z-40 flex flex-col w-[280px] shrink-0
         bg-surface-raised border-r border-wire overflow-hidden
@@ -150,12 +213,15 @@ export function Sidebar({ isOpen, onClose }: SidebarProps) {
         ${isOpen ? "translate-x-0" : "-translate-x-full"}
       `}
       aria-label="Navigation"
+      role={isMobileDialog ? "dialog" : undefined}
+      aria-modal={isMobileDialog ? true : undefined}
     >
       {/* Search */}
       <div className="p-3 border-b border-wire">
         <input
           type="text"
           placeholder="Search topics…"
+          aria-label="Search topics"
           value={search}
           onChange={(e) => setSearch(e.target.value)}
           className="w-full bg-surface-overlay border border-wire-strong rounded px-3 py-1.5 text-sm text-ink placeholder:text-ink-faint focus:outline-none focus:ring-1 focus:ring-brand"
