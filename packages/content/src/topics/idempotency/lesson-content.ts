@@ -1,15 +1,16 @@
 import type { Topic } from "@engineering-playbook/content-schema";
 
-export const idempotency: Topic = {
+// This is legacy pre-catalog data — id/categories now live in ./definition.ts.
+type LegacyLessonContent = Omit<Topic, "id" | "categories">;
+
+export const idempotency: LegacyLessonContent = {
   slug: "idempotency",
   title: "Idempotency",
   description:
     "The property where performing the same operation multiple times produces the same result as performing it once — essential for safe retries in distributed systems.",
-  category: "backend-patterns",
   difficulty: "intermediate",
   estimatedMinutes: 20,
   prerequisites: [],
-  nextTopics: ["outbox-pattern", "saga-pattern", "rate-limiter"],
 
   implementations: {
     typescript: `import crypto from "crypto";

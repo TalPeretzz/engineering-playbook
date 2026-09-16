@@ -1,15 +1,16 @@
 import type { Topic } from "@engineering-playbook/content-schema";
 
-export const consistentHashing: Topic = {
+// This is legacy pre-catalog data — id/categories now live in ./definition.ts.
+type LegacyLessonContent = Omit<Topic, "id" | "categories">;
+
+export const consistentHashing: LegacyLessonContent = {
   slug: "consistent-hashing",
   title: "Consistent Hashing",
   description:
     "A distributed hashing technique that minimizes key remapping when nodes are added or removed — essential for building scalable distributed caches and databases.",
-  category: "distributed-systems",
   difficulty: "intermediate",
   estimatedMinutes: 25,
   prerequisites: ["hashing"],
-  nextTopics: ["replication", "rate-limiter"],
 
   implementations: {
     typescript: `import * as crypto from "crypto";
