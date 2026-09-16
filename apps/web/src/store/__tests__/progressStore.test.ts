@@ -265,9 +265,9 @@ describe("getRecommendedNextTopicId", () => {
     expect(store.getRecommendedNextTopicId(null)).toBe("lru-cache");
   });
 
-  it("finds the next available topic even across coming-soon categories (messaging is entirely coming-soon)", () => {
-    // rate-limiter (distributed-systems) -> cache-aside (caching), skipping all of messaging.
-    expect(store.getRecommendedNextTopicId("rate-limiter")).toBe("cache-aside");
+  it("finds the next available topic across categories", () => {
+    // rate-limiter (distributed-systems) -> pub-sub (messaging).
+    expect(store.getRecommendedNextTopicId("rate-limiter")).toBe("pub-sub");
   });
 
   it("returns null once every available topic from that point on is completed", () => {

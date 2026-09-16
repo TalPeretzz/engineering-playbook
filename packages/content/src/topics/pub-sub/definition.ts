@@ -1,4 +1,5 @@
 import type { TopicDefinition } from "@engineering-playbook/content-schema";
+import { sections, implementations, challenges } from "./lesson-content";
 
 export const pubSub: TopicDefinition = {
   id: "pub-sub",
@@ -9,10 +10,15 @@ export const pubSub: TopicDefinition = {
   categories: ["messaging"],
   tags: ["messaging", "decoupling"],
   depth: "standard",
-  availability: "coming-soon",
+  availability: "available",
   difficulty: "beginner",
   estimatedMinutes: 15,
   prerequisites: [],
-  relatedTopics: [],
+  relatedTopics: ["consumer-groups", "competing-consumers"],
   learningPaths: [],
+  lesson: {
+    sections,
+    implementations,
+    challenges,
+  },
 };
