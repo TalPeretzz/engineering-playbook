@@ -34,6 +34,7 @@ export const learningPaths: LearningPath[] = [
       "quorum",
       "gossip-protocol",
       "heartbeats",
+      "circuit-breaker",
       "distributed-lock",
       "lease",
       "idempotency",
