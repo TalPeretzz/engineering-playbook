@@ -32,6 +32,7 @@ describe("nextAvailableTopicId / prevAvailableTopicId", () => {
       "retry-exponential-backoff",
       "idempotency",
       "rate-limiter",
+      "pub-sub",
       "cache-aside",
     ]) {
       expect(nextAvailableTopicId(id)).not.toBe(id);
@@ -39,9 +40,9 @@ describe("nextAvailableTopicId / prevAvailableTopicId", () => {
     }
   });
 
-  it("finds the next available topic across an entirely coming-soon category (messaging)", () => {
-    // rate-limiter (distributed-systems) -> cache-aside (caching), skipping all of messaging.
-    expect(nextAvailableTopicId("rate-limiter")).toBe("cache-aside");
+  it("finds the next available topic across categories", () => {
+    // rate-limiter (distributed-systems) -> pub-sub (messaging).
+    expect(nextAvailableTopicId("rate-limiter")).toBe("pub-sub");
   });
 
   it("returns null when no next available topic exists (last available topic in curriculum order)", () => {
