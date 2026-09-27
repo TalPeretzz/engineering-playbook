@@ -1,4 +1,5 @@
 import type { TopicDefinition } from "@engineering-playbook/content-schema";
+import { sections, implementations, challenges } from "./lesson-content";
 
 export const strategy: TopicDefinition = {
   id: "strategy",
@@ -9,10 +10,15 @@ export const strategy: TopicDefinition = {
   categories: ["design-patterns"],
   tags: ["design-pattern", "behavioral"],
   depth: "flagship",
-  availability: "coming-soon",
+  availability: "available",
   difficulty: "beginner",
   estimatedMinutes: 15,
   prerequisites: [],
-  relatedTopics: [],
+  relatedTopics: ["dependency-injection", "factory"],
   learningPaths: [],
+  lesson: {
+    sections,
+    implementations,
+    challenges,
+  },
 };

@@ -34,6 +34,7 @@ describe("nextAvailableTopicId / prevAvailableTopicId", () => {
       "rate-limiter",
       "pub-sub",
       "cache-aside",
+      "strategy",
     ]) {
       expect(nextAvailableTopicId(id)).not.toBe(id);
       expect(prevAvailableTopicId(id)).not.toBe(id);
@@ -43,11 +44,14 @@ describe("nextAvailableTopicId / prevAvailableTopicId", () => {
   it("finds the next available topic across categories", () => {
     // rate-limiter (distributed-systems) -> pub-sub (messaging).
     expect(nextAvailableTopicId("rate-limiter")).toBe("pub-sub");
+    // cache-aside (caching) -> strategy (design-patterns), skipping caching's other
+    // seven coming-soon topics.
+    expect(nextAvailableTopicId("cache-aside")).toBe("strategy");
   });
 
   it("returns null when no next available topic exists (last available topic in curriculum order)", () => {
-    // cache-aside is the last available topic; everything after it is coming-soon.
-    expect(nextAvailableTopicId("cache-aside")).toBeNull();
+    // strategy (design-patterns, the final category) is the last available topic today.
+    expect(nextAvailableTopicId("strategy")).toBeNull();
   });
 
   it("returns null when no previous available topic exists (first topic in curriculum order)", () => {
