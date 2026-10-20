@@ -1,4 +1,6 @@
 import type { TopicDefinition } from "@engineering-playbook/content-schema";
+import { createStandardLesson } from "../shared/standard-lesson";
+import { lessonSpecs } from "../shared/lesson-specs";
 
 export const leaderElection: TopicDefinition = {
   id: "leader-election",
@@ -9,10 +11,11 @@ export const leaderElection: TopicDefinition = {
   categories: ["distributed-systems"],
   tags: ["consensus", "coordination"],
   depth: "standard",
-  availability: "coming-soon",
+  availability: "available",
   difficulty: "intermediate",
   estimatedMinutes: 20,
   prerequisites: [],
   relatedTopics: [],
   learningPaths: [],
+  lesson: createStandardLesson("leader-election", lessonSpecs["leader-election"]),
 };

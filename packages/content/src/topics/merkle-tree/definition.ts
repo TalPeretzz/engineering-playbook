@@ -1,4 +1,6 @@
 import type { TopicDefinition } from "@engineering-playbook/content-schema";
+import { createStandardLesson } from "../shared/standard-lesson";
+import { lessonSpecs } from "../shared/lesson-specs";
 
 export const merkleTree: TopicDefinition = {
   id: "merkle-tree",
@@ -9,10 +11,11 @@ export const merkleTree: TopicDefinition = {
   categories: ["practical-data-structures"],
   tags: ["hashing", "data-integrity"],
   depth: "standard",
-  availability: "coming-soon",
+  availability: "available",
   difficulty: "intermediate",
   estimatedMinutes: 20,
   prerequisites: [],
   relatedTopics: [],
   learningPaths: [],
+  lesson: createStandardLesson("merkle-tree", lessonSpecs["merkle-tree"]),
 };

@@ -1,4 +1,6 @@
 import type { TopicDefinition } from "@engineering-playbook/content-schema";
+import { createStandardLesson } from "../shared/standard-lesson";
+import { lessonSpecs } from "../shared/lesson-specs";
 
 export const deadLetterQueue: TopicDefinition = {
   id: "dead-letter-queue",
@@ -9,10 +11,11 @@ export const deadLetterQueue: TopicDefinition = {
   categories: ["messaging"],
   tags: ["messaging", "reliability"],
   depth: "standard",
-  availability: "coming-soon",
+  availability: "available",
   difficulty: "beginner",
   estimatedMinutes: 15,
   prerequisites: [],
   relatedTopics: [],
   learningPaths: [],
+  lesson: createStandardLesson("dead-letter-queue", lessonSpecs["dead-letter-queue"]),
 };

@@ -1,4 +1,6 @@
 import type { TopicDefinition } from "@engineering-playbook/content-schema";
+import { createStandardLesson } from "../shared/standard-lesson";
+import { lessonSpecs } from "../shared/lesson-specs";
 
 export const ttl: TopicDefinition = {
   id: "ttl",
@@ -8,10 +10,11 @@ export const ttl: TopicDefinition = {
   categories: ["caching"],
   tags: ["caching", "expiration"],
   depth: "standard",
-  availability: "coming-soon",
+  availability: "available",
   difficulty: "beginner",
   estimatedMinutes: 10,
   prerequisites: [],
   relatedTopics: [],
   learningPaths: [],
+  lesson: createStandardLesson("ttl", lessonSpecs["ttl"]),
 };

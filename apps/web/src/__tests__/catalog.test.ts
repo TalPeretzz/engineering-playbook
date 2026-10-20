@@ -100,4 +100,46 @@ describe("catalog integrity", () => {
       }
     }
   });
+
+  it("every available lesson has renderable sections and challenges", () => {
+    for (const topic of allTopicDefinitions) {
+      if (topic.availability !== "available") continue;
+
+      expect(
+        topic.lesson?.sections?.length,
+        `${topic.id} must contain at least one rendered section`
+      ).toBeGreaterThan(0);
+      expect(
+        topic.lesson?.challenges?.length,
+        `${topic.id} must contain at least one challenge`
+      ).toBeGreaterThan(0);
+    }
+  });
+
+  it("has globally unique challenge ids and valid multiple-choice answers", () => {
+    const challengeIds: string[] = [];
+
+    for (const topic of allTopicDefinitions) {
+      for (const challenge of topic.lesson?.challenges ?? []) {
+        challengeIds.push(challenge.id);
+        if (challenge.type === "multiple-choice") {
+          expect(
+            challenge.options.some((option) => option.id === challenge.correctOptionId),
+            `${topic.id}/${challenge.id} has an invalid correct option`
+          ).toBe(true);
+        }
+      }
+    }
+
+    expect(new Set(challengeIds).size).toBe(challengeIds.length);
+  });
+
+  it("has unique section ids within every lesson", () => {
+    for (const topic of allTopicDefinitions) {
+      const sectionIds = (topic.lesson?.sections ?? []).map((section) => section.id);
+      expect(new Set(sectionIds).size, `${topic.id} contains duplicate section ids`).toBe(
+        sectionIds.length
+      );
+    }
+  });
 });

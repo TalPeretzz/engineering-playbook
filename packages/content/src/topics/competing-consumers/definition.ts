@@ -1,4 +1,6 @@
 import type { TopicDefinition } from "@engineering-playbook/content-schema";
+import { createStandardLesson } from "../shared/standard-lesson";
+import { lessonSpecs } from "../shared/lesson-specs";
 
 export const competingConsumers: TopicDefinition = {
   id: "competing-consumers",
@@ -9,10 +11,11 @@ export const competingConsumers: TopicDefinition = {
   categories: ["messaging"],
   tags: ["messaging", "scalability"],
   depth: "standard",
-  availability: "coming-soon",
+  availability: "available",
   difficulty: "beginner",
   estimatedMinutes: 15,
   prerequisites: [],
   relatedTopics: [],
   learningPaths: [],
+  lesson: createStandardLesson("competing-consumers", lessonSpecs["competing-consumers"]),
 };

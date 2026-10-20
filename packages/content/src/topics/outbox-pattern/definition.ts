@@ -1,4 +1,6 @@
 import type { TopicDefinition } from "@engineering-playbook/content-schema";
+import { createStandardLesson } from "../shared/standard-lesson";
+import { lessonSpecs } from "../shared/lesson-specs";
 
 export const outboxPattern: TopicDefinition = {
   id: "outbox-pattern",
@@ -9,10 +11,11 @@ export const outboxPattern: TopicDefinition = {
   categories: ["distributed-systems"],
   tags: ["messaging", "consistency"],
   depth: "flagship",
-  availability: "coming-soon",
+  availability: "available",
   difficulty: "advanced",
   estimatedMinutes: 25,
   prerequisites: [],
   relatedTopics: [],
   learningPaths: [],
+  lesson: createStandardLesson("outbox-pattern", lessonSpecs["outbox-pattern"]),
 };

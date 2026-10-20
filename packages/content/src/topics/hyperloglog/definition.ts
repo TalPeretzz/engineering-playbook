@@ -1,4 +1,6 @@
 import type { TopicDefinition } from "@engineering-playbook/content-schema";
+import { createStandardLesson } from "../shared/standard-lesson";
+import { lessonSpecs } from "../shared/lesson-specs";
 
 export const hyperloglog: TopicDefinition = {
   id: "hyperloglog",
@@ -9,10 +11,11 @@ export const hyperloglog: TopicDefinition = {
   categories: ["practical-data-structures"],
   tags: ["probabilistic", "cardinality-estimation"],
   depth: "flagship",
-  availability: "coming-soon",
+  availability: "available",
   difficulty: "advanced",
   estimatedMinutes: 25,
   prerequisites: [],
   relatedTopics: [],
   learningPaths: [],
+  lesson: createStandardLesson("hyperloglog", lessonSpecs.hyperloglog),
 };

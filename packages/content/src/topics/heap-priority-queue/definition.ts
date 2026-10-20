@@ -1,4 +1,6 @@
 import type { TopicDefinition } from "@engineering-playbook/content-schema";
+import { createStandardLesson } from "../shared/standard-lesson";
+import { lessonSpecs } from "../shared/lesson-specs";
 
 export const heapPriorityQueue: TopicDefinition = {
   id: "heap-priority-queue",
@@ -9,10 +11,11 @@ export const heapPriorityQueue: TopicDefinition = {
   categories: ["practical-data-structures"],
   tags: ["priority-queue", "scheduling"],
   depth: "standard",
-  availability: "coming-soon",
+  availability: "available",
   difficulty: "beginner",
   estimatedMinutes: 20,
   prerequisites: [],
   relatedTopics: [],
   learningPaths: [],
+  lesson: createStandardLesson("heap-priority-queue", lessonSpecs["heap-priority-queue"]),
 };

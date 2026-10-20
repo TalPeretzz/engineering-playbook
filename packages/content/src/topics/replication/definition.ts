@@ -1,4 +1,6 @@
 import type { TopicDefinition } from "@engineering-playbook/content-schema";
+import { createStandardLesson } from "../shared/standard-lesson";
+import { lessonSpecs } from "../shared/lesson-specs";
 
 export const replication: TopicDefinition = {
   id: "replication",
@@ -9,10 +11,11 @@ export const replication: TopicDefinition = {
   categories: ["distributed-systems"],
   tags: ["availability", "consistency"],
   depth: "standard",
-  availability: "coming-soon",
+  availability: "available",
   difficulty: "intermediate",
   estimatedMinutes: 20,
   prerequisites: [],
   relatedTopics: [],
   learningPaths: [],
+  lesson: createStandardLesson("replication", lessonSpecs["replication"]),
 };

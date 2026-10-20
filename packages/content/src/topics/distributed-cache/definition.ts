@@ -1,4 +1,6 @@
 import type { TopicDefinition } from "@engineering-playbook/content-schema";
+import { createStandardLesson } from "../shared/standard-lesson";
+import { lessonSpecs } from "../shared/lesson-specs";
 
 export const distributedCache: TopicDefinition = {
   id: "distributed-cache",
@@ -9,10 +11,11 @@ export const distributedCache: TopicDefinition = {
   categories: ["caching"],
   tags: ["caching", "scalability"],
   depth: "standard",
-  availability: "coming-soon",
+  availability: "available",
   difficulty: "intermediate",
   estimatedMinutes: 20,
   prerequisites: [],
   relatedTopics: [],
   learningPaths: [],
+  lesson: createStandardLesson("distributed-cache", lessonSpecs["distributed-cache"]),
 };

@@ -2,25 +2,23 @@ import { describe, it, expect } from "vitest";
 import {
   nextAvailableTopicId,
   prevAvailableTopicId,
+  derivedTopicOrder,
   topicsById,
 } from "@engineering-playbook/content";
 
 describe("nextAvailableTopicId / prevAvailableTopicId", () => {
-  it("nextAvailableFrom skips coming-soon topics", () => {
-    // consistent-hashing is followed by seven coming-soon practical-data-structures topics,
-    // then six more coming-soon distributed-systems topics, before the next available one
-    // (circuit-breaker).
+  it("returns the next available topic in curriculum order", () => {
     const nextId = nextAvailableTopicId("consistent-hashing");
     expect(nextId).not.toBeNull();
     expect(topicsById[nextId!].availability).toBe("available");
-    expect(nextId).toBe("circuit-breaker");
+    expect(nextId).toBe("trie");
   });
 
-  it("prevAvailableFrom skips coming-soon topics", () => {
+  it("returns the previous available topic in curriculum order", () => {
     const prevId = prevAvailableTopicId("circuit-breaker");
     expect(prevId).not.toBeNull();
     expect(topicsById[prevId!].availability).toBe("available");
-    expect(prevId).toBe("consistent-hashing");
+    expect(prevId).toBe("heartbeats");
   });
 
   it("never returns the current topic itself", () => {
@@ -44,14 +42,12 @@ describe("nextAvailableTopicId / prevAvailableTopicId", () => {
   it("finds the next available topic across categories", () => {
     // rate-limiter (distributed-systems) -> pub-sub (messaging).
     expect(nextAvailableTopicId("rate-limiter")).toBe("pub-sub");
-    // cache-aside (caching) -> strategy (design-patterns), skipping caching's other
-    // seven coming-soon topics.
-    expect(nextAvailableTopicId("cache-aside")).toBe("strategy");
+    expect(nextAvailableTopicId("distributed-cache")).toBe("strategy");
   });
 
   it("returns null when no next available topic exists (last available topic in curriculum order)", () => {
-    // strategy (design-patterns, the final category) is the last available topic today.
-    expect(nextAvailableTopicId("strategy")).toBeNull();
+    const lastId = derivedTopicOrder.at(-1)!;
+    expect(nextAvailableTopicId(lastId)).toBeNull();
   });
 
   it("returns null when no previous available topic exists (first topic in curriculum order)", () => {

@@ -1,4 +1,6 @@
 import type { TopicDefinition } from "@engineering-playbook/content-schema";
+import { createStandardLesson } from "../shared/standard-lesson";
+import { lessonSpecs } from "../shared/lesson-specs";
 
 export const bitmapsBitsets: TopicDefinition = {
   id: "bitmaps-bitsets",
@@ -9,10 +11,11 @@ export const bitmapsBitsets: TopicDefinition = {
   categories: ["practical-data-structures"],
   tags: ["space-efficient", "flags"],
   depth: "standard",
-  availability: "coming-soon",
+  availability: "available",
   difficulty: "beginner",
   estimatedMinutes: 15,
   prerequisites: [],
   relatedTopics: [],
   learningPaths: [],
+  lesson: createStandardLesson("bitmaps-bitsets", lessonSpecs["bitmaps-bitsets"]),
 };

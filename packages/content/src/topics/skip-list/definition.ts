@@ -1,4 +1,6 @@
 import type { TopicDefinition } from "@engineering-playbook/content-schema";
+import { createStandardLesson } from "../shared/standard-lesson";
+import { lessonSpecs } from "../shared/lesson-specs";
 
 export const skipList: TopicDefinition = {
   id: "skip-list",
@@ -9,10 +11,11 @@ export const skipList: TopicDefinition = {
   categories: ["practical-data-structures"],
   tags: ["ordered-data", "probabilistic"],
   depth: "reference",
-  availability: "coming-soon",
+  availability: "available",
   difficulty: "advanced",
   estimatedMinutes: 15,
   prerequisites: [],
   relatedTopics: [],
   learningPaths: [],
+  lesson: createStandardLesson("skip-list", lessonSpecs["skip-list"]),
 };

@@ -74,7 +74,7 @@ describe("filterCatalog / matchesFilters", () => {
         ...DEFAULT_FILTER_STATE,
         difficulty: "advanced",
         depth: "flagship",
-        availability: "coming-soon",
+        availability: "available",
       },
       CATEGORY_TITLES
     );

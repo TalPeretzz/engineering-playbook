@@ -1,4 +1,6 @@
 import type { TopicDefinition } from "@engineering-playbook/content-schema";
+import { createStandardLesson } from "../shared/standard-lesson";
+import { lessonSpecs } from "../shared/lesson-specs";
 
 export const factory: TopicDefinition = {
   id: "factory",
@@ -9,10 +11,11 @@ export const factory: TopicDefinition = {
   categories: ["design-patterns"],
   tags: ["design-pattern", "creational"],
   depth: "standard",
-  availability: "coming-soon",
+  availability: "available",
   difficulty: "beginner",
   estimatedMinutes: 15,
   prerequisites: [],
   relatedTopics: [],
   learningPaths: [],
+  lesson: createStandardLesson("factory", lessonSpecs["factory"]),
 };

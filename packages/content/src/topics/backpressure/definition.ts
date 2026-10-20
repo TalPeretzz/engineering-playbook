@@ -1,4 +1,6 @@
 import type { TopicDefinition } from "@engineering-playbook/content-schema";
+import { createStandardLesson } from "../shared/standard-lesson";
+import { lessonSpecs } from "../shared/lesson-specs";
 
 export const backpressure: TopicDefinition = {
   id: "backpressure",
@@ -9,10 +11,11 @@ export const backpressure: TopicDefinition = {
   categories: ["messaging"],
   tags: ["messaging", "flow-control"],
   depth: "standard",
-  availability: "coming-soon",
+  availability: "available",
   difficulty: "intermediate",
   estimatedMinutes: 15,
   prerequisites: [],
   relatedTopics: [],
   learningPaths: [],
+  lesson: createStandardLesson("backpressure", lessonSpecs["backpressure"]),
 };

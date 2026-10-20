@@ -1,4 +1,6 @@
 import type { TopicDefinition } from "@engineering-playbook/content-schema";
+import { createStandardLesson } from "../shared/standard-lesson";
+import { lessonSpecs } from "../shared/lesson-specs";
 
 export const eventSourcing: TopicDefinition = {
   id: "event-sourcing",
@@ -9,10 +11,11 @@ export const eventSourcing: TopicDefinition = {
   categories: ["distributed-systems"],
   tags: ["architecture", "audit-trail"],
   depth: "standard",
-  availability: "coming-soon",
+  availability: "available",
   difficulty: "advanced",
   estimatedMinutes: 25,
   prerequisites: [],
   relatedTopics: [],
   learningPaths: [],
+  lesson: createStandardLesson("event-sourcing", lessonSpecs["event-sourcing"]),
 };

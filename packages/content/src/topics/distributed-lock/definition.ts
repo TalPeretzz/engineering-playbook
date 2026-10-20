@@ -1,4 +1,6 @@
 import type { TopicDefinition } from "@engineering-playbook/content-schema";
+import { createStandardLesson } from "../shared/standard-lesson";
+import { lessonSpecs } from "../shared/lesson-specs";
 
 export const distributedLock: TopicDefinition = {
   id: "distributed-lock",
@@ -9,10 +11,11 @@ export const distributedLock: TopicDefinition = {
   categories: ["distributed-systems"],
   tags: ["coordination", "concurrency"],
   depth: "standard",
-  availability: "coming-soon",
+  availability: "available",
   difficulty: "intermediate",
   estimatedMinutes: 20,
   prerequisites: [],
   relatedTopics: [],
   learningPaths: [],
+  lesson: createStandardLesson("distributed-lock", lessonSpecs["distributed-lock"]),
 };

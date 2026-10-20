@@ -1,4 +1,6 @@
 import type { TopicDefinition } from "@engineering-playbook/content-schema";
+import { createStandardLesson } from "../shared/standard-lesson";
+import { lessonSpecs } from "../shared/lesson-specs";
 
 export const dependencyInjection: TopicDefinition = {
   id: "dependency-injection",
@@ -9,10 +11,11 @@ export const dependencyInjection: TopicDefinition = {
   categories: ["design-patterns"],
   tags: ["design-pattern", "architecture"],
   depth: "standard",
-  availability: "coming-soon",
+  availability: "available",
   difficulty: "intermediate",
   estimatedMinutes: 20,
   prerequisites: [],
   relatedTopics: [],
   learningPaths: [],
+  lesson: createStandardLesson("dependency-injection", lessonSpecs["dependency-injection"]),
 };

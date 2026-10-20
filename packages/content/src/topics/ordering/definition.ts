@@ -1,4 +1,6 @@
 import type { TopicDefinition } from "@engineering-playbook/content-schema";
+import { createStandardLesson } from "../shared/standard-lesson";
+import { lessonSpecs } from "../shared/lesson-specs";
 
 export const ordering: TopicDefinition = {
   id: "ordering",
@@ -9,10 +11,11 @@ export const ordering: TopicDefinition = {
   categories: ["messaging"],
   tags: ["messaging", "consistency"],
   depth: "standard",
-  availability: "coming-soon",
+  availability: "available",
   difficulty: "intermediate",
   estimatedMinutes: 15,
   prerequisites: [],
   relatedTopics: [],
   learningPaths: [],
+  lesson: createStandardLesson("ordering", lessonSpecs["ordering"]),
 };
