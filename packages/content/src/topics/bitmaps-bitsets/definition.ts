@@ -1,4 +1,5 @@
 import type { TopicDefinition } from "@engineering-playbook/content-schema";
+import { sections, implementations, challenges } from "./lesson-content";
 
 export const bitmapsBitsets: TopicDefinition = {
   id: "bitmaps-bitsets",
@@ -9,10 +10,15 @@ export const bitmapsBitsets: TopicDefinition = {
   categories: ["practical-data-structures"],
   tags: ["space-efficient", "flags"],
   depth: "standard",
-  availability: "coming-soon",
+  availability: "available",
   difficulty: "beginner",
   estimatedMinutes: 15,
   prerequisites: [],
-  relatedTopics: [],
+  relatedTopics: ["heap-priority-queue", "hyperloglog"],
   learningPaths: [],
+  lesson: {
+    sections,
+    implementations,
+    challenges,
+  },
 };
