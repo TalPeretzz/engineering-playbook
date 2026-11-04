@@ -34,6 +34,7 @@ describe("nextAvailableTopicId / prevAvailableTopicId", () => {
       "rate-limiter",
       "pub-sub",
       "cache-aside",
+      "write-through",
       "strategy",
     ]) {
       expect(nextAvailableTopicId(id)).not.toBe(id);
@@ -44,9 +45,14 @@ describe("nextAvailableTopicId / prevAvailableTopicId", () => {
   it("finds the next available topic across categories", () => {
     // rate-limiter (distributed-systems) -> pub-sub (messaging).
     expect(nextAvailableTopicId("rate-limiter")).toBe("pub-sub");
-    // cache-aside (caching) -> strategy (design-patterns), skipping caching's other
-    // seven coming-soon topics.
-    expect(nextAvailableTopicId("cache-aside")).toBe("strategy");
+    // write-through (caching) -> strategy (design-patterns), skipping caching's other
+    // six coming-soon topics.
+    expect(nextAvailableTopicId("write-through")).toBe("strategy");
+  });
+
+  it("finds the next available topic within the same category", () => {
+    // cache-aside -> write-through, both in "caching".
+    expect(nextAvailableTopicId("cache-aside")).toBe("write-through");
   });
 
   it("returns null when no next available topic exists (last available topic in curriculum order)", () => {
