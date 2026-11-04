@@ -188,10 +188,10 @@ describe("resetProgress", () => {
 
 describe("getCategoryProgress", () => {
   // "caching" category has 9 topics in the catalog; lru-cache, cache-aside,
-  // write-through, and write-behind are available today.
+  // write-through, write-behind, and read-through are available today.
   it("counts only available topics against the denominator", () => {
     const p = store.getCategoryProgress("caching");
-    expect(p.available).toBe(4);
+    expect(p.available).toBe(5);
     expect(p.completed).toBe(0);
     expect(p.percent).toBe(0);
   });
@@ -200,21 +200,26 @@ describe("getCategoryProgress", () => {
     store.completeTopic("lru-cache");
     let p = store.getCategoryProgress("caching");
     expect(p.completed).toBe(1);
-    expect(p.percent).toBe(25);
+    expect(p.percent).toBe(20);
 
     store.completeTopic("cache-aside");
     p = store.getCategoryProgress("caching");
     expect(p.completed).toBe(2);
-    expect(p.percent).toBe(50);
+    expect(p.percent).toBe(40);
 
     store.completeTopic("write-through");
     p = store.getCategoryProgress("caching");
     expect(p.completed).toBe(3);
-    expect(p.percent).toBe(75);
+    expect(p.percent).toBe(60);
 
     store.completeTopic("write-behind");
     p = store.getCategoryProgress("caching");
     expect(p.completed).toBe(4);
+    expect(p.percent).toBe(80);
+
+    store.completeTopic("read-through");
+    p = store.getCategoryProgress("caching");
+    expect(p.completed).toBe(5);
     expect(p.percent).toBe(100);
   });
 
@@ -225,11 +230,11 @@ describe("getCategoryProgress", () => {
 });
 
 describe("getPathProgress", () => {
-  // "caching" learning path has 9 topics; lru-cache, cache-aside, write-through, and
-  // write-behind are available today, in that order.
+  // "caching" learning path has 9 topics; lru-cache, cache-aside, write-through,
+  // write-behind, and read-through are available today, in that order.
   it("recommends the first not-completed available topic", () => {
     const p = store.getPathProgress("caching");
-    expect(p.available).toBe(4);
+    expect(p.available).toBe(5);
     expect(p.nextRecommendedId).toBe("lru-cache");
   });
 
@@ -237,7 +242,7 @@ describe("getPathProgress", () => {
     store.completeTopic("lru-cache");
     const p = store.getPathProgress("caching");
     expect(p.completed).toBe(1);
-    expect(p.percent).toBe(25);
+    expect(p.percent).toBe(20);
     expect(p.nextRecommendedId).toBe("cache-aside");
   });
 
@@ -246,8 +251,9 @@ describe("getPathProgress", () => {
     store.completeTopic("cache-aside");
     store.completeTopic("write-through");
     store.completeTopic("write-behind");
+    store.completeTopic("read-through");
     const p = store.getPathProgress("caching");
-    expect(p.completed).toBe(4);
+    expect(p.completed).toBe(5);
     expect(p.percent).toBe(100);
     expect(p.nextRecommendedId).toBeNull();
   });
