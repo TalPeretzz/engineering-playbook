@@ -1,4 +1,5 @@
 import type { TopicDefinition } from "@engineering-playbook/content-schema";
+import { sections, implementations, challenges } from "./lesson-content";
 
 export const writeThrough: TopicDefinition = {
   id: "write-through",
@@ -9,10 +10,15 @@ export const writeThrough: TopicDefinition = {
   categories: ["caching"],
   tags: ["caching", "write-path"],
   depth: "standard",
-  availability: "coming-soon",
+  availability: "available",
   difficulty: "intermediate",
   estimatedMinutes: 15,
-  prerequisites: [],
-  relatedTopics: [],
+  prerequisites: ["cache-aside"],
+  relatedTopics: ["cache-aside", "write-behind", "read-through"],
   learningPaths: [],
+  lesson: {
+    sections,
+    implementations,
+    challenges,
+  },
 };
