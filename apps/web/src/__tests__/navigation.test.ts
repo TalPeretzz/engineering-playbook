@@ -7,20 +7,26 @@ import {
 
 describe("nextAvailableTopicId / prevAvailableTopicId", () => {
   it("nextAvailableFrom skips coming-soon topics", () => {
-    // consistent-hashing is followed by seven coming-soon practical-data-structures topics,
-    // then six more coming-soon distributed-systems topics, before the next available one
-    // (circuit-breaker).
+    // consistent-hashing -> trie directly (trie is the next topic in
+    // practical-data-structures curriculum order and is now available).
     const nextId = nextAvailableTopicId("consistent-hashing");
     expect(nextId).not.toBeNull();
     expect(topicsById[nextId!].availability).toBe("available");
-    expect(nextId).toBe("circuit-breaker");
+    expect(nextId).toBe("trie");
   });
 
   it("prevAvailableFrom skips coming-soon topics", () => {
-    const prevId = prevAvailableTopicId("circuit-breaker");
+    const prevId = prevAvailableTopicId("trie");
     expect(prevId).not.toBeNull();
     expect(topicsById[prevId!].availability).toBe("available");
     expect(prevId).toBe("consistent-hashing");
+  });
+
+  it("skips multiple coming-soon topics across two categories", () => {
+    // trie is followed by six coming-soon practical-data-structures topics, then six
+    // more coming-soon distributed-systems topics, before the next available one
+    // (circuit-breaker).
+    expect(nextAvailableTopicId("trie")).toBe("circuit-breaker");
   });
 
   it("never returns the current topic itself", () => {
@@ -28,6 +34,7 @@ describe("nextAvailableTopicId / prevAvailableTopicId", () => {
       "bloom-filter",
       "lru-cache",
       "consistent-hashing",
+      "trie",
       "circuit-breaker",
       "retry-exponential-backoff",
       "idempotency",
