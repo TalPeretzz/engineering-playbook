@@ -29,17 +29,28 @@ describe("nextAvailableTopicId / prevAvailableTopicId", () => {
     expect(prevId).toBe("trie");
   });
 
+  it("prevAvailableFrom bitmaps-bitsets reaches heap-priority-queue directly", () => {
+    const prevId = prevAvailableTopicId("bitmaps-bitsets");
+    expect(prevId).not.toBeNull();
+    expect(topicsById[prevId!].availability).toBe("available");
+    expect(prevId).toBe("heap-priority-queue");
+  });
+
   it("skips a single coming-soon topic (skip-list) to reach heap-priority-queue", () => {
     // trie -> skip-list (coming-soon, reference-depth, stays metadata-only) ->
     // heap-priority-queue (now available).
     expect(nextAvailableTopicId("trie")).toBe("heap-priority-queue");
   });
 
+  it("finds the next available topic directly after heap-priority-queue (bitmaps-bitsets)", () => {
+    expect(nextAvailableTopicId("heap-priority-queue")).toBe("bitmaps-bitsets");
+  });
+
   it("skips multiple coming-soon topics across two categories", () => {
-    // heap-priority-queue is followed by four coming-soon practical-data-structures
+    // bitmaps-bitsets is followed by three coming-soon practical-data-structures
     // topics, then six coming-soon distributed-systems topics, before the next
     // available one (circuit-breaker).
-    expect(nextAvailableTopicId("heap-priority-queue")).toBe("circuit-breaker");
+    expect(nextAvailableTopicId("bitmaps-bitsets")).toBe("circuit-breaker");
   });
 
   it("never returns the current topic itself", () => {
@@ -49,6 +60,7 @@ describe("nextAvailableTopicId / prevAvailableTopicId", () => {
       "consistent-hashing",
       "trie",
       "heap-priority-queue",
+      "bitmaps-bitsets",
       "circuit-breaker",
       "retry-exponential-backoff",
       "idempotency",
