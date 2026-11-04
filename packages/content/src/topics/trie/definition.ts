@@ -1,4 +1,5 @@
 import type { TopicDefinition } from "@engineering-playbook/content-schema";
+import { sections, implementations, challenges } from "./lesson-content";
 
 export const trie: TopicDefinition = {
   id: "trie",
@@ -9,10 +10,15 @@ export const trie: TopicDefinition = {
   categories: ["practical-data-structures"],
   tags: ["strings", "search", "autocomplete"],
   depth: "standard",
-  availability: "coming-soon",
+  availability: "available",
   difficulty: "intermediate",
   estimatedMinutes: 20,
   prerequisites: [],
-  relatedTopics: [],
+  relatedTopics: ["skip-list"],
   learningPaths: [],
+  lesson: {
+    sections,
+    implementations,
+    challenges,
+  },
 };
