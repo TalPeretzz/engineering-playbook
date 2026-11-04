@@ -22,11 +22,24 @@ describe("nextAvailableTopicId / prevAvailableTopicId", () => {
     expect(prevId).toBe("consistent-hashing");
   });
 
+  it("prevAvailableFrom skips skip-list (coming-soon) to reach trie", () => {
+    const prevId = prevAvailableTopicId("heap-priority-queue");
+    expect(prevId).not.toBeNull();
+    expect(topicsById[prevId!].availability).toBe("available");
+    expect(prevId).toBe("trie");
+  });
+
+  it("skips a single coming-soon topic (skip-list) to reach heap-priority-queue", () => {
+    // trie -> skip-list (coming-soon, reference-depth, stays metadata-only) ->
+    // heap-priority-queue (now available).
+    expect(nextAvailableTopicId("trie")).toBe("heap-priority-queue");
+  });
+
   it("skips multiple coming-soon topics across two categories", () => {
-    // trie is followed by six coming-soon practical-data-structures topics, then six
-    // more coming-soon distributed-systems topics, before the next available one
-    // (circuit-breaker).
-    expect(nextAvailableTopicId("trie")).toBe("circuit-breaker");
+    // heap-priority-queue is followed by four coming-soon practical-data-structures
+    // topics, then six coming-soon distributed-systems topics, before the next
+    // available one (circuit-breaker).
+    expect(nextAvailableTopicId("heap-priority-queue")).toBe("circuit-breaker");
   });
 
   it("never returns the current topic itself", () => {
@@ -35,6 +48,7 @@ describe("nextAvailableTopicId / prevAvailableTopicId", () => {
       "lru-cache",
       "consistent-hashing",
       "trie",
+      "heap-priority-queue",
       "circuit-breaker",
       "retry-exponential-backoff",
       "idempotency",

@@ -1,4 +1,5 @@
 import type { TopicDefinition } from "@engineering-playbook/content-schema";
+import { sections, implementations, challenges } from "./lesson-content";
 
 export const heapPriorityQueue: TopicDefinition = {
   id: "heap-priority-queue",
@@ -9,10 +10,15 @@ export const heapPriorityQueue: TopicDefinition = {
   categories: ["practical-data-structures"],
   tags: ["priority-queue", "scheduling"],
   depth: "standard",
-  availability: "coming-soon",
+  availability: "available",
   difficulty: "beginner",
   estimatedMinutes: 20,
   prerequisites: [],
-  relatedTopics: [],
+  relatedTopics: ["trie"],
   learningPaths: [],
+  lesson: {
+    sections,
+    implementations,
+    challenges,
+  },
 };
