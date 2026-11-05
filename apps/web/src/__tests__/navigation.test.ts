@@ -36,6 +36,13 @@ describe("nextAvailableTopicId / prevAvailableTopicId", () => {
     expect(prevId).toBe("heap-priority-queue");
   });
 
+  it("prevAvailableFrom hyperloglog reaches bitmaps-bitsets directly", () => {
+    const prevId = prevAvailableTopicId("hyperloglog");
+    expect(prevId).not.toBeNull();
+    expect(topicsById[prevId!].availability).toBe("available");
+    expect(prevId).toBe("bitmaps-bitsets");
+  });
+
   it("skips a single coming-soon topic (skip-list) to reach heap-priority-queue", () => {
     // trie -> skip-list (coming-soon, reference-depth, stays metadata-only) ->
     // heap-priority-queue (now available).
@@ -46,11 +53,15 @@ describe("nextAvailableTopicId / prevAvailableTopicId", () => {
     expect(nextAvailableTopicId("heap-priority-queue")).toBe("bitmaps-bitsets");
   });
 
+  it("finds the next available topic directly after bitmaps-bitsets (hyperloglog)", () => {
+    expect(nextAvailableTopicId("bitmaps-bitsets")).toBe("hyperloglog");
+  });
+
   it("skips multiple coming-soon topics across two categories", () => {
-    // bitmaps-bitsets is followed by three coming-soon practical-data-structures
+    // hyperloglog is followed by two coming-soon practical-data-structures
     // topics, then six coming-soon distributed-systems topics, before the next
     // available one (circuit-breaker).
-    expect(nextAvailableTopicId("bitmaps-bitsets")).toBe("circuit-breaker");
+    expect(nextAvailableTopicId("hyperloglog")).toBe("circuit-breaker");
   });
 
   it("never returns the current topic itself", () => {
@@ -61,6 +72,7 @@ describe("nextAvailableTopicId / prevAvailableTopicId", () => {
       "trie",
       "heap-priority-queue",
       "bitmaps-bitsets",
+      "hyperloglog",
       "circuit-breaker",
       "retry-exponential-backoff",
       "idempotency",
