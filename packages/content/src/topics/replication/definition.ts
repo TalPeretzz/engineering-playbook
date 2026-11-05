@@ -1,4 +1,5 @@
 import type { TopicDefinition } from "@engineering-playbook/content-schema";
+import { sections, implementations, challenges } from "./lesson-content";
 
 export const replication: TopicDefinition = {
   id: "replication",
@@ -9,10 +10,15 @@ export const replication: TopicDefinition = {
   categories: ["distributed-systems"],
   tags: ["availability", "consistency"],
   depth: "standard",
-  availability: "coming-soon",
+  availability: "available",
   difficulty: "intermediate",
   estimatedMinutes: 20,
   prerequisites: [],
-  relatedTopics: [],
+  relatedTopics: ["leader-election", "quorum", "sharding"],
   learningPaths: [],
+  lesson: {
+    sections,
+    implementations,
+    challenges,
+  },
 };
