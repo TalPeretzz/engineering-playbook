@@ -43,6 +43,13 @@ describe("nextAvailableTopicId / prevAvailableTopicId", () => {
     expect(prevId).toBe("bitmaps-bitsets");
   });
 
+  it("prevAvailableFrom count-min-sketch reaches hyperloglog directly", () => {
+    const prevId = prevAvailableTopicId("count-min-sketch");
+    expect(prevId).not.toBeNull();
+    expect(topicsById[prevId!].availability).toBe("available");
+    expect(prevId).toBe("hyperloglog");
+  });
+
   it("skips a single coming-soon topic (skip-list) to reach heap-priority-queue", () => {
     // trie -> skip-list (coming-soon, reference-depth, stays metadata-only) ->
     // heap-priority-queue (now available).
@@ -57,11 +64,15 @@ describe("nextAvailableTopicId / prevAvailableTopicId", () => {
     expect(nextAvailableTopicId("bitmaps-bitsets")).toBe("hyperloglog");
   });
 
+  it("finds the next available topic directly after hyperloglog (count-min-sketch)", () => {
+    expect(nextAvailableTopicId("hyperloglog")).toBe("count-min-sketch");
+  });
+
   it("skips multiple coming-soon topics across two categories", () => {
-    // hyperloglog is followed by two coming-soon practical-data-structures
-    // topics, then six coming-soon distributed-systems topics, before the next
-    // available one (circuit-breaker).
-    expect(nextAvailableTopicId("hyperloglog")).toBe("circuit-breaker");
+    // count-min-sketch is followed by one coming-soon practical-data-structures
+    // topic (merkle-tree), then six coming-soon distributed-systems topics,
+    // before the next available one (circuit-breaker).
+    expect(nextAvailableTopicId("count-min-sketch")).toBe("circuit-breaker");
   });
 
   it("never returns the current topic itself", () => {
@@ -73,6 +84,7 @@ describe("nextAvailableTopicId / prevAvailableTopicId", () => {
       "heap-priority-queue",
       "bitmaps-bitsets",
       "hyperloglog",
+      "count-min-sketch",
       "circuit-breaker",
       "retry-exponential-backoff",
       "idempotency",
