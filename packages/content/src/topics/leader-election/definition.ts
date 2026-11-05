@@ -1,4 +1,5 @@
 import type { TopicDefinition } from "@engineering-playbook/content-schema";
+import { sections, implementations, challenges } from "./lesson-content";
 
 export const leaderElection: TopicDefinition = {
   id: "leader-election",
@@ -9,10 +10,15 @@ export const leaderElection: TopicDefinition = {
   categories: ["distributed-systems"],
   tags: ["consensus", "coordination"],
   depth: "standard",
-  availability: "coming-soon",
+  availability: "available",
   difficulty: "intermediate",
   estimatedMinutes: 20,
   prerequisites: [],
-  relatedTopics: [],
+  relatedTopics: ["heartbeats", "distributed-lock"],
   learningPaths: [],
+  lesson: {
+    sections,
+    implementations,
+    challenges,
+  },
 };
