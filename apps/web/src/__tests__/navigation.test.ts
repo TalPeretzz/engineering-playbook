@@ -78,6 +78,13 @@ describe("nextAvailableTopicId / prevAvailableTopicId", () => {
     expect(prevId).toBe("replication");
   });
 
+  it("prevAvailableFrom quorum reaches sharding directly", () => {
+    const prevId = prevAvailableTopicId("quorum");
+    expect(prevId).not.toBeNull();
+    expect(topicsById[prevId!].availability).toBe("available");
+    expect(prevId).toBe("sharding");
+  });
+
   it("skips a single coming-soon topic (skip-list) to reach heap-priority-queue", () => {
     // trie -> skip-list (coming-soon, reference-depth, stays metadata-only) ->
     // heap-priority-queue (now available).
@@ -115,11 +122,15 @@ describe("nextAvailableTopicId / prevAvailableTopicId", () => {
     expect(nextAvailableTopicId("replication")).toBe("sharding");
   });
 
+  it("finds the next available topic directly after sharding (quorum)", () => {
+    expect(nextAvailableTopicId("sharding")).toBe("quorum");
+  });
+
   it("skips multiple coming-soon topics across two categories", () => {
-    // sharding is followed by three coming-soon distributed-systems topics
-    // (quorum, gossip-protocol, heartbeats), before the next available one
+    // quorum is followed by two coming-soon distributed-systems topics
+    // (gossip-protocol, heartbeats), before the next available one
     // (circuit-breaker).
-    expect(nextAvailableTopicId("sharding")).toBe("circuit-breaker");
+    expect(nextAvailableTopicId("quorum")).toBe("circuit-breaker");
   });
 
   it("never returns the current topic itself", () => {
@@ -136,6 +147,7 @@ describe("nextAvailableTopicId / prevAvailableTopicId", () => {
       "leader-election",
       "replication",
       "sharding",
+      "quorum",
       "circuit-breaker",
       "retry-exponential-backoff",
       "idempotency",
