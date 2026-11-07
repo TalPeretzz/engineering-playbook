@@ -85,6 +85,13 @@ describe("nextAvailableTopicId / prevAvailableTopicId", () => {
     expect(prevId).toBe("sharding");
   });
 
+  it("prevAvailableFrom gossip-protocol reaches quorum directly", () => {
+    const prevId = prevAvailableTopicId("gossip-protocol");
+    expect(prevId).not.toBeNull();
+    expect(topicsById[prevId!].availability).toBe("available");
+    expect(prevId).toBe("quorum");
+  });
+
   it("skips a single coming-soon topic (skip-list) to reach heap-priority-queue", () => {
     // trie -> skip-list (coming-soon, reference-depth, stays metadata-only) ->
     // heap-priority-queue (now available).
@@ -126,11 +133,12 @@ describe("nextAvailableTopicId / prevAvailableTopicId", () => {
     expect(nextAvailableTopicId("sharding")).toBe("quorum");
   });
 
-  it("skips multiple coming-soon topics across two categories", () => {
-    // quorum is followed by two coming-soon distributed-systems topics
-    // (gossip-protocol, heartbeats), before the next available one
-    // (circuit-breaker).
-    expect(nextAvailableTopicId("quorum")).toBe("circuit-breaker");
+  it("finds the next available topic directly after quorum (gossip-protocol)", () => {
+    expect(nextAvailableTopicId("quorum")).toBe("gossip-protocol");
+  });
+
+  it("skips a single coming-soon topic (heartbeats) to reach circuit-breaker", () => {
+    expect(nextAvailableTopicId("gossip-protocol")).toBe("circuit-breaker");
   });
 
   it("never returns the current topic itself", () => {
@@ -148,6 +156,7 @@ describe("nextAvailableTopicId / prevAvailableTopicId", () => {
       "replication",
       "sharding",
       "quorum",
+      "gossip-protocol",
       "circuit-breaker",
       "retry-exponential-backoff",
       "idempotency",

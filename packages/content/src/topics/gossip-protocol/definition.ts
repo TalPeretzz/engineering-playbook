@@ -1,4 +1,5 @@
 import type { TopicDefinition } from "@engineering-playbook/content-schema";
+import { sections, implementations, challenges } from "./lesson-content";
 
 export const gossipProtocol: TopicDefinition = {
   id: "gossip-protocol",
@@ -9,10 +10,15 @@ export const gossipProtocol: TopicDefinition = {
   categories: ["distributed-systems"],
   tags: ["coordination", "decentralized"],
   depth: "standard",
-  availability: "coming-soon",
+  availability: "available",
   difficulty: "intermediate",
   estimatedMinutes: 20,
   prerequisites: [],
-  relatedTopics: [],
+  relatedTopics: ["heartbeats", "quorum"],
   learningPaths: [],
+  lesson: {
+    sections,
+    implementations,
+    challenges,
+  },
 };
