@@ -92,6 +92,20 @@ describe("nextAvailableTopicId / prevAvailableTopicId", () => {
     expect(prevId).toBe("quorum");
   });
 
+  it("prevAvailableFrom heartbeats reaches gossip-protocol directly", () => {
+    const prevId = prevAvailableTopicId("heartbeats");
+    expect(prevId).not.toBeNull();
+    expect(topicsById[prevId!].availability).toBe("available");
+    expect(prevId).toBe("gossip-protocol");
+  });
+
+  it("prevAvailableFrom circuit-breaker now reaches heartbeats directly (no gap)", () => {
+    const prevId = prevAvailableTopicId("circuit-breaker");
+    expect(prevId).not.toBeNull();
+    expect(topicsById[prevId!].availability).toBe("available");
+    expect(prevId).toBe("heartbeats");
+  });
+
   it("skips a single coming-soon topic (skip-list) to reach heap-priority-queue", () => {
     // trie -> skip-list (coming-soon, reference-depth, stays metadata-only) ->
     // heap-priority-queue (now available).
@@ -137,8 +151,14 @@ describe("nextAvailableTopicId / prevAvailableTopicId", () => {
     expect(nextAvailableTopicId("quorum")).toBe("gossip-protocol");
   });
 
-  it("skips a single coming-soon topic (heartbeats) to reach circuit-breaker", () => {
-    expect(nextAvailableTopicId("gossip-protocol")).toBe("circuit-breaker");
+  it("finds the next available topic directly after gossip-protocol (heartbeats)", () => {
+    expect(nextAvailableTopicId("gossip-protocol")).toBe("heartbeats");
+  });
+
+  it("finds the next available topic directly after heartbeats (circuit-breaker, no gap)", () => {
+    // heartbeats was the last coming-soon distributed-systems topic before
+    // circuit-breaker -- this chain now has zero coming-soon topics between them.
+    expect(nextAvailableTopicId("heartbeats")).toBe("circuit-breaker");
   });
 
   it("never returns the current topic itself", () => {
@@ -157,6 +177,7 @@ describe("nextAvailableTopicId / prevAvailableTopicId", () => {
       "sharding",
       "quorum",
       "gossip-protocol",
+      "heartbeats",
       "circuit-breaker",
       "retry-exponential-backoff",
       "idempotency",

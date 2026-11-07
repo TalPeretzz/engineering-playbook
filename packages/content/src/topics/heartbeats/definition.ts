@@ -1,4 +1,5 @@
 import type { TopicDefinition } from "@engineering-playbook/content-schema";
+import { sections, implementations, challenges } from "./lesson-content";
 
 export const heartbeats: TopicDefinition = {
   id: "heartbeats",
@@ -9,10 +10,15 @@ export const heartbeats: TopicDefinition = {
   categories: ["distributed-systems"],
   tags: ["failure-detection", "availability"],
   depth: "standard",
-  availability: "coming-soon",
+  availability: "available",
   difficulty: "beginner",
   estimatedMinutes: 15,
   prerequisites: [],
-  relatedTopics: [],
+  relatedTopics: ["gossip-protocol", "leader-election"],
   learningPaths: [],
+  lesson: {
+    sections,
+    implementations,
+    challenges,
+  },
 };
