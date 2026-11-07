@@ -1,4 +1,5 @@
 import type { TopicDefinition } from "@engineering-playbook/content-schema";
+import { sections, implementations, challenges } from "./lesson-content";
 
 export const sharding: TopicDefinition = {
   id: "sharding",
@@ -9,10 +10,15 @@ export const sharding: TopicDefinition = {
   categories: ["distributed-systems"],
   tags: ["scalability", "partitioning"],
   depth: "standard",
-  availability: "coming-soon",
+  availability: "available",
   difficulty: "intermediate",
   estimatedMinutes: 20,
   prerequisites: [],
-  relatedTopics: [],
+  relatedTopics: ["consistent-hashing", "replication", "quorum"],
   learningPaths: [],
+  lesson: {
+    sections,
+    implementations,
+    challenges,
+  },
 };

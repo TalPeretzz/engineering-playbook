@@ -71,6 +71,13 @@ describe("nextAvailableTopicId / prevAvailableTopicId", () => {
     expect(prevId).toBe("leader-election");
   });
 
+  it("prevAvailableFrom sharding reaches replication directly", () => {
+    const prevId = prevAvailableTopicId("sharding");
+    expect(prevId).not.toBeNull();
+    expect(topicsById[prevId!].availability).toBe("available");
+    expect(prevId).toBe("replication");
+  });
+
   it("skips a single coming-soon topic (skip-list) to reach heap-priority-queue", () => {
     // trie -> skip-list (coming-soon, reference-depth, stays metadata-only) ->
     // heap-priority-queue (now available).
@@ -104,11 +111,15 @@ describe("nextAvailableTopicId / prevAvailableTopicId", () => {
     expect(nextAvailableTopicId("leader-election")).toBe("replication");
   });
 
+  it("finds the next available topic directly after replication (sharding)", () => {
+    expect(nextAvailableTopicId("replication")).toBe("sharding");
+  });
+
   it("skips multiple coming-soon topics across two categories", () => {
-    // replication is followed by four coming-soon distributed-systems topics
-    // (sharding, quorum, gossip-protocol, heartbeats), before the next
-    // available one (circuit-breaker).
-    expect(nextAvailableTopicId("replication")).toBe("circuit-breaker");
+    // sharding is followed by three coming-soon distributed-systems topics
+    // (quorum, gossip-protocol, heartbeats), before the next available one
+    // (circuit-breaker).
+    expect(nextAvailableTopicId("sharding")).toBe("circuit-breaker");
   });
 
   it("never returns the current topic itself", () => {
@@ -124,6 +135,7 @@ describe("nextAvailableTopicId / prevAvailableTopicId", () => {
       "merkle-tree",
       "leader-election",
       "replication",
+      "sharding",
       "circuit-breaker",
       "retry-exponential-backoff",
       "idempotency",
