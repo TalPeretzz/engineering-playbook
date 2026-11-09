@@ -16,18 +16,18 @@ describe("nextAvailableTopicId / prevAvailableTopicId", () => {
     expect(nextId).toBe("trie");
   });
 
-  it("prevAvailableFrom skips coming-soon topics", () => {
+  it("returns the previous available topic", () => {
     const prevId = prevAvailableTopicId("trie");
     expect(prevId).not.toBeNull();
     expect(topicsById[prevId!].availability).toBe("available");
-    expect(prevId).toBe("heartbeats");
+    expect(prevId).toBe("consistent-hashing");
   });
 
-  it("prevAvailableFrom skips skip-list (coming-soon) to reach trie", () => {
+  it("prevAvailableFrom reaches the now-available skip-list", () => {
     const prevId = prevAvailableTopicId("heap-priority-queue");
     expect(prevId).not.toBeNull();
     expect(topicsById[prevId!].availability).toBe("available");
-    expect(prevId).toBe("trie");
+    expect(prevId).toBe("skip-list");
   });
 
   it("prevAvailableFrom bitmaps-bitsets reaches heap-priority-queue directly", () => {
@@ -107,10 +107,8 @@ describe("nextAvailableTopicId / prevAvailableTopicId", () => {
     expect(prevId).toBe("heartbeats");
   });
 
-  it("skips a single coming-soon topic (skip-list) to reach heap-priority-queue", () => {
-    // trie -> skip-list (coming-soon, reference-depth, stays metadata-only) ->
-    // heap-priority-queue (now available).
-    expect(nextAvailableTopicId("trie")).toBe("heap-priority-queue");
+  it("reaches the now-available skip-list after trie", () => {
+    expect(nextAvailableTopicId("trie")).toBe("skip-list");
   });
 
   it("finds the next available topic directly after heap-priority-queue (bitmaps-bitsets)", () => {
@@ -198,9 +196,7 @@ describe("nextAvailableTopicId / prevAvailableTopicId", () => {
   it("finds the next available topic across categories", () => {
     // rate-limiter (distributed-systems) -> pub-sub (messaging).
     expect(nextAvailableTopicId("rate-limiter")).toBe("pub-sub");
-    // read-through (caching) -> strategy (design-patterns), skipping caching's other
-    // four coming-soon topics.
-    expect(nextAvailableTopicId("read-through")).toBe("strategy");
+    expect(nextAvailableTopicId("read-through")).toBe("ttl");
   });
 
   it("finds the next available topic within the same category", () => {

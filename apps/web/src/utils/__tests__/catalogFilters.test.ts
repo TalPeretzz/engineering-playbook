@@ -78,9 +78,11 @@ describe("filterCatalog / matchesFilters", () => {
       },
       CATEGORY_TITLES
     );
-    // hyperloglog is advanced/flagship but now available, so it's excluded here
-    // (this test filters on availability: "coming-soon").
-    expect(results.map((t) => t.id).sort()).toEqual(["outbox-pattern", "saga-pattern"]);
+    expect(results.map((t) => t.id).sort()).toEqual([
+      "hyperloglog",
+      "outbox-pattern",
+      "saga-pattern",
+    ]);
   });
 
   it("returns false when only some facets match", () => {
