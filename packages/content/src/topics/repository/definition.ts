@@ -1,4 +1,6 @@
 import type { TopicDefinition } from "@engineering-playbook/content-schema";
+import { createStandardLesson } from "../shared/standard-lesson";
+import { lessonSpecs } from "../shared/lesson-specs";
 
 export const repository: TopicDefinition = {
   id: "repository",
@@ -9,10 +11,11 @@ export const repository: TopicDefinition = {
   categories: ["design-patterns"],
   tags: ["design-pattern", "data-access"],
   depth: "standard",
-  availability: "coming-soon",
+  availability: "available",
   difficulty: "beginner",
   estimatedMinutes: 15,
   prerequisites: [],
   relatedTopics: [],
   learningPaths: [],
+  lesson: createStandardLesson("repository", lessonSpecs["repository"]),
 };

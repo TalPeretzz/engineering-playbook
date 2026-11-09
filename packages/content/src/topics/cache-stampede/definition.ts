@@ -1,4 +1,6 @@
 import type { TopicDefinition } from "@engineering-playbook/content-schema";
+import { createStandardLesson } from "../shared/standard-lesson";
+import { lessonSpecs } from "../shared/lesson-specs";
 
 export const cacheStampede: TopicDefinition = {
   id: "cache-stampede",
@@ -9,10 +11,11 @@ export const cacheStampede: TopicDefinition = {
   categories: ["caching"],
   tags: ["caching", "reliability"],
   depth: "standard",
-  availability: "coming-soon",
+  availability: "available",
   difficulty: "intermediate",
   estimatedMinutes: 15,
   prerequisites: [],
   relatedTopics: [],
   learningPaths: [],
+  lesson: createStandardLesson("cache-stampede", lessonSpecs["cache-stampede"]),
 };

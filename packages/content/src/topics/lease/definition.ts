@@ -1,4 +1,6 @@
 import type { TopicDefinition } from "@engineering-playbook/content-schema";
+import { createStandardLesson } from "../shared/standard-lesson";
+import { lessonSpecs } from "../shared/lesson-specs";
 
 export const lease: TopicDefinition = {
   id: "lease",
@@ -9,10 +11,11 @@ export const lease: TopicDefinition = {
   categories: ["distributed-systems"],
   tags: ["coordination", "fault-tolerance"],
   depth: "standard",
-  availability: "coming-soon",
+  availability: "available",
   difficulty: "intermediate",
   estimatedMinutes: 15,
   prerequisites: [],
   relatedTopics: [],
   learningPaths: [],
+  lesson: createStandardLesson("lease", lessonSpecs["lease"]),
 };
