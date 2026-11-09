@@ -1,6 +1,5 @@
 import type { TopicDefinition } from "@engineering-playbook/content-schema";
-import { createStandardLesson } from "../shared/standard-lesson";
-import { lessonSpecs } from "../shared/lesson-specs";
+import { sections, implementations, challenges } from "./lesson-content";
 
 export const gossipProtocol: TopicDefinition = {
   id: "gossip-protocol",
@@ -15,7 +14,11 @@ export const gossipProtocol: TopicDefinition = {
   difficulty: "intermediate",
   estimatedMinutes: 20,
   prerequisites: [],
-  relatedTopics: [],
+  relatedTopics: ["heartbeats", "quorum"],
   learningPaths: [],
-  lesson: createStandardLesson("gossip-protocol", lessonSpecs["gossip-protocol"]),
+  lesson: {
+    sections,
+    implementations,
+    challenges,
+  },
 };

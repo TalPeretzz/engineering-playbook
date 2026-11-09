@@ -1,6 +1,5 @@
 import type { TopicDefinition } from "@engineering-playbook/content-schema";
-import { createStandardLesson } from "../shared/standard-lesson";
-import { lessonSpecs } from "../shared/lesson-specs";
+import { sections, implementations, challenges } from "./lesson-content";
 
 export const leaderElection: TopicDefinition = {
   id: "leader-election",
@@ -15,7 +14,11 @@ export const leaderElection: TopicDefinition = {
   difficulty: "intermediate",
   estimatedMinutes: 20,
   prerequisites: [],
-  relatedTopics: [],
+  relatedTopics: ["heartbeats", "distributed-lock"],
   learningPaths: [],
-  lesson: createStandardLesson("leader-election", lessonSpecs["leader-election"]),
+  lesson: {
+    sections,
+    implementations,
+    challenges,
+  },
 };

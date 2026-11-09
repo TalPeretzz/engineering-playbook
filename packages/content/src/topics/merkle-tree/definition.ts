@@ -1,6 +1,5 @@
 import type { TopicDefinition } from "@engineering-playbook/content-schema";
-import { createStandardLesson } from "../shared/standard-lesson";
-import { lessonSpecs } from "../shared/lesson-specs";
+import { sections, implementations, challenges } from "./lesson-content";
 
 export const merkleTree: TopicDefinition = {
   id: "merkle-tree",
@@ -15,7 +14,11 @@ export const merkleTree: TopicDefinition = {
   difficulty: "intermediate",
   estimatedMinutes: 20,
   prerequisites: [],
-  relatedTopics: [],
+  relatedTopics: ["consistent-hashing", "gossip-protocol"],
   learningPaths: [],
-  lesson: createStandardLesson("merkle-tree", lessonSpecs["merkle-tree"]),
+  lesson: {
+    sections,
+    implementations,
+    challenges,
+  },
 };

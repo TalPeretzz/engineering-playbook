@@ -1,6 +1,5 @@
 import type { TopicDefinition } from "@engineering-playbook/content-schema";
-import { createStandardLesson } from "../shared/standard-lesson";
-import { lessonSpecs } from "../shared/lesson-specs";
+import { sections, implementations, challenges } from "./lesson-content";
 
 export const sharding: TopicDefinition = {
   id: "sharding",
@@ -15,7 +14,11 @@ export const sharding: TopicDefinition = {
   difficulty: "intermediate",
   estimatedMinutes: 20,
   prerequisites: [],
-  relatedTopics: [],
+  relatedTopics: ["consistent-hashing", "replication", "quorum"],
   learningPaths: [],
-  lesson: createStandardLesson("sharding", lessonSpecs["sharding"]),
+  lesson: {
+    sections,
+    implementations,
+    challenges,
+  },
 };

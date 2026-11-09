@@ -1,6 +1,5 @@
 import type { TopicDefinition } from "@engineering-playbook/content-schema";
-import { createStandardLesson } from "../shared/standard-lesson";
-import { lessonSpecs } from "../shared/lesson-specs";
+import { sections, implementations, challenges } from "./lesson-content";
 
 export const replication: TopicDefinition = {
   id: "replication",
@@ -15,7 +14,11 @@ export const replication: TopicDefinition = {
   difficulty: "intermediate",
   estimatedMinutes: 20,
   prerequisites: [],
-  relatedTopics: [],
+  relatedTopics: ["leader-election", "quorum", "sharding"],
   learningPaths: [],
-  lesson: createStandardLesson("replication", lessonSpecs["replication"]),
+  lesson: {
+    sections,
+    implementations,
+    challenges,
+  },
 };

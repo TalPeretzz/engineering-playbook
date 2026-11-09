@@ -1,6 +1,5 @@
 import type { TopicDefinition } from "@engineering-playbook/content-schema";
-import { createStandardLesson } from "../shared/standard-lesson";
-import { lessonSpecs } from "../shared/lesson-specs";
+import { sections, implementations, challenges } from "./lesson-content";
 
 export const competingConsumers: TopicDefinition = {
   id: "competing-consumers",
@@ -15,7 +14,11 @@ export const competingConsumers: TopicDefinition = {
   difficulty: "beginner",
   estimatedMinutes: 15,
   prerequisites: [],
-  relatedTopics: [],
+  relatedTopics: ["consumer-groups", "pub-sub"],
   learningPaths: [],
-  lesson: createStandardLesson("competing-consumers", lessonSpecs["competing-consumers"]),
+  lesson: {
+    sections,
+    implementations,
+    challenges,
+  },
 };

@@ -1,6 +1,5 @@
 import type { TopicDefinition } from "@engineering-playbook/content-schema";
-import { createStandardLesson } from "../shared/standard-lesson";
-import { lessonSpecs } from "../shared/lesson-specs";
+import { sections, implementations, challenges } from "./lesson-content";
 
 export const trie: TopicDefinition = {
   id: "trie",
@@ -15,7 +14,11 @@ export const trie: TopicDefinition = {
   difficulty: "intermediate",
   estimatedMinutes: 20,
   prerequisites: [],
-  relatedTopics: [],
+  relatedTopics: ["skip-list"],
   learningPaths: [],
-  lesson: createStandardLesson("trie", lessonSpecs.trie),
+  lesson: {
+    sections,
+    implementations,
+    challenges,
+  },
 };

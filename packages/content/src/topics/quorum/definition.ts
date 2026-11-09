@@ -1,6 +1,5 @@
 import type { TopicDefinition } from "@engineering-playbook/content-schema";
-import { createStandardLesson } from "../shared/standard-lesson";
-import { lessonSpecs } from "../shared/lesson-specs";
+import { sections, implementations, challenges } from "./lesson-content";
 
 export const quorum: TopicDefinition = {
   id: "quorum",
@@ -15,7 +14,11 @@ export const quorum: TopicDefinition = {
   difficulty: "intermediate",
   estimatedMinutes: 15,
   prerequisites: [],
-  relatedTopics: [],
+  relatedTopics: ["leader-election", "replication"],
   learningPaths: [],
-  lesson: createStandardLesson("quorum", lessonSpecs["quorum"]),
+  lesson: {
+    sections,
+    implementations,
+    challenges,
+  },
 };

@@ -1,6 +1,5 @@
 import type { TopicDefinition } from "@engineering-playbook/content-schema";
-import { createStandardLesson } from "../shared/standard-lesson";
-import { lessonSpecs } from "../shared/lesson-specs";
+import { sections, implementations, challenges } from "./lesson-content";
 
 export const bitmapsBitsets: TopicDefinition = {
   id: "bitmaps-bitsets",
@@ -15,7 +14,11 @@ export const bitmapsBitsets: TopicDefinition = {
   difficulty: "beginner",
   estimatedMinutes: 15,
   prerequisites: [],
-  relatedTopics: [],
+  relatedTopics: ["heap-priority-queue", "hyperloglog"],
   learningPaths: [],
-  lesson: createStandardLesson("bitmaps-bitsets", lessonSpecs["bitmaps-bitsets"]),
+  lesson: {
+    sections,
+    implementations,
+    challenges,
+  },
 };

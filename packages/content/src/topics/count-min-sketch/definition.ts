@@ -1,6 +1,5 @@
 import type { TopicDefinition } from "@engineering-playbook/content-schema";
-import { createStandardLesson } from "../shared/standard-lesson";
-import { lessonSpecs } from "../shared/lesson-specs";
+import { sections, implementations, challenges } from "./lesson-content";
 
 export const countMinSketch: TopicDefinition = {
   id: "count-min-sketch",
@@ -15,7 +14,11 @@ export const countMinSketch: TopicDefinition = {
   difficulty: "advanced",
   estimatedMinutes: 20,
   prerequisites: [],
-  relatedTopics: [],
+  relatedTopics: ["hyperloglog", "bitmaps-bitsets"],
   learningPaths: [],
-  lesson: createStandardLesson("count-min-sketch", lessonSpecs["count-min-sketch"]),
+  lesson: {
+    sections,
+    implementations,
+    challenges,
+  },
 };

@@ -1,6 +1,5 @@
 import type { TopicDefinition } from "@engineering-playbook/content-schema";
-import { createStandardLesson } from "../shared/standard-lesson";
-import { lessonSpecs } from "../shared/lesson-specs";
+import { sections, implementations, challenges } from "./lesson-content";
 
 export const hyperloglog: TopicDefinition = {
   id: "hyperloglog",
@@ -15,7 +14,11 @@ export const hyperloglog: TopicDefinition = {
   difficulty: "advanced",
   estimatedMinutes: 25,
   prerequisites: [],
-  relatedTopics: [],
+  relatedTopics: ["bitmaps-bitsets", "count-min-sketch"],
   learningPaths: [],
-  lesson: createStandardLesson("hyperloglog", lessonSpecs.hyperloglog),
+  lesson: {
+    sections,
+    implementations,
+    challenges,
+  },
 };

@@ -41,12 +41,8 @@ describe("TopicPage smoke test", () => {
 });
 
 describe("TopicPageComingSoon smoke test", () => {
-  it("renders the coming-soon fallback without any challenge markup", () => {
-    const topic = {
-      ...definitionsBySlug["trie"],
-      availability: "coming-soon" as const,
-      lesson: undefined,
-    };
+  it("renders a coming-soon topic without any challenge markup", () => {
+    const topic = definitionsBySlug["skip-list"];
     expect(topic.availability).toBe("coming-soon");
     const html = renderToStaticMarkup(createElement(TopicPageComingSoon, { topic }));
     expect(html).toContain(topic.title);

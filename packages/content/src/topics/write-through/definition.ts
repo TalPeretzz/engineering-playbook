@@ -1,6 +1,5 @@
 import type { TopicDefinition } from "@engineering-playbook/content-schema";
-import { createStandardLesson } from "../shared/standard-lesson";
-import { lessonSpecs } from "../shared/lesson-specs";
+import { sections, implementations, challenges } from "./lesson-content";
 
 export const writeThrough: TopicDefinition = {
   id: "write-through",
@@ -14,8 +13,12 @@ export const writeThrough: TopicDefinition = {
   availability: "available",
   difficulty: "intermediate",
   estimatedMinutes: 15,
-  prerequisites: [],
-  relatedTopics: [],
+  prerequisites: ["cache-aside"],
+  relatedTopics: ["cache-aside", "write-behind", "read-through"],
   learningPaths: [],
-  lesson: createStandardLesson("write-through", lessonSpecs["write-through"]),
+  lesson: {
+    sections,
+    implementations,
+    challenges,
+  },
 };

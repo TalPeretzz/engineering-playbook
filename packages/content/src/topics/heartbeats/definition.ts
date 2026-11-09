@@ -1,6 +1,5 @@
 import type { TopicDefinition } from "@engineering-playbook/content-schema";
-import { createStandardLesson } from "../shared/standard-lesson";
-import { lessonSpecs } from "../shared/lesson-specs";
+import { sections, implementations, challenges } from "./lesson-content";
 
 export const heartbeats: TopicDefinition = {
   id: "heartbeats",
@@ -15,7 +14,11 @@ export const heartbeats: TopicDefinition = {
   difficulty: "beginner",
   estimatedMinutes: 15,
   prerequisites: [],
-  relatedTopics: [],
+  relatedTopics: ["gossip-protocol", "leader-election"],
   learningPaths: [],
-  lesson: createStandardLesson("heartbeats", lessonSpecs["heartbeats"]),
+  lesson: {
+    sections,
+    implementations,
+    challenges,
+  },
 };
