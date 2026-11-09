@@ -181,6 +181,7 @@ describe("nextAvailableTopicId / prevAvailableTopicId", () => {
       "circuit-breaker",
       "retry-exponential-backoff",
       "idempotency",
+      "distributed-lock",
       "rate-limiter",
       "pub-sub",
       "cache-aside",
@@ -200,6 +201,28 @@ describe("nextAvailableTopicId / prevAvailableTopicId", () => {
     // read-through (caching) -> strategy (design-patterns), skipping caching's other
     // four coming-soon topics.
     expect(nextAvailableTopicId("read-through")).toBe("strategy");
+  });
+
+  it("finds the next available topic directly after idempotency (distributed-lock)", () => {
+    expect(nextAvailableTopicId("idempotency")).toBe("distributed-lock");
+  });
+
+  it("skips five coming-soon topics (lease..event-sourcing) to reach rate-limiter", () => {
+    expect(nextAvailableTopicId("distributed-lock")).toBe("rate-limiter");
+  });
+
+  it("prevAvailableFrom distributed-lock reaches idempotency directly", () => {
+    const prevId = prevAvailableTopicId("distributed-lock");
+    expect(prevId).not.toBeNull();
+    expect(topicsById[prevId!].availability).toBe("available");
+    expect(prevId).toBe("idempotency");
+  });
+
+  it("prevAvailableFrom rate-limiter now reaches distributed-lock directly", () => {
+    const prevId = prevAvailableTopicId("rate-limiter");
+    expect(prevId).not.toBeNull();
+    expect(topicsById[prevId!].availability).toBe("available");
+    expect(prevId).toBe("distributed-lock");
   });
 
   it("finds the next available topic within the same category", () => {

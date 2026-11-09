@@ -1,4 +1,5 @@
 import type { TopicDefinition } from "@engineering-playbook/content-schema";
+import { sections, implementations, challenges } from "./lesson-content";
 
 export const distributedLock: TopicDefinition = {
   id: "distributed-lock",
@@ -9,10 +10,15 @@ export const distributedLock: TopicDefinition = {
   categories: ["distributed-systems"],
   tags: ["coordination", "concurrency"],
   depth: "standard",
-  availability: "coming-soon",
+  availability: "available",
   difficulty: "intermediate",
   estimatedMinutes: 20,
   prerequisites: [],
-  relatedTopics: [],
+  relatedTopics: ["quorum", "leader-election", "lease"],
   learningPaths: [],
+  lesson: {
+    sections,
+    implementations,
+    challenges,
+  },
 };
