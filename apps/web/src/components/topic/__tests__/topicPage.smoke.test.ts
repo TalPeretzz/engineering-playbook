@@ -41,9 +41,12 @@ describe("TopicPage smoke test", () => {
 });
 
 describe("TopicPageComingSoon smoke test", () => {
-  it("renders a coming-soon topic without any challenge markup", () => {
-    const topic = definitionsBySlug["skip-list"];
-    expect(topic.availability).toBe("coming-soon");
+  it("renders the coming-soon fallback without any challenge markup", () => {
+    const topic = {
+      ...definitionsBySlug["skip-list"],
+      availability: "coming-soon" as const,
+      lesson: undefined,
+    };
     const html = renderToStaticMarkup(createElement(TopicPageComingSoon, { topic }));
     expect(html).toContain(topic.title);
     expect(html.toLowerCase()).toContain("coming soon");

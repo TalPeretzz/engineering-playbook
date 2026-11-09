@@ -4,6 +4,12 @@
  */
 import { describe, it, expect, beforeEach } from "vitest";
 import { createProgressStore, subscribeToProgress, setPreferredLanguage } from "../progressStore";
+import {
+  curriculum,
+  learningPaths,
+  topicsById,
+  derivedTopicOrder,
+} from "@engineering-playbook/content";
 
 function makeStorage(): Storage {
   const mem = new Map<string, string>();
@@ -187,11 +193,12 @@ describe("resetProgress", () => {
 });
 
 describe("getCategoryProgress", () => {
-  // "caching" category has 9 topics in the catalog; lru-cache, cache-aside,
-  // write-through, write-behind, and read-through are available today.
   it("counts only available topics against the denominator", () => {
+    const available = curriculum.topicsInCategory.caching.filter(
+      (id) => topicsById[id]?.availability === "available"
+    );
     const p = store.getCategoryProgress("caching");
-    expect(p.available).toBe(5);
+    expect(p.available).toBe(available.length);
     expect(p.completed).toBe(0);
     expect(p.percent).toBe(0);
   });
@@ -200,27 +207,27 @@ describe("getCategoryProgress", () => {
     store.completeTopic("lru-cache");
     let p = store.getCategoryProgress("caching");
     expect(p.completed).toBe(1);
-    expect(p.percent).toBe(20);
+    expect(p.percent).toBe(Math.round(100 / p.available));
 
     store.completeTopic("cache-aside");
     p = store.getCategoryProgress("caching");
     expect(p.completed).toBe(2);
-    expect(p.percent).toBe(40);
+    expect(p.percent).toBe(Math.round(200 / p.available));
 
     store.completeTopic("write-through");
     p = store.getCategoryProgress("caching");
     expect(p.completed).toBe(3);
-    expect(p.percent).toBe(60);
+    expect(p.percent).toBe(Math.round(300 / p.available));
 
     store.completeTopic("write-behind");
     p = store.getCategoryProgress("caching");
     expect(p.completed).toBe(4);
-    expect(p.percent).toBe(80);
+    expect(p.percent).toBe(Math.round(400 / p.available));
 
     store.completeTopic("read-through");
     p = store.getCategoryProgress("caching");
     expect(p.completed).toBe(5);
-    expect(p.percent).toBe(100);
+    expect(p.percent).toBe(Math.round(500 / p.available));
   });
 
   it("returns zeroes for an unknown category id", () => {
@@ -230,11 +237,10 @@ describe("getCategoryProgress", () => {
 });
 
 describe("getPathProgress", () => {
-  // "caching" learning path has 9 topics; lru-cache, cache-aside, write-through,
-  // write-behind, and read-through are available today, in that order.
   it("recommends the first not-completed available topic", () => {
+    const path = learningPaths.find((candidate) => candidate.id === "caching")!;
     const p = store.getPathProgress("caching");
-    expect(p.available).toBe(5);
+    expect(p.available).toBe(path.topicIds.length);
     expect(p.nextRecommendedId).toBe("lru-cache");
   });
 
@@ -242,18 +248,15 @@ describe("getPathProgress", () => {
     store.completeTopic("lru-cache");
     const p = store.getPathProgress("caching");
     expect(p.completed).toBe(1);
-    expect(p.percent).toBe(20);
+    expect(p.percent).toBe(Math.round(100 / p.available));
     expect(p.nextRecommendedId).toBe("cache-aside");
   });
 
   it("clears the recommendation once every available topic is completed", () => {
-    store.completeTopic("lru-cache");
-    store.completeTopic("cache-aside");
-    store.completeTopic("write-through");
-    store.completeTopic("write-behind");
-    store.completeTopic("read-through");
+    const path = learningPaths.find((candidate) => candidate.id === "caching")!;
+    for (const id of path.topicIds) store.completeTopic(id);
     const p = store.getPathProgress("caching");
-    expect(p.completed).toBe(5);
+    expect(p.completed).toBe(path.topicIds.length);
     expect(p.percent).toBe(100);
     expect(p.nextRecommendedId).toBeNull();
   });
@@ -290,8 +293,8 @@ describe("getRecommendedNextTopicId", () => {
   });
 
   it("returns null once every available topic from that point on is completed", () => {
-    // strategy (design-patterns, the final category) is the last available topic today.
-    expect(store.getRecommendedNextTopicId("strategy")).toBeNull();
+    const lastId = derivedTopicOrder.at(-1)!;
+    expect(store.getRecommendedNextTopicId(lastId)).toBeNull();
   });
 
   it("returns null for an id that isn't in curriculum order at all", () => {

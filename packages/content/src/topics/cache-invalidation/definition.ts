@@ -1,4 +1,6 @@
 import type { TopicDefinition } from "@engineering-playbook/content-schema";
+import { createStandardLesson } from "../shared/standard-lesson";
+import { lessonSpecs } from "../shared/lesson-specs";
 
 export const cacheInvalidation: TopicDefinition = {
   id: "cache-invalidation",
@@ -9,10 +11,11 @@ export const cacheInvalidation: TopicDefinition = {
   categories: ["caching"],
   tags: ["caching", "consistency"],
   depth: "standard",
-  availability: "coming-soon",
+  availability: "available",
   difficulty: "intermediate",
   estimatedMinutes: 20,
   prerequisites: [],
   relatedTopics: [],
   learningPaths: [],
+  lesson: createStandardLesson("cache-invalidation", lessonSpecs["cache-invalidation"]),
 };

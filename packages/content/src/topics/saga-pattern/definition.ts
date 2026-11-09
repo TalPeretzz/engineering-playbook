@@ -1,4 +1,6 @@
 import type { TopicDefinition } from "@engineering-playbook/content-schema";
+import { createStandardLesson } from "../shared/standard-lesson";
+import { lessonSpecs } from "../shared/lesson-specs";
 
 export const sagaPattern: TopicDefinition = {
   id: "saga-pattern",
@@ -9,10 +11,11 @@ export const sagaPattern: TopicDefinition = {
   categories: ["distributed-systems"],
   tags: ["distributed-transactions", "microservices"],
   depth: "flagship",
-  availability: "coming-soon",
+  availability: "available",
   difficulty: "advanced",
   estimatedMinutes: 25,
   prerequisites: [],
   relatedTopics: [],
   learningPaths: [],
+  lesson: createStandardLesson("saga-pattern", lessonSpecs["saga-pattern"]),
 };

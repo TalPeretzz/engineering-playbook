@@ -1,4 +1,6 @@
 import type { TopicDefinition } from "@engineering-playbook/content-schema";
+import { createStandardLesson } from "../shared/standard-lesson";
+import { lessonSpecs } from "../shared/lesson-specs";
 
 export const cqrs: TopicDefinition = {
   id: "cqrs",
@@ -9,10 +11,11 @@ export const cqrs: TopicDefinition = {
   categories: ["distributed-systems"],
   tags: ["architecture", "scalability"],
   depth: "standard",
-  availability: "coming-soon",
+  availability: "available",
   difficulty: "advanced",
   estimatedMinutes: 20,
   prerequisites: [],
   relatedTopics: [],
   learningPaths: [],
+  lesson: createStandardLesson("cqrs", lessonSpecs["cqrs"]),
 };
