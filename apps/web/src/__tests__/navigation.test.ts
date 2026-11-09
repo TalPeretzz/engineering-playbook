@@ -204,8 +204,8 @@ describe("nextAvailableTopicId / prevAvailableTopicId", () => {
     expect(nextAvailableTopicId("idempotency")).toBe("distributed-lock");
   });
 
-  it("skips five coming-soon topics (lease..event-sourcing) to reach rate-limiter", () => {
-    expect(nextAvailableTopicId("distributed-lock")).toBe("rate-limiter");
+  it("reaches the now-available lease after distributed-lock", () => {
+    expect(nextAvailableTopicId("distributed-lock")).toBe("lease");
   });
 
   it("prevAvailableFrom distributed-lock reaches idempotency directly", () => {
@@ -215,11 +215,11 @@ describe("nextAvailableTopicId / prevAvailableTopicId", () => {
     expect(prevId).toBe("idempotency");
   });
 
-  it("prevAvailableFrom rate-limiter now reaches distributed-lock directly", () => {
+  it("prevAvailableFrom rate-limiter reaches event-sourcing", () => {
     const prevId = prevAvailableTopicId("rate-limiter");
     expect(prevId).not.toBeNull();
     expect(topicsById[prevId!].availability).toBe("available");
-    expect(prevId).toBe("distributed-lock");
+    expect(prevId).toBe("event-sourcing");
   });
 
   it("finds the next available topic within the same category", () => {
