@@ -180,6 +180,7 @@ describe("nextAvailableTopicId / prevAvailableTopicId", () => {
       "circuit-breaker",
       "retry-exponential-backoff",
       "idempotency",
+      "distributed-lock",
       "rate-limiter",
       "pub-sub",
       "cache-aside",
@@ -197,6 +198,28 @@ describe("nextAvailableTopicId / prevAvailableTopicId", () => {
     // rate-limiter (distributed-systems) -> pub-sub (messaging).
     expect(nextAvailableTopicId("rate-limiter")).toBe("pub-sub");
     expect(nextAvailableTopicId("read-through")).toBe("ttl");
+  });
+
+  it("finds the next available topic directly after idempotency (distributed-lock)", () => {
+    expect(nextAvailableTopicId("idempotency")).toBe("distributed-lock");
+  });
+
+  it("reaches the now-available lease after distributed-lock", () => {
+    expect(nextAvailableTopicId("distributed-lock")).toBe("lease");
+  });
+
+  it("prevAvailableFrom distributed-lock reaches idempotency directly", () => {
+    const prevId = prevAvailableTopicId("distributed-lock");
+    expect(prevId).not.toBeNull();
+    expect(topicsById[prevId!].availability).toBe("available");
+    expect(prevId).toBe("idempotency");
+  });
+
+  it("prevAvailableFrom rate-limiter reaches event-sourcing", () => {
+    const prevId = prevAvailableTopicId("rate-limiter");
+    expect(prevId).not.toBeNull();
+    expect(topicsById[prevId!].availability).toBe("available");
+    expect(prevId).toBe("event-sourcing");
   });
 
   it("finds the next available topic within the same category", () => {
