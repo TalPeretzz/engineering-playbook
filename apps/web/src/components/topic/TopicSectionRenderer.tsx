@@ -6,6 +6,7 @@ import { SectionHeading } from "./SectionHeading";
 import { StepVisual } from "./StepVisual";
 import { CollapsibleSection } from "./CollapsibleSection";
 import { LruCacheVisual } from "./LruCacheVisual";
+import { SceneWalkthrough } from "./SceneWalkthrough";
 
 type Props = {
   section: Section;
@@ -92,6 +93,9 @@ function renderInner(section: Section, onFirstInteraction?: () => void) {
           </div>
         </div>
       );
+
+    case "scene":
+      return <SceneWalkthrough scene={section} onFirstStep={onFirstInteraction} />;
 
     case "lru-visual":
       return <LruCacheVisual />;

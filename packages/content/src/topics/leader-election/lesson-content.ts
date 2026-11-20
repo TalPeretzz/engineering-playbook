@@ -1,4 +1,5 @@
 import type { Section, Challenge } from "@engineering-playbook/content-schema";
+import { walkthrough } from "./walkthrough";
 
 export const sections: Section[] = [
   {
@@ -16,6 +17,7 @@ export const sections: Section[] = [
       },
     ],
   },
+  walkthrough,
   {
     type: "text",
     id: "how-it-works",
@@ -36,26 +38,6 @@ export const sections: Section[] = [
         text: "The key design principle across real implementations: leader election is reduced to a narrower, already-solved problem (atomic claim + failure detection via a consensus-backed coordination service), rather than every application reinventing distributed consensus from scratch.",
       },
     ],
-  },
-  {
-    type: "visual",
-    id: "visual",
-    heading: "Visual",
-    content: `ZooKeeper election: ephemeral sequential znodes
-
-  guid-n_001   <- node A (lowest seq -> LEADER)
-  guid-n_002   <- node B (watches n_001, its predecessor)
-  guid-n_003   <- node C (watches n_002, NOT the leader)
-
-Node A crashes -> session ends -> n_001 auto-deleted
-
-  B watches n_001 -> fires -> B checks: am I lowest? yes
-  B becomes LEADER
-
-  guid-n_002   <- node B (LEADER)
-  guid-n_003   <- node C (still watches n_002, unchanged)
-
-Only B reacted -- C never woke up (no thundering herd)`,
   },
   {
     type: "complexity",

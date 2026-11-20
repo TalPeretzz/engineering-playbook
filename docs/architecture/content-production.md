@@ -165,6 +165,33 @@ derive every group directly from `curriculum`/`categories`/`allTopicDefinitions`
 
 ---
 
+## 6. Animated walkthroughs (`type: "scene"`)
+
+A `SceneSection` is a step-by-step animated walkthrough of **one concrete
+scenario**: a small system diagram (nodes + edges on a 640×360 canvas) plus
+an ordered list of steps. It is pure data and is rendered by
+`SceneWalkthrough.tsx`, so no per-topic component is needed. Leader Election
+is the reference example
+(`packages/content/src/topics/leader-election/walkthrough.ts`).
+
+- **Steps describe deltas.** `nodes`, `edges` and `metrics` overrides are
+  cumulative: a step inherits everything set before it. `messages` (the
+  animated dots on edges) belong only to the step that declares them.
+- **Tell a story.** Tag each step with a `stage`:
+  `problem → mechanism → failure → solution → recap`. Put the single
+  takeaway in `keyIdea`, and list visible deltas in `changes`.
+- **Objectives** (`objectives[]`) tick off as the reader reaches the step
+  that `completes` them. Every objective must be completed by some step.
+- **Deep links:** `?<sceneId>=<step>` (1-based) opens the scene at that step.
+  Keyboard: ← → to step, R to replay, Space to autoplay.
+- Place the scene right after the problem statement ("show, then explain"),
+  and drop the old ASCII `visual` section if the scene covers it.
+- **Verify:** `sceneState.test.ts` runs `validateScene()` over every scene in
+  the catalog and fails on dangling node/edge/metric/objective ids or nodes
+  off the canvas.
+
+---
+
 ## Known gaps (not blocking, worth knowing)
 
 - **Structured `LessonContent` slots are unused** — see §3. Every topic today
