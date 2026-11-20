@@ -1,6 +1,5 @@
 import type { TopicDefinition } from "@engineering-playbook/content-schema";
-import { createStandardLesson } from "../shared/standard-lesson";
-import { lessonSpecs } from "../shared/lesson-specs";
+import { sections, implementations, challenges } from "./lesson-content";
 
 export const lease: TopicDefinition = {
   id: "lease",
@@ -14,8 +13,8 @@ export const lease: TopicDefinition = {
   availability: "available",
   difficulty: "intermediate",
   estimatedMinutes: 15,
-  prerequisites: [],
-  relatedTopics: [],
+  prerequisites: ["distributed-lock"],
+  relatedTopics: ["leader-election", "heartbeats", "distributed-lock"],
   learningPaths: [],
-  lesson: createStandardLesson("lease", lessonSpecs["lease"]),
+  lesson: { sections, implementations, challenges },
 };
