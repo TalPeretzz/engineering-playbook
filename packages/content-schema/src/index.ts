@@ -131,6 +131,120 @@ export type LruVisualSection = {
   collapsible?: boolean;
 };
 
+// ---------------------------------------------------------------------------
+// Scene — a generic, data-driven, step-by-step animated walkthrough.
+//
+// A scene is a small system diagram (nodes + edges) plus an ordered list of
+// steps. Each step tells one beat of a single concrete scenario and describes
+// only what *changed*: node/edge/metric overrides are cumulative (a step
+// inherits everything earlier steps set), while `messages` belong to the
+// step that declares them and are not carried forward.
+//
+// Coordinates are in a fixed 640×360 canvas; the renderer scales it.
+// ---------------------------------------------------------------------------
+
+export type SceneNodeKind =
+  "client" | "server" | "worker" | "database" | "cache" | "queue" | "coordinator";
+
+export type SceneTone =
+  "neutral" | "active" | "leader" | "success" | "warning" | "danger" | "muted";
+
+export type SceneNode = {
+  id: string;
+  label: string;
+  kind: SceneNodeKind;
+  /** Centre of the node on the 640×360 canvas. */
+  x: number;
+  y: number;
+  sublabel?: string;
+};
+
+export type SceneEdge = {
+  id: string;
+  from: string;
+  to: string;
+  label?: string;
+  dashed?: boolean;
+};
+
+export type SceneNodeState = {
+  tone?: SceneTone;
+  sublabel?: string;
+  /** Short pill rendered above the node, e.g. "LEADER". Empty string clears it. */
+  badge?: string;
+  hidden?: boolean;
+};
+
+export type SceneEdgeState = {
+  tone?: SceneTone;
+  label?: string;
+  hidden?: boolean;
+};
+
+export type SceneMessageKind = "request" | "response" | "heartbeat" | "failure";
+
+export type SceneMessage = {
+  /** Edge the message travels along. */
+  edge: string;
+  /** Travel `to → from` instead of `from → to`. */
+  reverse?: boolean;
+  label?: string;
+  kind?: SceneMessageKind;
+};
+
+export type SceneStage = "problem" | "mechanism" | "failure" | "solution" | "recap";
+
+export type SceneChange = {
+  kind: "add" | "remove" | "change";
+  text: string;
+};
+
+export type SceneStep = {
+  id: string;
+  /** Short label for the stepper, e.g. "Crash". */
+  short: string;
+  title: string;
+  stage: SceneStage;
+  /** Paragraphs; supports **bold** and `code`. */
+  body: string[];
+  keyIdea?: string;
+  changes?: SceneChange[];
+  nodes?: Record<string, SceneNodeState>;
+  edges?: Record<string, SceneEdgeState>;
+  messages?: SceneMessage[];
+  /** Metric id → display value. Cumulative, like nodes/edges. */
+  metrics?: Record<string, string>;
+  /** Objective ids that become "learned" once the reader reaches this step. */
+  completes?: string[];
+};
+
+export type SceneMetric = {
+  id: string;
+  label: string;
+  /** Value shown before any step sets one. Defaults to "—". */
+  initial?: string;
+};
+
+export type SceneObjective = {
+  id: string;
+  text: string;
+};
+
+export type SceneSection = {
+  type: "scene";
+  id: string;
+  heading: string;
+  /** One-line framing of the scenario, shown above the canvas. */
+  scenario: string;
+  nodes: SceneNode[];
+  edges: SceneEdge[];
+  metrics?: SceneMetric[];
+  objectives?: SceneObjective[];
+  steps: SceneStep[];
+  phase?: string;
+  collapsible?: boolean;
+};
+
 export type Section =
   | TextSection
   | VisualSection
@@ -138,7 +252,8 @@ export type Section =
   | TradeoffsSection
   | UseCasesSection
   | ComparisonSection
-  | LruVisualSection;
+  | LruVisualSection
+  | SceneSection;
 
 // ---------------------------------------------------------------------------
 // Challenges — discriminated union
