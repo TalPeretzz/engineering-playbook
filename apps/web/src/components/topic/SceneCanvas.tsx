@@ -727,22 +727,24 @@ export function IsoCanvas({
         const ns = state.nodes[node.id];
         if (!ns.badge) return null;
         const { g, side } = geo.get(node.id)!;
-        const [tt] = rhombus(g, side, ISO_H);
-        const top = { x: g.x, y: g.y - ISO_H };
+        const [tt, , , tl] = rhombus(g, side, ISO_H);
+        const bw = ns.badge.length * 6.4 + 14;
+        // Sits off the upper-left edge of the top face, clear of the icon and vertical edges.
+        const anchor = { x: (tl.x + tt.x) / 2 - 20, y: (tl.y + tt.y) / 2 - 14 };
         return (
           <g key={node.id}>
             <g>
               <rect
-                x={top.x - (ns.badge.length * 6.4 + 14) / 2}
-                y={tt.y - 24}
-                width={ns.badge.length * 6.4 + 14}
+                x={anchor.x - bw / 2}
+                y={anchor.y - 13}
+                width={bw}
                 height={18}
                 rx={9}
                 className={BADGE_TONE[ns.tone]}
               />
               <text
-                x={top.x}
-                y={tt.y - 11.5}
+                x={anchor.x}
+                y={anchor.y - 0.5}
                 textAnchor="middle"
                 className="text-[10px] font-bold fill-white tracking-wider"
                 style={{ fontFamily: "JetBrains Mono, ui-monospace, monospace" }}

@@ -93,7 +93,7 @@ export function SceneWalkthrough({
   const [stepIndex, setStepIndex] = useState(0);
   const [playing, setPlaying] = useState(false);
   const [replayKey, setReplayKey] = useState(0);
-  const [view, setView] = useState<SceneView>("flat");
+  const [view, setView] = useState<SceneView>("iso");
   const reduceMotion = useReducedMotion();
   const rootRef = useRef<HTMLDivElement>(null);
   const svgRef = useRef<SVGSVGElement>(null);
